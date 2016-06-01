@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.runtime;
+package fr.liglab.adele.cream.runtime.model.impl;
 
 import fr.liglab.adele.cream.model.Relation;
 import org.apache.felix.ipojo.annotations.Component;

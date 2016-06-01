@@ -67,16 +67,10 @@
                             fr.liglab.adele.cream.annotations.*,
                             fr.liglab.adele.cream.model.*
                         </Export-Package>
-                        <Private-Package>
-                            fr.liglab.adele.cream.internal.*
-                        </Private-Package>
                         <Bundle-SymbolicName>
                             ${project.artifactId}
                         </Bundle-SymbolicName>
-                        <IPOJO-Extension>
-                            context-component:fr.liglab.adele.cream.internal.factories.ContextEntityFactory,
-                            behavior-extension:fr.liglab.adele.cream.internal.factories.BehaviorFactory
-                        </IPOJO-Extension>
+
                     </instructions>
                 </configuration>
             </plugin>

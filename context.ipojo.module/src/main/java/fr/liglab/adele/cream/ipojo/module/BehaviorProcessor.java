@@ -10,7 +10,7 @@ import org.apache.felix.ipojo.metadata.Element;
  */
 public class BehaviorProcessor extends AnnotationProcessor<Behavior>  {
 
-	protected static final String BEHAVIOR_ELEMENT = BehaviorReference.NAMESPACE+":"+BehaviorReference.DEFAULT_BEHAVIOR_NAME;
+	protected static final String BEHAVIOR_ELEMENT = BehaviorReference.BEHAVIOR_NAMESPACE +":"+BehaviorReference.DEFAULT_BEHAVIOR_TYPE;
 
 	public BehaviorProcessor(ClassLoader classReferenceLoader) {
 		super(Behavior.class,classReferenceLoader);
@@ -23,7 +23,7 @@ public class BehaviorProcessor extends AnnotationProcessor<Behavior>  {
 	}
 
 	private Element buildBehaviorElement(Behavior annotation){
-		Element behaviorElement = new Element(BehaviorReference.DEFAULT_BEHAVIOR_NAME,BehaviorReference.NAMESPACE);
+		Element behaviorElement = new Element(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
 		Attribute specAttr = new Attribute(BehaviorReference.SPEC_ATTR_NAME,annotation.spec().getName());
 		Attribute implAttr = new Attribute(BehaviorReference.IMPLEM_ATTR_NAME,annotation.implem().getName());
 		behaviorElement.addAttribute(specAttr);

@@ -1,12 +1,7 @@
-package fr.liglab.adele.cream.internal.factories;
+package fr.liglab.adele.cream.runtime.internal.factories;
 
 import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.BundleContext;
-
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.List;
 
 /**
  * Created by aygalinc on 31/05/16.

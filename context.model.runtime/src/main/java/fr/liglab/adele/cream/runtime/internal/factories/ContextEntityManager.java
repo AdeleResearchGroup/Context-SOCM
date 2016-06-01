@@ -1,10 +1,7 @@
-package fr.liglab.adele.cream.internal.factories;
+package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
-import org.apache.felix.ipojo.ComponentFactory;
-import org.apache.felix.ipojo.HandlerFactory;
-import org.apache.felix.ipojo.HandlerManager;
-import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.util.Log;
 import org.apache.felix.ipojo.util.Logger;
@@ -44,16 +41,22 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
 
     }
 
-    private List<RequiredBehavior> getBehavior (Element metadata, Dictionary configuration){
+    public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+        super.configure(metadata,configuration);
+        System.out.println(" behavior ! ");
+        myRequiredBehavior.addAll(getBehavior(metadata));
+    }
+
+    private List<RequiredBehavior> getBehavior (Element metadata){
         List<RequiredBehavior> behaviors = new ArrayList<>();
-        Element[] behaviorsElements = metadata.getElements("behaviors");
+        Element[] behaviorsElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
         if (behaviorsElements == null) {
             return behaviors;
         }
 
         for (Element behavior : behaviorsElements){
-            String behaviorSpec = behavior.getAttribute("spec");
-            String behaviorImplem = behavior.getAttribute("implem");
+            String behaviorSpec = behavior.getAttribute(BehaviorReference.SPEC_ATTR_NAME);
+            String behaviorImplem = behavior.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME);
             if ((behaviorSpec == null) || (behaviorImplem == null)){
                 getLogger().log(Log.WARNING, "behavior spec or implem is null");
                 continue;
@@ -102,13 +105,17 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
 
     @Override
     public synchronized boolean addingService(ServiceReference reference) {
+      System.out.println("Bhv detected ");
         for (int i = 0; i < myRequiredBehavior.size(); i++) {
             RequiredBehavior req =  myRequiredBehavior.get(i);
+            System.out.println("Bhv check " + req.getSpecName() + " impl " + req.getImplName());
             if (req.getReference() == null && match(req, reference)) {
+                System.out.println(" Check ok");
                 req.setReference(reference);
                 return true;
             }
         }
+        System.out.println(" Check ko");
         return false;
     }
 
@@ -141,8 +148,9 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
     protected boolean match(RequiredBehavior req, ServiceReference<?> ref) {
         String spec = (String) ref.getProperty(BehaviorReference.SPEC_ATTR_NAME);
         String impl = (String) ref.getProperty(BehaviorReference.IMPLEM_ATTR_NAME);
-
-        return spec.equalsIgnoreCase(req.getSpecName()) && impl.equalsIgnoreCase(req.getImplName());
+        System.out.println(" Service spec " + spec + " against  " + req.getSpecName());
+        System.out.println(" Service impl " + impl + " against  " + req.getImplName());
+        return    req.getSpecName().equalsIgnoreCase(spec)  && req.getImplName().equalsIgnoreCase(impl);
     }
 
     /**
@@ -228,20 +236,10 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
             return myFactory;
         }
 
-        /**
-         * Gets the handler qualified name (<code>namespace:name</code>).
-         * @return the handler full name
-         */
-        public String getFullName() {
-            if (myBehaviorNameImpl == null) {
-                return HandlerFactory.IPOJO_NAMESPACE + ":" + m_name;
-            } else {
-                return myBehaviorNameImpl + ":" + m_name;
-            }
-        }
+
 
         public String getSpecName() {
-            return m_name;
+            return myName;
         }
 
         public String getImplName() {

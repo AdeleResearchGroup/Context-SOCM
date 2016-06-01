@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.internal.factories;
+package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import org.apache.felix.ipojo.*;
@@ -53,7 +53,7 @@ public class ContextEntityFactory extends ComponentFactory {
          * Remove behavior from the required handler list
          */
         for (RequiredHandler handler: requiredHandlers){
-            if  (!(BehaviorReference.NAMESPACE.equals(handler.getNamespace()) && BehaviorReference.DEFAULT_BEHAVIOR_NAME.equals(handler.getName()))){
+            if  (!(BehaviorReference.BEHAVIOR_NAMESPACE.equals(handler.getNamespace()) && BehaviorReference.DEFAULT_BEHAVIOR_TYPE.equals(handler.getName()))){
                 list.add(handler);
             }
         }

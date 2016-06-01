@@ -5,15 +5,10 @@ package fr.liglab.adele.cream.annotations.internal;
  */
 public interface BehaviorReference {
 
-    /**
-     * The namespace associated to context handlers
-     */
-    public static final String NAMESPACE = "fr.liglab.adele.cream.runtime.behavior";
 
-    /**
-     * The handler in charge of managing entities
-     */
-    public static final String DEFAULT_BEHAVIOR_NAME = "default";
+    public static final String BEHAVIOR_NAMESPACE = "fr.liglab.adele.cream.runtime.behavior";
+
+    public static final String DEFAULT_BEHAVIOR_TYPE = "default";
 
     public static final String SPEC_ATTR_NAME = "specification";
 

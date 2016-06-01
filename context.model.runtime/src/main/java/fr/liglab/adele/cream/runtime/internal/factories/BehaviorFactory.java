@@ -1,5 +1,6 @@
-package fr.liglab.adele.cream.internal.factories;
+package fr.liglab.adele.cream.runtime.internal.factories;
 
+import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.metadata.Element;
@@ -13,8 +14,27 @@ import java.util.Dictionary;
  */
 public class BehaviorFactory extends ComponentFactory {
 
+    private final String mySpec;
+
+    private final String myImplem;
+
     public BehaviorFactory(BundleContext context, Element element) throws ConfigurationException {
         super(context, element);
+        // Get the type
+        String spec = element.getAttribute(BehaviorReference.SPEC_ATTR_NAME);
+        if (spec != null) {
+            mySpec = spec;
+        } else {
+           throw new ConfigurationException("A behavior provider needs a spec");
+        }
+
+        // Get the type
+        String impl = element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME);
+        if (impl != null) {
+            myImplem = impl;
+        } else {
+            throw new ConfigurationException("A behavior provider needs an implem");
+        }
     }
 
     @Override
@@ -61,6 +81,9 @@ public class BehaviorFactory extends ComponentFactory {
             if (this.getFactory().getClassName() != null) {
                 dict.put("component.class", this.getFactory().getClassName());
             }
+            dict.put(BehaviorReference.BEHAVIOR_TYPE_PROPERTY,BehaviorReference.BEHAVIOR_TYPE);
+            dict.put(BehaviorReference.IMPLEM_ATTR_NAME,myImplem);
+            dict.put(BehaviorReference.SPEC_ATTR_NAME,mySpec);
             return dict;
         }
     }

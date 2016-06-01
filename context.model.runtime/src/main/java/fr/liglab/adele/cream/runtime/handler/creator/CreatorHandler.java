@@ -1,6 +1,6 @@
 package fr.liglab.adele.cream.runtime.handler.creator;
 
-import fr.liglab.adele.cream.runtime.RelationImpl;
+import fr.liglab.adele.cream.runtime.model.impl.RelationImpl;
 import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
