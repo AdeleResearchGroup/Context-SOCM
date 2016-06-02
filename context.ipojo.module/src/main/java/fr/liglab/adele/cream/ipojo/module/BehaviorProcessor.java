@@ -26,8 +26,10 @@ public class BehaviorProcessor extends AnnotationProcessor<Behavior>  {
 		Element behaviorElement = new Element(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
 		Attribute specAttr = new Attribute(BehaviorReference.SPEC_ATTR_NAME,annotation.spec().getName());
 		Attribute implAttr = new Attribute(BehaviorReference.IMPLEM_ATTR_NAME,annotation.implem().getName());
+		Attribute id = new Attribute(BehaviorReference.ID_ATTR_NAME,annotation.id());
 		behaviorElement.addAttribute(specAttr);
 		behaviorElement.addAttribute(implAttr);
+		behaviorElement.addAttribute(id);
 		return behaviorElement;
 	}
 }

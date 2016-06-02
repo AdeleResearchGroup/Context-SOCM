@@ -18,9 +18,9 @@ import java.util.List;
 /**
  * Created by aygalinc on 31/05/16.
  */
-public class ContextEntityManager extends InstanceManager implements TrackerCustomizer {
+public class ContextEntityManager extends InstanceManager /**implements TrackerCustomizer**/ {
 
-    private final List<RequiredBehavior> myRequiredBehavior = new ArrayList<>();
+  //  private final List<RequiredBehavior> myRequiredBehavior = new ArrayList<>();
 
     /**
      * The tracker used to track required handler factories.
@@ -43,35 +43,17 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
 
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
         super.configure(metadata,configuration);
-        System.out.println(" behavior ! ");
-        myRequiredBehavior.addAll(getBehavior(metadata));
+
+   //     myRequiredBehavior.addAll(getBehavior(metadata));
     }
 
-    private List<RequiredBehavior> getBehavior (Element metadata){
-        List<RequiredBehavior> behaviors = new ArrayList<>();
-        Element[] behaviorsElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
-        if (behaviorsElements == null) {
-            return behaviors;
-        }
 
-        for (Element behavior : behaviorsElements){
-            String behaviorSpec = behavior.getAttribute(BehaviorReference.SPEC_ATTR_NAME);
-            String behaviorImplem = behavior.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME);
-            if ((behaviorSpec == null) || (behaviorImplem == null)){
-                getLogger().log(Log.WARNING, "behavior spec or implem is null");
-                continue;
-            }
-            RequiredBehavior requiredBehavior = new RequiredBehavior(behaviorSpec,behaviorImplem);
-            behaviors.add(requiredBehavior);
-        }
-
-        return behaviors;
-    }
 
     @Override
     public void start() {
         super.start();
-        synchronized (this){
+
+     /**   synchronized (this){
             if (m_state == VALID){
                 if (m_tracker == null) {
                     if (myRequiredBehavior.size() != 0) {
@@ -86,24 +68,44 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
                     }
                 }
             }
-        }
+        }**/
     }
 
     @Override
     public void stop() {
-        synchronized (this){
+       /** synchronized (this){
             if (m_state == VALID){
                 if (m_tracker != null) {
                     m_tracker.close();
                     m_tracker = null;
                 }
             }
-        }
+        }**/
         super.stop();
     }
 
+    /**  private List<RequiredBehavior> getBehavior (Element metadata){
+     List<RequiredBehavior> behaviors = new ArrayList<>();
+     Element[] behaviorsElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
+     if (behaviorsElements == null) {
+     return behaviors;
+     }
 
-    @Override
+     for (Element behavior : behaviorsElements){
+     String behaviorSpec = behavior.getAttribute(BehaviorReference.SPEC_ATTR_NAME);
+     String behaviorImplem = behavior.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME);
+     if ((behaviorSpec == null) || (behaviorImplem == null)){
+     getLogger().log(Log.WARNING, "behavior spec or implem is null");
+     continue;
+     }
+     RequiredBehavior requiredBehavior = new RequiredBehavior(behaviorSpec,behaviorImplem);
+     behaviors.add(requiredBehavior);
+     }
+
+     return behaviors;
+     }**/
+
+  /**  @Override
     public synchronized boolean addingService(ServiceReference reference) {
       System.out.println("Bhv detected ");
         for (int i = 0; i < myRequiredBehavior.size(); i++) {
@@ -153,49 +155,26 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
         return    req.getSpecName().equalsIgnoreCase(spec)  && req.getImplName().equalsIgnoreCase(impl);
     }
 
-    /**
-     * Structure storing required handlers.
-     * Access to this class must mostly be with the lock on the factory.
-     * (except to access final fields)
-     */
+
     protected class RequiredBehavior {
-        /**
-         * The factory to create this behvior.
-         */
+
         private BehaviorFactory myFactory;
 
-        /**
-         * The behavior name.
-         */
+
         private final String myName;
 
-        /**
-         * The behavior impl name.
-         */
+
         private final String myBehaviorNameImpl;
 
-        /**
-         * The Service Reference of the handler factory.
-         */
+
         private ServiceReference<? extends BehaviorFactory> m_reference;
 
-        /**
-         * Crates a Required Handler.
-         * @param name the handler name.
-         * @param behaviorNameImpl the handler namespace.
-         */
+
         public RequiredBehavior(String name, String behaviorNameImpl) {
             myName = name;
             myBehaviorNameImpl = behaviorNameImpl;
         }
 
-        /**
-         * Equals method.
-         * Two handlers are equals if they have same name and namespace or they share the same service reference.
-         * @param object the object to compare to the current object.
-         * @return <code>true</code> if the two compared object are equals
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
         public boolean equals(Object object) {
             if (object instanceof RequiredBehavior) {
                 RequiredBehavior req = (RequiredBehavior) object;
@@ -210,22 +189,12 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
 
         }
 
-        /**
-         * Hashcode method.
-         * This method delegates to the {@link Object#hashCode()}.
-         * @return the object hashcode.
-         * @see java.lang.Object#hashCode()
-         */
+
         public int hashCode() {
             return super.hashCode();
         }
 
-        /**
-         * Gets the factory object used for this handler.
-         * The object is get when used for the first time.
-         * This method is called with the lock avoiding concurrent modification and on a valid factory.
-         * @return the factory object.
-         */
+
         public BehaviorFactory getFactory() {
             if (m_reference == null) {
                 return null;
@@ -250,10 +219,7 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
             return m_reference;
         }
 
-        /**
-         * Releases the reference of the used factory.
-         * This method is called with the lock on the current factory.
-         */
+
         public void unRef() {
             if (m_reference != null) {
                 myFactory = null;
@@ -261,13 +227,8 @@ public class ContextEntityManager extends InstanceManager implements TrackerCust
             }
         }
 
-        /**
-         * Sets the service reference. If the new service reference is <code>null</code>, it ungets the used factory (if already get).
-         * This method is called with the lock on the current factory.
-         * @param ref the new service reference.
-         */
         public void setReference(ServiceReference<? extends BehaviorFactory> ref) {
             m_reference = ref;
         }
-    }
+    }**/
 }

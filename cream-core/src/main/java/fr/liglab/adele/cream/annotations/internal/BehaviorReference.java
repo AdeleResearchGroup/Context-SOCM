@@ -6,13 +6,15 @@ package fr.liglab.adele.cream.annotations.internal;
 public interface BehaviorReference {
 
 
-    public static final String BEHAVIOR_NAMESPACE = "fr.liglab.adele.cream.runtime.behavior";
+    public static final String BEHAVIOR_NAMESPACE = "fr.liglab.adele.cream.runtime.handler";
 
-    public static final String DEFAULT_BEHAVIOR_TYPE = "default";
+    public static final String DEFAULT_BEHAVIOR_TYPE = "behavior";
 
     public static final String SPEC_ATTR_NAME = "specification";
 
     public static final String IMPLEM_ATTR_NAME = "implementation";
+
+    public static final String ID_ATTR_NAME = "id";
 
     public static final String BEHAVIOR_TYPE_PROPERTY = "behavior.factory.property";
 

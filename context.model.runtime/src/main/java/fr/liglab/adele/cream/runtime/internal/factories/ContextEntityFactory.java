@@ -46,18 +46,18 @@ public class ContextEntityFactory extends ComponentFactory {
 
     @Override
     public List<RequiredHandler> getRequiredHandlerList(){
-        List<RequiredHandler> requiredHandlers = super.getRequiredHandlerList();
-        List<RequiredHandler> list = new ArrayList<>();
+        /**    List<RequiredHandler> requiredHandlers = super.getRequiredHandlerList();
+      List<RequiredHandler> list = new ArrayList<>();
 
-        /**
+
          * Remove behavior from the required handler list
-         */
+
         for (RequiredHandler handler: requiredHandlers){
             if  (!(BehaviorReference.BEHAVIOR_NAMESPACE.equals(handler.getNamespace()) && BehaviorReference.DEFAULT_BEHAVIOR_TYPE.equals(handler.getName()))){
                 list.add(handler);
             }
-        }
-        return list;
+        } */
+        return super.getRequiredHandlerList();
     }
 
     /**

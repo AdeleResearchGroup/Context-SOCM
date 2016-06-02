@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 
 @ContextEntity(services = ContextEntityDescription.class)
-@Behavior(spec = BehaviorS.class,implem = BehaviorImpl.class)
+@Behavior(id="localisableBehavior", spec = BehaviorS.class,implem = BehaviorImpl.class)
 public class ContextEntityImpl implements ContextEntityDescription {
 
 	private String externalValue = "external value";

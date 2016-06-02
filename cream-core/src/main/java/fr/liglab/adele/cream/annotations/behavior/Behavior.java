@@ -9,4 +9,6 @@ public @interface Behavior {
     Class spec();
 
     Class implem();
+
+    String id();
 }
