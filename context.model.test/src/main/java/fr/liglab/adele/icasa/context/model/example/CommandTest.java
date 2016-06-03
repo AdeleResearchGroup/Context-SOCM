@@ -17,6 +17,9 @@ public class CommandTest {
     @Requires(optional = false,specification = Factory.class,filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
     Factory contextEntityFacto ;
 
+    /**
+     * TODO: Maybe Proxy hide mine !!!!
+     */
     @Requires(id = "test", optional = true)
     ContextEntityDescription description ;
 
