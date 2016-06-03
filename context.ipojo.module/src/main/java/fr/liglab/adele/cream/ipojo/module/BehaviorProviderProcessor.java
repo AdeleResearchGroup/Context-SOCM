@@ -57,18 +57,7 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
         if (! implemented) {
             error("Cannot ensure that the class " + classname + " is the implementation of the specified context services");
         }
-        
-        /*
-         * Add the specified context services as provided specifications of the IPOJO component
-         */
-        String specifications = annotation.spec().getName();
 
-        Element provides = new Element("provides","");
-        Attribute attribute = new Attribute("specifications", specifications);
-        provides.addAttribute(attribute);
-
-
-        addMetadataElement(provides);
     }
 
 
