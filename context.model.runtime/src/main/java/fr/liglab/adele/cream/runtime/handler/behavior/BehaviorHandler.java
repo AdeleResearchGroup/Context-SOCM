@@ -1,6 +1,8 @@
 package fr.liglab.adele.cream.runtime.handler.behavior;
 
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.runtime.internal.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;
@@ -9,6 +11,8 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.util.Log;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
@@ -16,22 +20,34 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Handler(name = BehaviorReference.DEFAULT_BEHAVIOR_TYPE, namespace = BehaviorReference.BEHAVIOR_NAMESPACE)
-public class BehaviorHandler extends PrimitiveHandler implements InstanceStateListener {
+public class BehaviorHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler {
 
-    private final Map<String,RequiredBehavior> myRequiredBehavior = new ConcurrentHashMap<>();
+    private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
+
+    private final Map<Method,RequiredBehavior> myRequiredBehaviorByMethod = new ConcurrentHashMap<>();
 
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
         getInstanceManager().addInstanceStateListener(this);
+
         Element[] behaviorElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
+
         for (Element element:behaviorElements){
-
-
-            myRequiredBehavior.put(element.getAttribute(BehaviorReference.ID_ATTR_NAME),
+            myRequiredBehaviorById.put(element.getAttribute(BehaviorReference.ID_ATTR_NAME),
                     new RequiredBehavior( element.getAttribute(BehaviorReference.SPEC_ATTR_NAME),
                             element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME))
             );
+        }
+
+        Class clazz = getInstanceManager().getClazz();
+        Behavior[] behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
+        for (Behavior behavior:behaviors){
+            Class service = behavior.spec();
+            Method[] methods = service.getMethods();
+            for (Method method:methods){
+                myRequiredBehaviorByMethod.put(method,myRequiredBehaviorById.get(behavior.id()));
+            }
         }
     }
 
@@ -51,13 +67,13 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
     @Override
     public  void stateChanged(ComponentInstance instance, int newState) {
         if (newState == ComponentInstance.VALID){
-                for (Map.Entry<String,RequiredBehavior> behavior: myRequiredBehavior.entrySet()){
-                    behavior.getValue().tryStartBehavior();
-                }
+            for (Map.Entry<String,RequiredBehavior> behavior: myRequiredBehaviorById.entrySet()){
+                behavior.getValue().tryStartBehavior();
+            }
         }
 
         if (newState == ComponentInstance.INVALID){
-            for (Map.Entry<String,RequiredBehavior> behavior: myRequiredBehavior.entrySet()){
+            for (Map.Entry<String,RequiredBehavior> behavior: myRequiredBehaviorById.entrySet()){
                 behavior.getValue().tryInvalid();
             }
         }
@@ -65,7 +81,7 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
 
     @Bind(id = "behaviorF",specification = Factory.class,optional = true,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_TYPE_PROPERTY+"="+BehaviorReference.BEHAVIOR_TYPE+")")
     public void bindBehaviorFactory(Factory behaviorFactory, Map prop){
-        for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehavior.entrySet()){
+        for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             if (match(entry.getValue(),prop)){
                 entry.getValue().setFactory(behaviorFactory);
                 entry.getValue().addManager();
@@ -78,7 +94,7 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
 
     @Unbind(id = "behaviorF")
     public void unbindBehaviorFactory(Factory behaviorFactory,Map prop){
-        for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehavior.entrySet()){
+        for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             if (match(entry.getValue(),prop)){
                 entry.getValue().unRef();
             }
@@ -118,6 +134,18 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
         return new BehaviorHandlerDescription();
     }
 
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        for (Map.Entry<String,RequiredBehavior> behaviorEntry : myRequiredBehaviorById.entrySet()){
+            Object returnObj = behaviorEntry.getValue().invoke(proxy,method,args);
+            if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)){
+                continue;
+            }
+            return returnObj;
+        }
+        return SuccessorStrategy.NO_FOUND_CODE;
+    }
+
     public class BehaviorHandlerDescription extends HandlerDescription {
 
         public BehaviorHandlerDescription(){
@@ -127,7 +155,7 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
         @Override
         public Element getHandlerInfo() {
             Element element = super.getHandlerInfo();
-            for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehavior.entrySet()){
+            for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
                 entry.getValue().getBehaviorDescription(element);
             }
             return element;

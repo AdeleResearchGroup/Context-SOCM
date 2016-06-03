@@ -2,18 +2,21 @@ package fr.liglab.adele.cream.runtime.handler.behavior;
 
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorFactory;
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorManager;
+import fr.liglab.adele.cream.runtime.internal.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 /**
  * Created by aygalinc on 02/06/16.
  */
-public class RequiredBehavior {
+public class RequiredBehavior implements InvocationHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequiredBehavior.class);
 
@@ -54,7 +57,7 @@ public class RequiredBehavior {
         return myBehaviorNameImpl;
     }
 
-    public BehaviorManager getManager() {
+    public synchronized BehaviorManager getManager() {
         return myManager;
     }
 
@@ -63,7 +66,7 @@ public class RequiredBehavior {
         myManager = null;
     }
 
-    public void addManager() {
+    public synchronized void addManager() {
         if (myManager != null || myFactory == null){
             return;
         }
@@ -79,36 +82,44 @@ public class RequiredBehavior {
         }
     }
 
-    public void tryStartBehavior(){
+    public synchronized void tryStartBehavior(){
 
         if (myManager != null){
-           if (firstStart) {
-               firstStart=false;
-               myManager.start();
-           }else {
-               myManager.setState(ComponentInstance.VALID);
-           }
+            if (firstStart) {
+                firstStart=false;
+                myManager.start();
+            }else {
+                myManager.setState(ComponentInstance.VALID);
+            }
         }
     }
 
-    public void tryInvalid(){
+    public synchronized void tryInvalid(){
         if (myManager != null){
             myManager.setState(ComponentInstance.INVALID);
         }
     }
 
-    public void tryDispose(){
+    public synchronized void tryDispose(){
         if (myManager != null){
             myManager.setState(ComponentInstance.DISPOSED);
         }
     }
 
-    public void getBehaviorDescription(Element elmentToAttach){
+    public synchronized void getBehaviorDescription(Element elmentToAttach){
         if(myManager != null){
             InstanceDescription description = myManager.getInstanceDescription();
 
             Element behaviorDescription = description.getDescription();
             elmentToAttach.addElement(behaviorDescription);
         }
+    }
+
+    @Override
+    public synchronized Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (myManager != null){
+            return myManager.getInvocationHandler().invoke(proxy,method,args);
+        }
+        return SuccessorStrategy.NO_FOUND_CODE;
     }
 }

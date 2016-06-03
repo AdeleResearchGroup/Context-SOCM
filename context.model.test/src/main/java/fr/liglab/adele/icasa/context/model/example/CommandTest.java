@@ -17,6 +17,14 @@ public class CommandTest {
     @Requires(optional = false,specification = Factory.class,filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
     Factory contextEntityFacto ;
 
+    @Requires(id = "test", optional = true)
+    ContextEntityDescription description ;
+
+    @Bind(id = "test")
+    public void bindTest(ContextEntityDescription description){
+    description.hello();
+    }
+
     /**
      * Defines the functions (commands).
      */
