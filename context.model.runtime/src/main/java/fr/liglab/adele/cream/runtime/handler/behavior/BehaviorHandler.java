@@ -24,8 +24,6 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
 
-    private final Map<Method,RequiredBehavior> myRequiredBehaviorByMethod = new ConcurrentHashMap<>();
-
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
@@ -40,15 +38,6 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
             );
         }
 
-        Class clazz = getInstanceManager().getClazz();
-        Behavior[] behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
-        for (Behavior behavior:behaviors){
-            Class service = behavior.spec();
-            Method[] methods = service.getMethods();
-            for (Method method:methods){
-                myRequiredBehaviorByMethod.put(method,myRequiredBehaviorById.get(behavior.id()));
-            }
-        }
     }
 
     @Override
