@@ -31,7 +31,7 @@ public class MethodIdentifier {
             Method method = (Method) o;
 
             /** Check Method Declaring Class **/
-            if (equalDeclaringClass(method)){
+            if (!equalDeclaringClass(method)){
                 return false;
             }
 
@@ -65,8 +65,10 @@ public class MethodIdentifier {
         }
 
         for (int i = 0; i < paramsClass.length; i++) {
-            if (paramsType[i].equals(paramsClass[i]))
-                return false;
+            if (paramsType[i].equals(paramsClass[i])){
+                continue;
+            }
+            return false;
         }
         return true;
     }

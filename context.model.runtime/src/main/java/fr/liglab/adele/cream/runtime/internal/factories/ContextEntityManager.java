@@ -47,18 +47,27 @@ public class ContextEntityManager extends InstanceManager{
         return (BehaviorHandler)  getHandler(BehaviorReference.BEHAVIOR_NAMESPACE+":"+BehaviorReference.DEFAULT_BEHAVIOR_TYPE);
     }
 
-
     @Override
-    public Object createPojoObject(){
-        System.out.println(" Someone Get a proxy ! ");
-        Object pojo = super.createPojoObject();
-
+    protected Object createObject() {
+        System.out.println(" Someone CREATE  OBJECT And His Proxy ! ");
+        Object pojo = super.createObject();
         Class clazz = getClazz();
+
         Behavior[] behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
-        List<Class> interfaz = new ArrayList<>();
+        Class<?> clazzInterface[] = clazz.getInterfaces();
+
+        Class<?> interfaces[] = new Class[behaviors.length+clazzInterface.length];
+
+        int i = 0;
         for (Behavior behavior:behaviors){
             Class service = behavior.spec();
-            interfaz.add(service);
+            interfaces[i] = service;
+            i++;
+        }
+
+        for (Class interfaz:clazzInterface){
+            interfaces[i] = interfaz;
+            i++;
         }
 
         List<InvocationHandler> successor = new ArrayList<InvocationHandler>();
@@ -68,7 +77,7 @@ public class ContextEntityManager extends InstanceManager{
                 new ParentSuccessorStrategy(),successor
         );
 
-        return Proxy.newProxyInstance(clazz.getClassLoader(),(Class<?>[]) interfaz.toArray(),invocationHandler);
+        return Proxy.newProxyInstance(clazz.getClassLoader(),interfaces,invocationHandler);
     }
 
 

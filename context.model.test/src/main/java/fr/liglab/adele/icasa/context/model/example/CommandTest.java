@@ -22,14 +22,14 @@ public class CommandTest {
 
     @Bind(id = "test")
     public void bindTest(ContextEntityDescription description){
-    description.hello();
+    System.out.println(description.hello());
     }
 
     /**
      * Defines the functions (commands).
      */
     @ServiceProperty(name = "osgi.command.function", value = "{}")
-    String[] m_function = new String[]{"create"};
+    String[] m_function = new String[]{"create","testBehavior"};
 
 
     @Descriptor("Create A Entity")
@@ -49,4 +49,12 @@ public class CommandTest {
         }
     }
 
+    @Descriptor("Create A Entity")
+    public void testBehavior(@Descriptor("testBehavior") String... handleId) {
+        try {
+            System.out.println(((BehaviorS)description).coucou());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -59,7 +59,7 @@ public class ContextEntityImpl implements ContextEntityDescription {
 
 	@Override
 	public String hello() {
-		return hello;
+		return "COUCOU";
 	}
 
 	@Override

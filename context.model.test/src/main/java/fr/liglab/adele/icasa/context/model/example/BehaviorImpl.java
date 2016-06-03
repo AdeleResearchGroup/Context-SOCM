@@ -6,4 +6,8 @@ import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 @BehaviorProvider(spec = BehaviorS.class)
 public class BehaviorImpl implements BehaviorS {
 
+    @Override
+    public String coucou() {
+        return "Coucou from the behavior";
+    }
 }
