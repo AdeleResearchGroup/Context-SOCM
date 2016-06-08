@@ -1,9 +1,12 @@
-package fr.liglab.adele.cream.runtime.handler.behavior;
+package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorFactory;
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorManager;
 import fr.liglab.adele.cream.runtime.internal.utils.SuccessorStrategy;
-import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.ConfigurationException;
+import org.apache.felix.ipojo.Factory;
+import org.apache.felix.ipojo.MissingHandlerException;
+import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.slf4j.Logger;
@@ -27,8 +30,6 @@ public class RequiredBehavior implements InvocationHandler {
     private final String myBehaviorNameImpl;
 
     private BehaviorManager myManager;
-
-    private volatile boolean firstStart = true;
 
     public RequiredBehavior(String spec, String behaviorImpl) {
         myName = spec;
@@ -84,25 +85,26 @@ public class RequiredBehavior implements InvocationHandler {
 
     public synchronized void tryStartBehavior(){
 
-        if (myManager != null){
-            if (firstStart) {
-                firstStart=false;
+        if (myManager != null ){
+            if (!myManager.isStarted()) {
                 myManager.start();
+                myManager.getBehaviorLifeCycleHandler().startBehavior();
             }else {
-                myManager.setState(ComponentInstance.VALID);
+                myManager.getBehaviorLifeCycleHandler().startBehavior();
             }
         }
     }
 
     public synchronized void tryInvalid(){
-        if (myManager != null){
-            myManager.setState(ComponentInstance.INVALID);
+        if (myManager != null && myManager.isStarted() ){
+            myManager.getBehaviorLifeCycleHandler().stopBehavior();
+
         }
     }
 
     public synchronized void tryDispose(){
         if (myManager != null){
-            myManager.setState(ComponentInstance.DISPOSED);
+            myManager.dispose();
         }
     }
 
@@ -117,7 +119,7 @@ public class RequiredBehavior implements InvocationHandler {
 
     @Override
     public synchronized Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (myManager != null){
+        if (myManager != null && myManager.isStarted()){
             return myManager.getInvocationHandler().invoke(proxy,method,args);
         }
         return SuccessorStrategy.NO_FOUND_CODE;

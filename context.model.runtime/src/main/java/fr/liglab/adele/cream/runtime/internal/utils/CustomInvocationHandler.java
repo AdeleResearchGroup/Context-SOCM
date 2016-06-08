@@ -47,7 +47,7 @@ public class CustomInvocationHandler implements InvocationHandler {
             }
         }
 
-        return mySuccessorStrategy.successorStrategy(mySuccessor,proxy,method,args);
+        return mySuccessorStrategy.successorStrategy(myPojo,mySuccessor,proxy,method,args);
     }
 
 }

@@ -17,15 +17,17 @@ public class CommandTest {
     @Requires(optional = false,specification = Factory.class,filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
     Factory contextEntityFacto ;
 
-    /**
-     * TODO: Maybe Proxy hide mine !!!!
-     */
-    @Requires(id = "test", optional = true)
+
+    @Requires(id = "test", optional = true,proxy = false)
     ContextEntityDescription description ;
+
+    @Requires(id = "test2", optional = true,proxy = false)
+    BehaviorS behaviorS ;
+
 
     @Bind(id = "test")
     public void bindTest(ContextEntityDescription description){
-    System.out.println(description.hello());
+        System.out.println(description.hello());
     }
 
     /**
@@ -56,6 +58,8 @@ public class CommandTest {
     public void testBehavior(@Descriptor("testBehavior") String... handleId) {
         try {
             System.out.println(((BehaviorS)description).coucou());
+            System.out.println((behaviorS.coucou()));
+            System.out.println(((ContextEntityDescription)behaviorS).hello());
         } catch (Exception e) {
             e.printStackTrace();
         }

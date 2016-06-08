@@ -2,7 +2,7 @@ package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
-import fr.liglab.adele.cream.runtime.handler.behavior.BehaviorHandler;
+import fr.liglab.adele.cream.runtime.handler.behavior.manager.BehaviorHandler;
 import fr.liglab.adele.cream.runtime.internal.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.runtime.internal.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.ComponentFactory;
@@ -83,8 +83,33 @@ public class ContextEntityManager extends InstanceManager{
 
     private class ParentSuccessorStrategy implements SuccessorStrategy{
 
+        private final static String EQUALS_METHOD_CALL = "equals";
+
+        private final static String HASHCODE_METHOD_CALL = "hashcode";
+
+        private final static String TOSTRING_METHOD_CALL = "toString";
+
+        private final static String NONE_OBJECT_METHOD_CALL = "None";
         @Override
-        public Object successorStrategy(List<InvocationHandler> successors, Object proxy, Method method, Object[] args) throws Throwable {
+        public Object successorStrategy(Object pojo,List<InvocationHandler> successors, Object proxy, Method method, Object[] args) throws Throwable {
+            System.out.println("Parent Successor Strategy ");
+            String nativeMethodCode = belongToObjectMethod(  proxy,  method, args);
+            System.out.println(nativeMethodCode + "  is DElegated ");
+            if (!NONE_OBJECT_METHOD_CALL.equals(nativeMethodCode)){
+                System.out.println(nativeMethodCode + "  is called " + pojo );
+                if (EQUALS_METHOD_CALL.equals(nativeMethodCode)){
+                    return pojo.equals(args[0]);
+                }
+                else if (HASHCODE_METHOD_CALL.equals(nativeMethodCode)){
+                    return pojo.hashCode();
+                }
+                else if (TOSTRING_METHOD_CALL.equals(nativeMethodCode)){
+
+                    return pojo.toString();
+                }
+
+            }
+
             for (InvocationHandler successor : successors){
                 Object returnObj = successor.invoke(proxy,method,args);
                 if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)){
@@ -94,6 +119,20 @@ public class ContextEntityManager extends InstanceManager{
             }
             throw  new RuntimeException();
         }
+
+        private String belongToObjectMethod(Object proxy, Method method, Object[] args){
+            if (TOSTRING_METHOD_CALL.equals(method.getName()) && args == null ){
+                return TOSTRING_METHOD_CALL;
+            }
+            if (HASHCODE_METHOD_CALL.equals(method.getName()) && args == null ){
+                return HASHCODE_METHOD_CALL;
+            }
+            if (EQUALS_METHOD_CALL.equals(method.getName()) && args.length == 1 ){
+                return EQUALS_METHOD_CALL;
+            }
+            return NONE_OBJECT_METHOD_CALL;
+        }
     }
+
 
 }

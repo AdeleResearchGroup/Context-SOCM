@@ -8,6 +8,7 @@ import org.apache.felix.ipojo.util.Logger;
 import org.osgi.framework.BundleContext;
 
 import java.util.Dictionary;
+import java.util.List;
 
 /**
  * Created by aygalinc on 31/05/16.
@@ -25,7 +26,7 @@ public class BehaviorFactory extends ComponentFactory {
         if (spec != null) {
             mySpec = spec;
         } else {
-           throw new ConfigurationException("A behavior provider needs a spec");
+            throw new ConfigurationException("A behavior provider needs a spec");
         }
 
         // Get the type
@@ -35,6 +36,14 @@ public class BehaviorFactory extends ComponentFactory {
         } else {
             throw new ConfigurationException("A behavior provider needs an implem");
         }
+    }
+
+    @Override
+    public List<RequiredHandler> getRequiredHandlerList() {
+        List<RequiredHandler> returnList = super.getRequiredHandlerList();
+        RequiredHandler behaviorLifecycleHandler = new RequiredHandler(BehaviorReference.BEHAVIOR_LIFECYCLE_NAME,BehaviorReference.BEHAVIOR_NAMESPACE);
+        returnList.add(behaviorLifecycleHandler);
+        return returnList;
     }
 
     @Override

@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.model.example;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
+import org.apache.felix.ipojo.annotations.Provides;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -10,6 +11,7 @@ import java.util.function.Supplier;
 
 
 @ContextEntity(services = ContextEntityDescription.class)
+@Provides(specifications = BehaviorS.class)
 @Behavior(id="localisableBehavior", spec = BehaviorS.class,implem = BehaviorImpl.class)
 public class ContextEntityImpl implements ContextEntityDescription {
 

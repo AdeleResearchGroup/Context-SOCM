@@ -8,6 +8,8 @@ public interface BehaviorReference {
 
     public static final String BEHAVIOR_NAMESPACE = "fr.liglab.adele.cream.runtime.handler";
 
+    public static final String BEHAVIOR_LIFECYCLE_NAME = "behavior.lifecycle";
+
     public static final String DEFAULT_BEHAVIOR_TYPE = "behavior";
 
     public static final String SPEC_ATTR_NAME = "specification";
