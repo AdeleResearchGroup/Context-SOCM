@@ -81,7 +81,6 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
         InstanceManager instanceManager = getInstanceManager();
-        String componentName			= instanceManager.getClassName();
 
         String instanceName				= instanceManager.getInstanceName();
         dependencyFilter				= "("+ Factory.INSTANCE_NAME_PROPERTY+"="+instanceName+")";
