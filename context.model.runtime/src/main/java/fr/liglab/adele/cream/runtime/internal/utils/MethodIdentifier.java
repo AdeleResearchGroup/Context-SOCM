@@ -65,7 +65,7 @@ public class MethodIdentifier {
         }
 
         for (int i = 0; i < paramsClass.length; i++) {
-            if (paramsType[i].equals(paramsClass[i])){
+            if (paramsType[i].equals(paramsClass[i].getName())){
                 continue;
             }
             return false;
