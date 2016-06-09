@@ -30,6 +30,13 @@
     <dependencies>
         <dependency>
             <groupId>fr.liglab.adele.cream</groupId>
+            <artifactId>cream.usage.facilities</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>fr.liglab.adele.cream</groupId>
             <artifactId>cream.core</artifactId>
             <version>${project.version}</version>
         </dependency>

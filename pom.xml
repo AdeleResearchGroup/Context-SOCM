@@ -71,6 +71,7 @@
         <module>cream-core</module>
         <module>context.ipojo.module</module>
         <module>context.model.runtime</module>
+        <module>context.model.usage.facilities</module>
         <module>context.model.test</module>
         <module>cream-distribution</module>
     </modules>

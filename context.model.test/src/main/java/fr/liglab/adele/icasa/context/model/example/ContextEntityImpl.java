@@ -18,10 +18,10 @@ public class ContextEntityImpl implements ContextEntityDescription {
 	private String externalValue = "external value";
 	private int accessCount = 0;
 
-	@State.Field(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO, directAccess = false)
+	@State.Field(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO, directAccess = true,value = "Coucou")
 	private String hello;
 
-	@State.Pull(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO, period = 3, unit = TimeUnit.SECONDS)
+	@State.Pull(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO)
 	private Supplier<String> pull =  () -> {
 		/*
 		 * TODO If a value was pushed, we continue to return the last value kept by hand inside this class.

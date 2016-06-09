@@ -11,8 +11,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>fr.liglab.adele.cream</groupId>
-    <artifactId>icasa.context.model.test</artifactId>
+    <artifactId>cream.usage.facilities</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
@@ -20,14 +21,10 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <dependency>
@@ -36,17 +33,16 @@
             <version>${project.version}</version>
         </dependency>
 
+
         <dependency>
-            <groupId>fr.liglab.adele.cream</groupId>
-            <artifactId>cream.usage.facilities</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.gogo.runtime</artifactId>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
         </dependency>
-
 
     </dependencies>
 
@@ -58,7 +54,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.context.model.example;
+                        <Export-Package>
+                            fr.liglab.adele.cream.event.handler.annotation.*,
+                        </Export-Package>
+                        <Export-Package>
+                            fr.liglab.adele.cream.event.handler.implem.*
                         </Export-Package>
                     </instructions>
                 </configuration>
@@ -66,13 +66,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-ipojo-plugin</artifactId>
-                <dependencies>
-                        <dependency>
-                            <groupId>fr.liglab.adele.cream</groupId>
-                            <artifactId>cream.ipojo.module</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <goals>
