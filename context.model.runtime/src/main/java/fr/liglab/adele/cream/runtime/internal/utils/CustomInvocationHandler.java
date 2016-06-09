@@ -40,7 +40,6 @@ public class CustomInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println(" Someone Calls ! " + method.getName() +  " : " + method.getDeclaringClass());
         for (Map.Entry<MethodIdentifier,Callback> entry : myMethods.entrySet()){
             if (entry.getKey().equals(method)){
                 return entry.getValue().call(myPojo,args);

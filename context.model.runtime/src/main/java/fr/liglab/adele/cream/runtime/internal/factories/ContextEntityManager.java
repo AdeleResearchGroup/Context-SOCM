@@ -92,11 +92,8 @@ public class ContextEntityManager extends InstanceManager{
         private final static String NONE_OBJECT_METHOD_CALL = "None";
         @Override
         public Object successorStrategy(Object pojo,List<InvocationHandler> successors, Object proxy, Method method, Object[] args) throws Throwable {
-            System.out.println("Parent Successor Strategy ");
             String nativeMethodCode = belongToObjectMethod(  proxy,  method, args);
-            System.out.println(nativeMethodCode + "  is DElegated ");
             if (!NONE_OBJECT_METHOD_CALL.equals(nativeMethodCode)){
-                System.out.println(nativeMethodCode + "  is called " + pojo );
                 if (EQUALS_METHOD_CALL.equals(nativeMethodCode)){
                     return pojo.equals(args[0]);
                 }
