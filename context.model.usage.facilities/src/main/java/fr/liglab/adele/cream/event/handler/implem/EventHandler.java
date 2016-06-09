@@ -16,6 +16,7 @@ import org.apache.felix.ipojo.handlers.dependency.Dependency;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.util.DependencyModel;
+import org.apache.felix.ipojo.util.Log;
 import org.osgi.framework.BundleContext;
 
 import java.util.ArrayList;
@@ -98,8 +99,32 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
             String spec = event.getAttribute(ContextUpdate.SPECIFICATION_ATTRIBUTE);
             String state = event.getAttribute(ContextUpdate.STATE_ID_ATTRIBUTE);
             MethodMetadata methodMetadata = getPojoMetadata().getMethod(methodEvent);
-            myContextUpdateElement.add(new ContextUpdateElement(spec,state,methodMetadata,instanceManager));
+            if (checkMethodStructure(methodMetadata)){
+                myContextUpdateElement.add(new ContextUpdateElement(spec,state,methodMetadata,instanceManager));
+            }else {
+                getLogger().log(Log.WARNING," Method " + methodEvent + " is malformed");
+            }
         }
+    }
+
+    /**
+     * Not check the first type parameter because it cannot be done without loading the pojo to deduce interface Hierarchy of the first parameter type
+     */
+    private boolean checkMethodStructure(MethodMetadata metadata){
+        String argument[] = metadata.getMethodArguments();
+        if (argument == null || argument.length != 3){
+            return false;
+        }
+
+        if (! argument[1].equals(Object.class.getName())){
+            return false;
+        }
+
+        if (! argument[2].equals(Object.class.getName())){
+            return false;
+        }
+        return true;
+
     }
 
     @Override
