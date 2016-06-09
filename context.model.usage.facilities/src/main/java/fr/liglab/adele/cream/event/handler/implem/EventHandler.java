@@ -75,10 +75,7 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
 
     @Override
     public void close(DependencyModel dependency) {
-        List<ContextUpdateElement> elements = myDependencyModelToContextElement.remove(dependency);
-        for (ContextUpdateElement element : elements){
-            element.clearValue();
-        }
+
     }
 
     @Override
@@ -128,7 +125,7 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     }
 
     @Override
-    public void stop() {
+    public  void stop() {
         for (Map.Entry<DependencyModel,List<ContextUpdateElement>> entry : myDependencyModelToContextElement.entrySet()){
             for (ContextUpdateElement updateElement : entry.getValue()){
                 updateElement.clearValue();
@@ -138,7 +135,7 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     }
 
     @Override
-    public void start() {
+    public  void start() {
 
     }
 }
