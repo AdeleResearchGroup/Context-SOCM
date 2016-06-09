@@ -10,6 +10,8 @@ import org.apache.felix.ipojo.util.Callback;
 import org.osgi.framework.BundleContext;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by aygalinc on 09/06/16.
@@ -46,16 +48,29 @@ public class ContextUpdateElement {
     public boolean equals(Object obj) {
         if (obj instanceof Dependency){
             Dependency dependency = (Dependency) obj;
-            /**
-             * TODO : interface hierarchy must be introspect, in order to check if the CS affiliate to the state is a part of the interface Hierarchy
-             */
-            String dependencySpec = dependency.getSpecification().getName();
-            if (mySpecName.equals(dependencySpec)){
-                return true;
+
+            List<String> specToCompare = new ArrayList<>();
+
+            getAllInterface(dependency.getSpecification(),specToCompare);
+
+            for (String spec : specToCompare){
+                if (mySpecName.equals(spec)){
+                    return true;
+                }
             }
+            return false;
         }
 
         return super.equals(obj);
+    }
+
+    private void getAllInterface(Class clazz,List<String> returnList){
+        if (clazz.isInterface()){
+            returnList.add(clazz.getName());
+        }
+        for (Class interfaz : clazz.getInterfaces()){
+            getAllInterface(interfaz,returnList);
+        }
     }
 
     public void updateIfNecessary(TransformedServiceReference ref){
