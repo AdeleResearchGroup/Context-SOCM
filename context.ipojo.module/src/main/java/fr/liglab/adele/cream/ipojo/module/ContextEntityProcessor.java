@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.ipojo.module;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import fr.liglab.adele.cream.annotations.entity.StrategyReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.objectweb.asm.Type;
@@ -71,7 +72,9 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
         Element provides = new Element("provides","");
         if (annotation.services().length > 0) {
             Attribute attribute = new Attribute("specifications", specifications);
+            Attribute attributeStrategy = new Attribute("strategy", StrategyReference.STRATEGY_PATH);
             provides.addAttribute(attribute);
+            provides.addAttribute(attributeStrategy);
         }
         
         addMetadataElement(provides);
