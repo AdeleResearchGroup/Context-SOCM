@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.annotations.strategy;
+package fr.liglab.adele.cream.annotations.entity;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;

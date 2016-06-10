@@ -3,7 +3,7 @@ package fr.liglab.adele.icasa.context.model.example;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
-import fr.liglab.adele.cream.annotations.strategy.StrategyReference;
+import fr.liglab.adele.cream.annotations.entity.StrategyReference;
 import org.apache.felix.ipojo.annotations.Provides;
 
 import java.util.concurrent.TimeUnit;
