@@ -19,7 +19,7 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
 
     protected static final String CONTEXT_ENTITY_ELEMENT = HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER;
 
-    private static final String COMPONENT_TYPE = "context-component";
+    public static final String COMPONENT_TYPE = "context-component";
 
     public ContextEntityProcessor(ClassLoader classReferenceLoader) {
 		super(ContextEntity.class,classReferenceLoader);

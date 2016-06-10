@@ -19,6 +19,12 @@ public class BehaviorProcessor extends AnnotationProcessor<Behavior>  {
 	@Override
 	public void process(Behavior annotation) {
 		Element root = getRootMetadata();
+		String classname 			= getAnnotatedClassType().getClassName();
+
+		if (!checkRootElement(root)){
+			error("Behavior annotation find on a different component type than " + ContextEntityProcessor.COMPONENT_TYPE, classname);
+		}
+
 		root.addElement(buildBehaviorElement(annotation));
 	}
 
@@ -31,5 +37,12 @@ public class BehaviorProcessor extends AnnotationProcessor<Behavior>  {
 		behaviorElement.addAttribute(implAttr);
 		behaviorElement.addAttribute(id);
 		return behaviorElement;
+	}
+
+	private boolean checkRootElement(Element root){
+		if (ContextEntityProcessor.COMPONENT_TYPE.equals(root.getName())){
+			return true;
+		}
+		return false;
 	}
 }
