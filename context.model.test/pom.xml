@@ -60,10 +60,6 @@
                     <instructions>
                         <Export-Package>fr.liglab.adele.icasa.context.model.example;
                         </Export-Package>
-                        <Import-Package>
-                            fr.liglab.adele.cream.annotations.strategy,
-                            *
-                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
