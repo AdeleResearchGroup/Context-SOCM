@@ -8,13 +8,11 @@ import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.util.Log;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.List;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,19 +21,28 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
 
+    private String myContextId;
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
         getInstanceManager().addInstanceStateListener(this);
+
+        myContextId = (String) configuration.get("context.entity.init");
+        Hashtable prop = new Hashtable();
+        if (myContextId != null){
+            prop.put("context.entity.init",myContextId);
+        }
 
         Element[] behaviorElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
 
         for (Element element:behaviorElements){
             myRequiredBehaviorById.put(element.getAttribute(BehaviorReference.ID_ATTR_NAME),
                     new RequiredBehavior( element.getAttribute(BehaviorReference.SPEC_ATTR_NAME),
-                            element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME))
+                            element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME),prop)
             );
         }
+
+
 
     }
 
@@ -90,25 +97,6 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
     }
 
 
-    private List<RequiredBehavior> getBehavior(Element metadata){
-        List<RequiredBehavior> behaviors = new ArrayList<>();
-        Element[] behaviorsElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
-        if (behaviorsElements == null) {
-            return behaviors;
-        }
-
-        for (Element behavior : behaviorsElements){
-            String behaviorSpec = behavior.getAttribute(BehaviorReference.SPEC_ATTR_NAME);
-            String behaviorImplem = behavior.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME);
-            if ((behaviorSpec == null) || (behaviorImplem == null)){
-                getLogger().log(Log.WARNING, "behavior spec or implem is null");
-                continue;
-            }
-            RequiredBehavior requiredBehavior = new RequiredBehavior(behaviorSpec,behaviorImplem);
-            behaviors.add(requiredBehavior);
-        }
-        return behaviors;
-    }
 
 
     protected boolean match(RequiredBehavior req, Map prop) {

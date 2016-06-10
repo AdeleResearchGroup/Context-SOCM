@@ -31,9 +31,12 @@ public class RequiredBehavior implements InvocationHandler {
 
     private BehaviorManager myManager;
 
-    public RequiredBehavior(String spec, String behaviorImpl) {
+    private final Hashtable myConfiguration = new Hashtable();
+
+    public RequiredBehavior(String spec, String behaviorImpl,Hashtable config) {
         myName = spec;
         myBehaviorNameImpl = behaviorImpl;
+        myConfiguration.putAll(config);
     }
 
     public int hashCode() {
@@ -71,9 +74,9 @@ public class RequiredBehavior implements InvocationHandler {
         if (myManager != null || myFactory == null){
             return;
         }
-        Hashtable prop = new Hashtable();
+
         try {
-            myManager = (BehaviorManager) myFactory.createComponentInstance(prop,null);
+            myManager = (BehaviorManager) myFactory.createComponentInstance(myConfiguration,null);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error(unacceptableConfiguration.toString());
         } catch (MissingHandlerException e) {
