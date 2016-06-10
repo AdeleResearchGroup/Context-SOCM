@@ -1,7 +1,7 @@
 package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
-import fr.liglab.adele.cream.runtime.internal.utils.SuccessorStrategy;
+import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;

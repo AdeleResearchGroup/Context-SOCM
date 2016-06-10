@@ -2,7 +2,7 @@ package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorFactory;
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorManager;
-import fr.liglab.adele.cream.runtime.internal.utils.SuccessorStrategy;
+import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;

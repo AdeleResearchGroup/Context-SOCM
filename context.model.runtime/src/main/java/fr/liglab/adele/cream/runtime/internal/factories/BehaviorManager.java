@@ -2,8 +2,8 @@ package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
-import fr.liglab.adele.cream.runtime.internal.utils.CustomInvocationHandler;
-import fr.liglab.adele.cream.runtime.internal.utils.SuccessorStrategy;
+import fr.liglab.adele.cream.utils.CustomInvocationHandler;
+import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.ComponentFactory;
 import org.apache.felix.ipojo.HandlerManager;
 import org.apache.felix.ipojo.InstanceManager;

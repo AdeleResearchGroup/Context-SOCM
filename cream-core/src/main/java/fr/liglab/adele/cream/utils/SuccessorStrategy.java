@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.runtime.internal.utils;
+package fr.liglab.adele.cream.utils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

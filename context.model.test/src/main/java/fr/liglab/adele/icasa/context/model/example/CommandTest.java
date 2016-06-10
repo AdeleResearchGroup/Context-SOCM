@@ -27,7 +27,7 @@ public class CommandTest {
 
     @ContextUpdate(specification = ContextEntityDescription.class,stateId = ContextEntityDescription.HELLO)
     public void updateState(ContextEntityDescription entityDescription,Object newP,Object old){
-        System.out.print(" change on Hello catch");
+        System.out.println(" change on Hello catch");
     }
 
     @Bind(id = "test")
@@ -62,7 +62,6 @@ public class CommandTest {
     @Descriptor("Create A Entity")
     public void testBehavior(@Descriptor("testBehavior") String... handleId) {
         try {
-            System.out.println(((BehaviorS)description).coucou());
             System.out.println((behaviorS.coucou()));
             System.out.println(((ContextEntityDescription)behaviorS).hello());
         } catch (Exception e) {

@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.model.example;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.cream.annotations.strategy.StrategyReference;
 import org.apache.felix.ipojo.annotations.Provides;
 
 import java.util.concurrent.TimeUnit;
@@ -11,17 +12,17 @@ import java.util.function.Supplier;
 
 
 @ContextEntity(services = ContextEntityDescription.class)
-@Provides(specifications = BehaviorS.class)
+@Provides(specifications = BehaviorS.class,strategy = StrategyReference.STRATEGY_PATH)
 @Behavior(id="localisableBehavior", spec = BehaviorS.class,implem = BehaviorImpl.class)
 public class ContextEntityImpl implements ContextEntityDescription {
 
 	private String externalValue = "external value";
 	private int accessCount = 0;
 
-	@State.Field(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO, directAccess = true,value = "Coucou")
+	@State.Field(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO, directAccess = false)
 	private String hello;
 
-	@State.Pull(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO)
+	@State.Pull(service = ContextEntityDescription.class, state = ContextEntityDescription.HELLO, period = 3, unit = TimeUnit.SECONDS)
 	private Supplier<String> pull =  () -> {
 		/*
 		 * TODO If a value was pushed, we continue to return the last value kept by hand inside this class.
@@ -61,7 +62,7 @@ public class ContextEntityImpl implements ContextEntityDescription {
 
 	@Override
 	public String hello() {
-		return "COUCOU";
+		return hello;
 	}
 
 	@Override
@@ -73,5 +74,6 @@ public class ContextEntityImpl implements ContextEntityDescription {
 	public String getSerialNumber() {
 		return serial;
 	}
+
 
 }

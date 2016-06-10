@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.runtime.internal.utils;
+package fr.liglab.adele.cream.utils;
 
 import org.apache.felix.ipojo.parser.MethodMetadata;
 

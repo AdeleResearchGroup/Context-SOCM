@@ -65,7 +65,8 @@
                     <instructions>
                         <Export-Package>
                             fr.liglab.adele.cream.annotations.*,
-                            fr.liglab.adele.cream.model.*
+                            fr.liglab.adele.cream.model.*,
+                            fr.liglab.adele.cream.utils.*
                         </Export-Package>
                         <Bundle-SymbolicName>
                             ${project.artifactId}

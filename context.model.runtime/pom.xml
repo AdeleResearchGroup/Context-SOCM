@@ -72,7 +72,7 @@
                     <instructions>
                         <Export-Package>
                             fr.liglab.adele.cream.runtime.handler.*,
-                            fr.liglab.adele.cream.runtime.model.*
+                            fr.liglab.adele.cream.runtime.model.*,
                         </Export-Package>
                         <Export-Package>
                             fr.liglab.adele.cream.runtime.internal.*

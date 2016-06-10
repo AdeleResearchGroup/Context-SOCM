@@ -1,5 +1,7 @@
-package fr.liglab.adele.cream.runtime.internal.utils;
+package fr.liglab.adele.cream.utils;
 
+import fr.liglab.adele.cream.utils.MethodIdentifier;
+import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
