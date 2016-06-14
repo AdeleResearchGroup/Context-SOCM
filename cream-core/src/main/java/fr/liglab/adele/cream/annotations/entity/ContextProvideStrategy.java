@@ -8,6 +8,8 @@ import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.handlers.providedservice.CreationStrategy;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -20,6 +22,8 @@ import java.util.Properties;
  * Created by aygalinc on 10/06/16.
  */
 public class ContextProvideStrategy extends CreationStrategy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ContextProvideStrategy.class);
 
     /**
      * The instance manager passed to the iPOJO ServiceFactory to manage
@@ -77,8 +81,12 @@ public class ContextProvideStrategy extends CreationStrategy {
         InvocationHandler invocationHandler = new CustomInvocationHandler(pojo,myManager,
                 new ParentSuccessorStrategy(),successor
         );
-
-        return Proxy.newProxyInstance(clazz.getClassLoader(),interfaces,invocationHandler);
+        try{
+            pojo = Proxy.newProxyInstance(clazz.getClassLoader(),interfaces,invocationHandler);
+        }catch (java.lang.NoClassDefFoundError e){
+            LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! " + e.toString());
+        }
+        return pojo;
     }
 
     @Override
