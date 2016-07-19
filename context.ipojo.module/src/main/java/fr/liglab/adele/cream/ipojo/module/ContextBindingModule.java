@@ -52,7 +52,7 @@ public class ContextBindingModule extends AbsBindingModule {
 				);
 
 		bind(Behavior.class)
-				.when(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
+				.when(and( on(ElementType.TYPE), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
 				.to(
 						new BehaviorProcessor(classReferenceLoader)
 				);
