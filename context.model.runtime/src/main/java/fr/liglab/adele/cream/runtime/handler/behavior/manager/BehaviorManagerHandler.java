@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
-public class BehaviorHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler,ContextListener {
+public class BehaviorManagerHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler,ContextListener {
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
 
@@ -187,7 +187,7 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
     public class BehaviorHandlerDescription extends HandlerDescription {
 
         public BehaviorHandlerDescription(){
-            super(BehaviorHandler.this);
+            super(BehaviorManagerHandler.this);
         }
 
         @Override
