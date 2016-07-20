@@ -33,8 +33,8 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
         component.addAttribute(new Attribute("classname", classname));
         component.addAttribute(new Attribute("immediate", "true"));
 
-        component.addAttribute(new Attribute(BehaviorReference.SPEC_ATTR_NAME,annotation.spec().getName()));
-        component.addAttribute(new Attribute(BehaviorReference.IMPLEM_ATTR_NAME,classname));
+        component.addAttribute(new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,annotation.spec().getName()));
+        component.addAttribute(new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,classname));
 
         if (getRootMetadata() != null) {
             error("Multiple 'component type' annotations on the class '{%s}'.", classname);

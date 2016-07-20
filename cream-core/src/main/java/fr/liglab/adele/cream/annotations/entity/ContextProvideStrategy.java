@@ -1,7 +1,7 @@
 package fr.liglab.adele.cream.annotations.entity;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
-import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.InstanceManager;
@@ -95,7 +95,7 @@ public class ContextProvideStrategy extends CreationStrategy {
     }
 
     private InvocationHandler getBehaviorHandler(){
-        Object  handler = myManager.getHandler(BehaviorReference.BEHAVIOR_NAMESPACE+":"+BehaviorReference.DEFAULT_BEHAVIOR_TYPE);
+        Object  handler = myManager.getHandler(HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_MANAGER_HANDLER);
         if (handler == null) return null;
         return (InvocationHandler)  handler;
     }

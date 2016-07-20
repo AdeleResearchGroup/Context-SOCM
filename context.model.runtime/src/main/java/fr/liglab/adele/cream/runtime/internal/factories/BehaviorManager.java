@@ -1,6 +1,5 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
-import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
@@ -40,7 +39,7 @@ public class BehaviorManager extends InstanceManager {
     }
 
     public BehaviorLifecyleHandler getBehaviorLifeCycleHandler(){
-        return (BehaviorLifecyleHandler)  getHandler(BehaviorReference.BEHAVIOR_NAMESPACE+":"+BehaviorReference.BEHAVIOR_LIFECYCLE_NAME);
+        return (BehaviorLifecyleHandler)  getHandler(HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER);
     }
 
     public void registerBehaviorListener(ContextListener listener){

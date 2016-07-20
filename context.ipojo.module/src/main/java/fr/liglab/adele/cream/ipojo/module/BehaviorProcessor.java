@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.ipojo.module;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 
@@ -10,7 +11,7 @@ import org.apache.felix.ipojo.metadata.Element;
  */
 public class BehaviorProcessor extends AnnotationProcessor<Behavior>  {
 
-	protected static final String BEHAVIOR_ELEMENT = BehaviorReference.BEHAVIOR_NAMESPACE +":"+BehaviorReference.DEFAULT_BEHAVIOR_TYPE;
+	protected static final String BEHAVIOR_ELEMENT = HandlerReference.NAMESPACE +":"+ HandlerReference.BEHAVIOR_MANAGER_HANDLER;
 
 	public BehaviorProcessor(ClassLoader classReferenceLoader) {
 		super(Behavior.class,classReferenceLoader);
@@ -29,10 +30,10 @@ public class BehaviorProcessor extends AnnotationProcessor<Behavior>  {
 	}
 
 	private Element buildBehaviorElement(Behavior annotation){
-		Element behaviorElement = new Element(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
-		Attribute specAttr = new Attribute(BehaviorReference.SPEC_ATTR_NAME,annotation.spec().getName());
-		Attribute implAttr = new Attribute(BehaviorReference.IMPLEM_ATTR_NAME,annotation.implem().getName());
-		Attribute id = new Attribute(BehaviorReference.ID_ATTR_NAME,annotation.id());
+		Element behaviorElement = new Element(HandlerReference.BEHAVIOR_MANAGER_HANDLER,HandlerReference.NAMESPACE);
+		Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,annotation.spec().getName());
+		Attribute implAttr = new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,annotation.implem().getName());
+		Attribute id = new Attribute(BehaviorReference.ID_ATTRIBUTE_NAME,annotation.id());
 		behaviorElement.addAttribute(specAttr);
 		behaviorElement.addAttribute(implAttr);
 		behaviorElement.addAttribute(id);

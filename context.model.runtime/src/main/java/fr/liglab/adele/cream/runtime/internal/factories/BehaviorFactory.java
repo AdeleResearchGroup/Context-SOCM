@@ -1,6 +1,7 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.metadata.Element;
@@ -22,7 +23,7 @@ public class BehaviorFactory extends ComponentFactory {
     public BehaviorFactory(BundleContext context, Element element) throws ConfigurationException {
         super(context, element);
         // Get the type
-        String spec = element.getAttribute(BehaviorReference.SPEC_ATTR_NAME);
+        String spec = element.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME);
         if (spec != null) {
             mySpec = spec;
         } else {
@@ -30,7 +31,7 @@ public class BehaviorFactory extends ComponentFactory {
         }
 
         // Get the type
-        String impl = element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME);
+        String impl = element.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME);
         if (impl != null) {
             myImplem = impl;
         } else {
@@ -41,7 +42,7 @@ public class BehaviorFactory extends ComponentFactory {
     @Override
     public List<RequiredHandler> getRequiredHandlerList() {
         List<RequiredHandler> returnList = super.getRequiredHandlerList();
-        RequiredHandler behaviorLifecycleHandler = new RequiredHandler(BehaviorReference.BEHAVIOR_LIFECYCLE_NAME,BehaviorReference.BEHAVIOR_NAMESPACE);
+        RequiredHandler behaviorLifecycleHandler = new RequiredHandler(HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER,HandlerReference.NAMESPACE);
         returnList.add(behaviorLifecycleHandler);
         return returnList;
     }
@@ -90,9 +91,9 @@ public class BehaviorFactory extends ComponentFactory {
             if (this.getFactory().getClassName() != null) {
                 dict.put("component.class", this.getFactory().getClassName());
             }
-            dict.put(BehaviorReference.BEHAVIOR_TYPE_PROPERTY,BehaviorReference.BEHAVIOR_TYPE);
-            dict.put(BehaviorReference.IMPLEM_ATTR_NAME,myImplem);
-            dict.put(BehaviorReference.SPEC_ATTR_NAME,mySpec);
+            dict.put(BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY,BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE);
+            dict.put(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,myImplem);
+            dict.put(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,mySpec);
             return dict;
         }
     }

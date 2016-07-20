@@ -1,6 +1,7 @@
 package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
@@ -19,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-@Handler(name = BehaviorReference.DEFAULT_BEHAVIOR_TYPE, namespace = BehaviorReference.BEHAVIOR_NAMESPACE)
+@Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
 public class BehaviorHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler,ContextListener {
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
@@ -42,11 +43,11 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
             prop.put(ContextEntity.CONTEXT_ENTITY_ID,myContextId);
         }
 
-        Element[] behaviorElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
+        Element[] behaviorElements = metadata.getElements(HandlerReference.BEHAVIOR_MANAGER_HANDLER,HandlerReference.NAMESPACE);
 
         for (Element element:behaviorElements){
-            myRequiredBehaviorById.put(element.getAttribute(BehaviorReference.ID_ATTR_NAME),
-                    new RequiredBehavior( element.getAttribute(BehaviorReference.SPEC_ATTR_NAME),element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME),prop)
+            myRequiredBehaviorById.put(element.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),
+                    new RequiredBehavior( element.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME),element.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME),prop)
             );
         }
 
@@ -96,7 +97,7 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
         }
     }
 
-    @Bind(id = "behaviorF",specification = Factory.class,optional = true,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_TYPE_PROPERTY+"="+BehaviorReference.BEHAVIOR_TYPE+")")
+    @Bind(id = "behaviorF",specification = Factory.class,optional = true,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY +"="+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE +")")
     public void bindBehaviorFactory(Factory behaviorFactory, Map prop){
         for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             if (match(entry.getValue(),prop)){
@@ -123,8 +124,8 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
 
 
     protected boolean match(RequiredBehavior req, Map prop) {
-        String spec = (String) prop.get(BehaviorReference.SPEC_ATTR_NAME);
-        String impl = (String) prop.get(BehaviorReference.IMPLEM_ATTR_NAME);
+        String spec = (String) prop.get(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME);
+        String impl = (String) prop.get(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME);
         return    req.getSpecName().equalsIgnoreCase(spec)  && req.getImplName().equalsIgnoreCase(impl);
     }
 
