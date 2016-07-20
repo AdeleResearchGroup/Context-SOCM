@@ -1,10 +1,13 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
+import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.ComponentFactory;
+import org.apache.felix.ipojo.ContextListener;
 import org.apache.felix.ipojo.HandlerManager;
 import org.apache.felix.ipojo.InstanceManager;
 import org.osgi.framework.BundleContext;
@@ -38,6 +41,14 @@ public class BehaviorManager extends InstanceManager {
 
     public BehaviorLifecyleHandler getBehaviorLifeCycleHandler(){
         return (BehaviorLifecyleHandler)  getHandler(BehaviorReference.BEHAVIOR_NAMESPACE+":"+BehaviorReference.BEHAVIOR_LIFECYCLE_NAME);
+    }
+
+    public void registerBehaviorListener(ContextListener listener){
+        BehaviorEntityHandler entityHandler = (BehaviorEntityHandler)  getHandler(HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER);
+        if (entityHandler == null){
+            return;
+        }
+        entityHandler.registerContextListener(listener,null);
     }
 
     private class NotFoundStrategy implements SuccessorStrategy{

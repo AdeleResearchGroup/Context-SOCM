@@ -3,10 +3,7 @@ package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorFactory;
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorManager;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.UnacceptableConfiguration;
+import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.slf4j.Logger;
@@ -127,4 +124,9 @@ public class RequiredBehavior implements InvocationHandler {
         }
         return SuccessorStrategy.NO_FOUND_CODE;
     }
+
+    public void registerBehaviorListener(ContextListener listener){
+        myManager.registerBehaviorListener(listener);
+    }
+
 }

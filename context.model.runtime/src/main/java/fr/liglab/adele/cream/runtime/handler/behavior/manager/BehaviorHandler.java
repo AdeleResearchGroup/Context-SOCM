@@ -1,12 +1,13 @@
 package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
-import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
+import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
 
 import java.lang.reflect.InvocationHandler;
@@ -14,14 +15,20 @@ import java.lang.reflect.Method;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import fr.liglab.adele.cream.model.ContextEntity;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = BehaviorReference.DEFAULT_BEHAVIOR_TYPE, namespace = BehaviorReference.BEHAVIOR_NAMESPACE)
-public class BehaviorHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler {
+public class BehaviorHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler,ContextListener {
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
+
+    private final Set<String> stateVariable = new ConcurrentSkipListSet<>();
+    /**
+     * The provider handler of my associated iPOJO component instance
+     */
+    private ProvidedServiceHandler providerHandler;
 
     private String myContextId;
     @Override
@@ -48,13 +55,27 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
     }
 
     @Override
-    public  void stop() {
-
+    public  synchronized void stop() {
+        providerHandler = null;
+        for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
+            entry.getValue().tryDispose();
+        }
+        stateVariable.clear();
     }
 
     @Override
-    public  void start() {
+    public  synchronized void start() {
+        providerHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+    }
 
+    @Validate
+    public void validate(){
+
+    }
+
+    @Invalidate
+    public void invalidate(){
+        stateVariable.clear();
     }
 
     /**
@@ -81,6 +102,7 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
             if (match(entry.getValue(),prop)){
                 entry.getValue().setFactory(behaviorFactory);
                 entry.getValue().addManager();
+                entry.getValue().registerBehaviorListener(this);
                 if (getInstanceManager().getState() == ComponentInstance.VALID){
                     entry.getValue().tryStartBehavior();
                 }
@@ -121,6 +143,31 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
             return returnObj;
         }
         return SuccessorStrategy.NO_FOUND_CODE;
+    }
+
+    /**
+     * Context Listener Implem
+     */
+    @Override
+    public synchronized void update(ContextSource contextSource, String s, Object o) {
+
+        if (getInstanceManager().getState() <= InstanceManager.INVALID)
+            return;
+
+        if (providerHandler == null){
+            return;
+        }
+
+        Hashtable<String,Object> property = new Hashtable<String,Object>();
+        property.put(s, o);
+
+        if (stateVariable.contains(s)){
+            providerHandler.reconfigure(property);
+        }else {
+            stateVariable.add(s);
+            providerHandler.addProperties(property);
+        }
+
     }
 
     public class BehaviorHandlerDescription extends HandlerDescription {

@@ -9,6 +9,8 @@ import fr.liglab.adele.cream.runtime.handler.entity.utils.DirectAccessIntercepto
 import fr.liglab.adele.cream.runtime.handler.entity.utils.StateInterceptor;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.SynchronisationInterceptor;
 import org.apache.felix.ipojo.ConfigurationException;
+import org.apache.felix.ipojo.ContextListener;
+import org.apache.felix.ipojo.ContextSource;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -22,9 +24,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
-public class BehaviorEntityHandler extends AbstractContextHandler {
+public class BehaviorEntityHandler extends AbstractContextHandler implements ContextSource{
 
     /**
      * The list of exposed context services
@@ -47,6 +50,14 @@ public class BehaviorEntityHandler extends AbstractContextHandler {
     private final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
 
     private boolean instanceIsActive=false;
+
+    /**
+     * The list of iPOJO context listeners to notify on state updates.
+     *
+     * This handler implements ContextSource to allow state variables to be used in
+     * dependency filters.
+     */
+    private final Set<ContextListener> contextSourceListeners	= new HashSet<>();
 
     @Override
     protected boolean isInstanceActive() {
@@ -107,7 +118,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler {
 
     @Override
     public synchronized void stop() {
-
+        contextSourceListeners.clear();
     }
 
     /**
@@ -323,7 +334,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler {
         else {
             stateValues.remove(stateId);
         }
-        //TODO:PRopagate the value change !
+        notifyContextListener(stateId,value);
     }
 
     /**
@@ -364,6 +375,43 @@ public class BehaviorEntityHandler extends AbstractContextHandler {
     public HandlerDescription getDescription() {
         return new BehaviorEntityHandlerDescription();
     }
+
+    /**
+     *Context Source Implementation
+     */
+
+    @Override
+    public Object getProperty(String property) {
+        return stateValues.get(property);
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Dictionary getContext() {
+        return new Hashtable<>(stateValues);
+    }
+
+    @Override
+    public void registerContextListener(ContextListener listener, String[] properties) {
+        if (!contextSourceListeners.contains(listener)){
+            contextSourceListeners.add(listener);
+        }
+    }
+
+    @Override
+    public synchronized void unregisterContextListener(ContextListener listener) {
+        contextSourceListeners.remove(listener);
+    }
+
+    /**
+     * Notify All the context listener
+     */
+    private void notifyContextListener(String property,Object value){
+        for (ContextListener listener : contextSourceListeners){
+            listener.update(this,property,value);
+        }
+    }
+
 
     /**
      * The description of the handler.
