@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.runtime.handler.entity;
+package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 
 /**

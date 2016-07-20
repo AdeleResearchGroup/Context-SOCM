@@ -20,6 +20,11 @@ public interface HandlerReference {
 	public static final String ENTITY_HANDLER = "entity";
 
 	/**
+	 * The handler in charge of managing entities
+	 */
+	public static final String BEHAVIOR_ENTITY_HANDLER = "behavior-entity";
+
+	/**
 	 * The handler in charge of managing relations
 	 */
 	public static final String RELATION_HANDLER = "relation";

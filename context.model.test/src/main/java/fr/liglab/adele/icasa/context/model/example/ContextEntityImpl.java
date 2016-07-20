@@ -12,8 +12,8 @@ import java.util.function.Supplier;
 
 
 @ContextEntity(services = ContextEntityDescription.class)
-@Provides(specifications = BehaviorS.class,strategy = StrategyReference.STRATEGY_PATH)
-@Behavior(id="localisableBehavior", spec = BehaviorS.class,implem = BehaviorImpl.class)
+@Provides(specifications = BehaviorService.class,strategy = StrategyReference.STRATEGY_PATH)
+@Behavior(id="localisableBehavior", spec = BehaviorService.class,implem = BehaviorImpl.class)
 public class ContextEntityImpl implements ContextEntityDescription {
 
 	private String externalValue = "external value";

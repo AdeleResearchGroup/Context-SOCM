@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.runtime.handler.entity;
+package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.FieldInterceptor;
@@ -15,28 +15,28 @@ import java.util.Map;
  */
 public class DirectAccessInterceptor implements StateInterceptor, FieldInterceptor {
 
-    /**
-     * The associated entity handler in charge of keeping the context state
-     */
-	private final EntityHandler entityHandler;
+	/**
+	 * The associated entity handler in charge of keeping the context state
+	 */
+	private final AbstractContextHandler abstractContextHandler;
 
 	/**
 	 * The mapping from fields handled by this interceptor to states of the context
 	 */
 	private final Map<String,String> fieldToState = new HashMap<>();
-	
+
 	/**
-	 * @param entityHandler
+	 * @param abstractContextHandler
 	 */
-	public DirectAccessInterceptor(EntityHandler entityHandler) {
-		this.entityHandler = entityHandler;
+	public DirectAccessInterceptor(AbstractContextHandler abstractContextHandler) {
+		this.abstractContextHandler = abstractContextHandler;
 	}
 
 	/**
 	 * Adds a new managed field
 	 */
 	public void handleState(InstanceManager component, PojoMetadata componentMetadata, Element state) throws ConfigurationException {
-		
+
 		String stateId				= state.getAttribute("id");
 		String stateField			= state.getAttribute("field");
 
@@ -46,25 +46,25 @@ public class DirectAccessInterceptor implements StateInterceptor, FieldIntercept
 		if (stateField == null) {
 			throw new ConfigurationException("Malformed Manifest : a state variable is declared with no 'field' attribute");
 		}
-		
-        FieldMetadata fieldMetadata = componentMetadata.getField(stateField);
+
+		FieldMetadata fieldMetadata = componentMetadata.getField(stateField);
 		if (fieldMetadata == null) {
 			throw new ConfigurationException("Malformed Manifest : the specified field doesn't exists "+stateField);
 		}
-		
-        fieldToState.put(stateField,stateId);
-        component.register(fieldMetadata,this);
+
+		fieldToState.put(stateField,stateId);
+		component.register(fieldMetadata,this);
 	}
-	
-    @Override
-    public Object onGet(Object pojo, String fieldName, Object value) {
-    	return entityHandler.getStateValue(fieldToState.get(fieldName));
-    }
-	
+
 	@Override
-    public void onSet(Object pojo, String fieldName, Object value) {
-		entityHandler.update(fieldToState.get(fieldName),value);
-    }
+	public Object onGet(Object pojo, String fieldName, Object value) {
+		return abstractContextHandler.getStateValue(fieldToState.get(fieldName));
+	}
+
+	@Override
+	public void onSet(Object pojo, String fieldName, Object value) {
+		abstractContextHandler.update(fieldToState.get(fieldName),value);
+	}
 
 	@Override
 	public void validate() {

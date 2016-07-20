@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.runtime.handler.entity;
+package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.FieldInterceptor;
@@ -8,8 +8,6 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
-
-import fr.liglab.adele.cream.runtime.handler.entity.EntityHandler.PeriodicTask;
 
 import java.lang.reflect.Member;
 import java.util.HashMap;
@@ -35,12 +33,12 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
     /**
      * The periodic tasks associated to pull fields
      */
-    private final Map<String,PeriodicTask> pullTasks 	= new HashMap<>();
+    private final Map<String,AbstractContextHandler.PeriodicTask> pullTasks 	= new HashMap<>();
     
     /**
      * The associated entity handler in charge of keeping the context state
      */
-	private final EntityHandler entityHandler;
+	private final AbstractContextHandler abstractContextHandler;
 
 	/**
 	 * The mapping from fields handled by this interceptor to states of the context
@@ -53,10 +51,10 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
 	private final Map<String,String> methodToState = new HashMap<>();
 	
 	/**
-	 * @param entityHandler
+	 * @param abstractContextHandler
 	 */
-	public SynchronisationInterceptor(EntityHandler entityHandler) {
-		this.entityHandler = entityHandler;
+	public SynchronisationInterceptor(AbstractContextHandler abstractContextHandler) {
+		this.abstractContextHandler = abstractContextHandler;
 	}
 
     @Override
@@ -66,7 +64,7 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
     		return pullFunction.apply(pojo);
     	}
     	
-    	return entityHandler.getStateValue(fieldToState.get(fieldName));
+    	return abstractContextHandler.getStateValue(fieldToState.get(fieldName));
     }
 
 	@Override
@@ -80,7 +78,7 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
     @Override
     public void onExit(Object pojo, Member method, Object returnedValue) {
     	if (returnedValue != null){
-        	this.entityHandler.update(methodToState.get(method.getName()),returnedValue);
+        	this.abstractContextHandler.update(methodToState.get(method.getName()),returnedValue);
     	}
     }
 	
@@ -141,11 +139,11 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
 	    	Long period 			= Long.valueOf(state.getAttribute("period"));
 	    	TimeUnit unit			= TimeUnit.valueOf(state.getAttribute("unit"));
 	    	
-	    	PeriodicTask pullTask 	= entityHandler.schedule( (InstanceManager instance) -> {
+	    	AbstractContextHandler.PeriodicTask pullTask 	= abstractContextHandler.schedule( (InstanceManager instance) -> {
 		    	Function<Object,Object> pullFunction = pullFunctions.get(stateField);
 		    	if (pullFunction != null) {
 		    		Object pulledValue = pullFunction.apply(instance.getPojoObject());
-			    	entityHandler.update(stateId,pulledValue);
+					abstractContextHandler.update(stateId,pulledValue);
 		    	}
 			},period,unit);
 	    	
@@ -202,14 +200,14 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
 
 	@Override
 	public void validate() {
-		for (PeriodicTask pullTask : pullTasks.values()) {
+		for (AbstractContextHandler.PeriodicTask pullTask : pullTasks.values()) {
 			pullTask.start();
 		}
 	}
 
 	@Override
 	public void invalidate() {
-		for (PeriodicTask pullTask : pullTasks.values()) {
+		for (AbstractContextHandler.PeriodicTask pullTask : pullTasks.values()) {
 			pullTask.stop();
 		}
 	}

@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 
@@ -54,7 +56,7 @@ public abstract class StateProcessor<A extends Annotation> extends AnnotationPro
 			stateElement = new Element("state", "");
 			stateElement.addAttribute(new Attribute("id",stateId));
 			
-			addMetadataElement(stateId,stateElement,ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT);
+			addMetadataElement(stateId,stateElement,getParentElement());
 		}
 
 		return stateElement;
@@ -112,6 +114,15 @@ public abstract class StateProcessor<A extends Annotation> extends AnnotationPro
 			warn("Warning on class " + className + " : annotation "+ annotationName + " for state" + stateId	+ ", the state has an associated field with direct access, the annotation will be ignored at runtime");
 		}
 
+	}
+
+	private String getParentElement(){
+		if ( (getRootMetadata().getNameSpace() == null ) && BehaviorProviderProcessor.COMPONENT_TYPE.equals(getRootMetadata().getName())){
+			return HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER;
+		}
+		else {
+			return ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT;
+		}
 	}
 
 }

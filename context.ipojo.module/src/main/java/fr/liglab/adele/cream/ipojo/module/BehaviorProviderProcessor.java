@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.ipojo.module;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.objectweb.asm.Type;
@@ -12,7 +13,9 @@ import org.objectweb.asm.tree.ClassNode;
  */
 public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvider> {
 
-    private static final String COMPONENT_TYPE = "behavior-extension";
+    protected static final String BEHAVIOR_CONTEXT_ENTITY_ELEMENT = HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER;
+
+    public static final String COMPONENT_TYPE = "behavior-extension";
 
     public BehaviorProviderProcessor(ClassLoader classReferenceLoader) {
         super(BehaviorProvider.class,classReferenceLoader);
@@ -57,6 +60,13 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
         if (! implemented) {
             error("Cannot ensure that the class " + classname + " is the implementation of the specified context services");
         }
+
+
+         /*
+         *  Create the Entity element that will own all definitions regarding the context
+         */
+        Element context = new Element(HandlerReference.BEHAVIOR_ENTITY_HANDLER,HandlerReference.NAMESPACE);
+        addMetadataElement(BEHAVIOR_CONTEXT_ENTITY_ELEMENT,context);
 
     }
 

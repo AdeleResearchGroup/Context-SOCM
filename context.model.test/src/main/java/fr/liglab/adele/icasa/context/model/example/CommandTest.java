@@ -22,8 +22,8 @@ public class CommandTest {
     @Requires(specification = ContextEntityDescription.class,id = "test", optional = true,proxy = false)
     ContextEntityDescription description ;
 
-    @Requires(specification = BehaviorS.class,id = "test2", optional = true,proxy = false)
-    BehaviorS behaviorS ;
+    @Requires(specification = BehaviorService.class,id = "test2", optional = true,proxy = false)
+    BehaviorService behaviorService;
 
     @ContextUpdate(specification = ContextEntityDescription.class,stateId = ContextEntityDescription.HELLO)
     public void updateState(ContextEntityDescription entityDescription,Object newP,Object old){
@@ -62,8 +62,8 @@ public class CommandTest {
     @Descriptor("Create A Entity")
     public void testBehavior(@Descriptor("testBehavior") String... handleId) {
         try {
-            System.out.println((behaviorS.coucou()));
-            System.out.println(((ContextEntityDescription)behaviorS).hello());
+            System.out.println((behaviorService.coucou()));
+            System.out.println(((ContextEntityDescription) behaviorService).hello());
         } catch (Exception e) {
             e.printStackTrace();
         }

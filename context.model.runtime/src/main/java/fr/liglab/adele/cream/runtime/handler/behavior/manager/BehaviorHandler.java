@@ -16,6 +16,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fr.liglab.adele.cream.model.ContextEntity;
+
 @Handler(name = BehaviorReference.DEFAULT_BEHAVIOR_TYPE, namespace = BehaviorReference.BEHAVIOR_NAMESPACE)
 public class BehaviorHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler {
 
@@ -27,18 +29,17 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
 
         getInstanceManager().addInstanceStateListener(this);
 
-        myContextId = (String) configuration.get("context.entity.init");
+        myContextId = (String) configuration.get(ContextEntity.CONTEXT_ENTITY_ID);
         Hashtable prop = new Hashtable();
         if (myContextId != null){
-            prop.put("context.entity.init",myContextId);
+            prop.put(ContextEntity.CONTEXT_ENTITY_ID,myContextId);
         }
 
         Element[] behaviorElements = metadata.getElements(BehaviorReference.DEFAULT_BEHAVIOR_TYPE,BehaviorReference.BEHAVIOR_NAMESPACE);
 
         for (Element element:behaviorElements){
             myRequiredBehaviorById.put(element.getAttribute(BehaviorReference.ID_ATTR_NAME),
-                    new RequiredBehavior( element.getAttribute(BehaviorReference.SPEC_ATTR_NAME),
-                            element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME),prop)
+                    new RequiredBehavior( element.getAttribute(BehaviorReference.SPEC_ATTR_NAME),element.getAttribute(BehaviorReference.IMPLEM_ATTR_NAME),prop)
             );
         }
 

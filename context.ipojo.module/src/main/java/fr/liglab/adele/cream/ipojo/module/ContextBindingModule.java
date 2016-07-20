@@ -58,31 +58,32 @@ public class ContextBindingModule extends AbsBindingModule {
 				);
 
 		bind(State.Field.class)
-				.when(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
+				.when(getFieldSuccessPredicate())
 				.to(
 						new StateVariableFieldProcessor(classReferenceLoader)
 				);
 
 		bind(State.Pull.class)
-				.when(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
+				.when(getFieldSuccessPredicate())
 				.to(
 						new PullFieldProcessor(classReferenceLoader)
 				);
 
 		bind(State.Apply.class)
-				.when(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
+				.when(getFieldSuccessPredicate())
 				.to(
 						new ApplyFieldProcessor(classReferenceLoader)
 				);
 
 		bind(State.Push.class)
-				.when(and( on(ElementType.METHOD), not(method().returns(Void.TYPE)), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
+				.when(or(and( on(ElementType.METHOD), not(method().returns(Void.TYPE)), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()),
+						and(on(ElementType.METHOD), not(method().returns(Void.TYPE)), reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists())))
 				.to(
 						new PushMethodProcessor(classReferenceLoader)
 				);
 
 		bind(Relation.Field.class)
-				.when(and( on(ElementType.FIELD), field().hasAnnotation(Requires.class)))
+				.when(getFieldSuccessPredicate())
 				.to(
 						new RelationProcessor(classReferenceLoader)
 				);
@@ -108,32 +109,32 @@ public class ContextBindingModule extends AbsBindingModule {
     	 */
 
 		bind(State.Field.class)
-				.when(and( on(ElementType.FIELD), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
+				.when(getFieldFailPredicate())
 				.to((BindingContext context) ->
-						error(context,"Class %s must be annotated with %s to use State injection annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName())
+						error(context,"Class %s must be annotated with %s or %s to use State injection annotation",
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
 				);
 
 		bind(State.Pull.class)
-				.when(and( on(ElementType.FIELD), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
+				.when(getFieldFailPredicate())
 				.to((BindingContext context) ->
-						error(context,"Class %s must be annotated with %s to use pull annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName())
+						error(context,"Class %s must be annotated with %s or %s to use pull annotation",
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
 				);
 
 
 		bind(State.Apply.class)
-				.when(and( on(ElementType.FIELD), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
+				.when(getFieldFailPredicate())
 				.to((BindingContext context) ->
-						error(context,"Class %s must be annotated with %s to use aply annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName())
+						error(context,"Class %s must be annotated with %s or %s to use aply annotation",
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
 				);
 
 		bind(State.Push.class)
-				.when(and( on(ElementType.METHOD), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
+				.when(and( on(ElementType.METHOD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists()))))
 				.to((BindingContext context) ->
-						error(context,"Class %s must be annotated with %s to use push injection annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName())
+						error(context,"Class %s must be annotated with %s or %s to use push injection annotation",
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
 				);
 
 		bind(State.Push.class)
@@ -247,5 +248,12 @@ public class ContextBindingModule extends AbsBindingModule {
 		}
 	}
 
+	public Predicate getFieldSuccessPredicate(){
+		return or(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()),and(on(ElementType.FIELD), reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists()));
+	}
+
+	public Predicate getFieldFailPredicate(){
+		return and(on(ElementType.FIELD),not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists())));
+	}
 }
 
