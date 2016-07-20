@@ -5,6 +5,8 @@ package fr.liglab.adele.cream.annotations.internal;
  */
 public interface BehaviorReference {
 
+    public static final String BEHAVIOR_INDIVIDUAL_ELEMENT_NAME = "behavior";
+
     public static final String SPECIFICATION_ATTRIBUTE_NAME = "specification";
 
     public static final String IMPLEMEMENTATION_ATTRIBUTE_NAME = "implementation";

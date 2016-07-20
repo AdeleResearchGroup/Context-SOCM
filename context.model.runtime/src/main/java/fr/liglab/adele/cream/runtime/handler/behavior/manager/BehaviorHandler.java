@@ -32,6 +32,7 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
     private ProvidedServiceHandler providerHandler;
 
     private String myContextId;
+
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
@@ -45,10 +46,22 @@ public class BehaviorHandler extends PrimitiveHandler implements InstanceStateLi
 
         Element[] behaviorElements = metadata.getElements(HandlerReference.BEHAVIOR_MANAGER_HANDLER,HandlerReference.NAMESPACE);
 
+        if (behaviorElements == null) {
+            throw new ConfigurationException("Behavior Elements are null ");
+        }
+
         for (Element element:behaviorElements){
-            myRequiredBehaviorById.put(element.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),
-                    new RequiredBehavior( element.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME),element.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME),prop)
-            );
+            Element[] behaviorIndividualElements = element.getElements(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
+
+            if (behaviorIndividualElements == null){
+                throw new ConfigurationException("Behavior Individual Element is null ");
+            }
+
+            for (Element individualBehaviorElement:behaviorIndividualElements) {
+                myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),
+                        new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME), individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME), prop)
+                );
+            }
         }
 
 

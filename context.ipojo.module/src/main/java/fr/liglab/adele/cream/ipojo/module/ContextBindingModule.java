@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.ipojo.module;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
+import fr.liglab.adele.cream.annotations.behavior.Behaviors;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.Relation;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
@@ -55,6 +56,12 @@ public class ContextBindingModule extends AbsBindingModule {
 				.when(and( on(ElementType.TYPE), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
 				.to(
 						new BehaviorProcessor(classReferenceLoader)
+				);
+
+		bind(Behaviors.class)
+				.when(and( on(ElementType.TYPE), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
+				.to(
+						new BehaviorsProcessor(classReferenceLoader)
 				);
 
 		bind(State.Field.class)
@@ -142,6 +149,20 @@ public class ContextBindingModule extends AbsBindingModule {
 				.to((BindingContext context) ->
 						error(context,"Push method '%s' in class %s must have a return type. The value of this return is affected in the state buffer each time the method is called.",
 								context.getMethodNode().name, context.getWorkbench().getClassNode().name)
+				);
+
+		bind(Behavior.class)
+				.when(and( on(ElementType.TYPE), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
+				.to((BindingContext context) ->
+						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
+								Behavior.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
+				);
+
+		bind(Behaviors.class)
+				.when(and( on(ElementType.TYPE), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
+				.to((BindingContext context) ->
+						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
+								Behavior.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
 				);
 
         /*
