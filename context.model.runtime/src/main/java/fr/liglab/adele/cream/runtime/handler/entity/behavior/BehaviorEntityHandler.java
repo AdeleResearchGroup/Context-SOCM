@@ -86,9 +86,9 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         if (state == InstanceManager.VALID) {
             instanceIsActive = true;
 
-            /** TODO
+
              propagate(new Hashtable<>(stateValues));
-             **/
+
             /*
              * restart state handlers
              */
@@ -312,6 +312,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
      * Handler Propagation
      */
 
+
     /**
      * Updates the value of a state property, propagating the change to the published service properties
      * @param stateId
@@ -335,6 +336,12 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
             stateValues.remove(stateId);
         }
         notifyContextListener(stateId,value);
+    }
+
+    private void propagate(Hashtable<String,Object> properties){
+        for (Map.Entry<String,Object> prop:  properties.entrySet()){
+            update(prop.getKey(),prop.getValue());
+        }
     }
 
     /**
