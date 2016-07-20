@@ -172,8 +172,14 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
             return;
         }
 
+
         Hashtable<String,Object> property = new Hashtable<String,Object>();
         property.put(s, o);
+        if (o == null){
+            stateVariable.remove(s);
+            providerHandler.removeProperties(property);
+            return;
+        }
 
         if (stateVariable.contains(s)){
             providerHandler.reconfigure(property);
