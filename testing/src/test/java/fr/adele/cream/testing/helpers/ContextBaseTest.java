@@ -62,7 +62,6 @@ public abstract class ContextBaseTest extends BaseTest {
 
     protected Option creamBundles() {
         return composite(
-                mavenBundle().groupId("org.ow2.chameleon.fuchsia").artifactId("org.ow2.chameleon.fuchsia.core").versionAsInProject(),
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.model.runtime").versionAsInProject(),
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.core").versionAsInProject(),
                 wrappedBundle(mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream-helpers").classifier("tests").versionAsInProject())
