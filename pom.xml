@@ -40,7 +40,7 @@
         <ipojo.version>1.12.1</ipojo.version>
         <ipojo.plugin.version>1.12.1</ipojo.plugin.version>
         <osgi-core.version>5.0.0</osgi-core.version>
-        <osgi.compendium.version>4.2.0</osgi.compendium.version>
+        <osgi.compendium.version>4.3.0</osgi.compendium.version>
         <felix.framework.version>4.2.1</felix.framework.version>
         <felix.configadmin.version>1.6.0</felix.configadmin.version>
         <felix.eventadmin.version>1.3.2</felix.eventadmin.version>
@@ -74,6 +74,7 @@
         <module>context.model.usage.facilities</module>
         <module>context.model.test</module>
         <module>cream-distribution</module>
+        <module>testing</module>
     </modules>
 
     <dependencyManagement>
@@ -166,104 +167,6 @@
                 <groupId>org.wisdom-framework</groupId>
                 <artifactId>wisdom-vertx-engine</artifactId>
                 <version>${wisdom.version}</version>
-            </dependency>
-
-            <!--TEST DEPENDENCIES-->
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.enterprise</artifactId>
-                <version>5.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.chameleon.testing</groupId>
-                <artifactId>osgi-helpers</artifactId>
-                <version>${osgi-helpers.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.chameleon.fuchsia.testing</groupId>
-                <artifactId>fuchsia-helpers</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-junit4</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-container-native</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-link-mvn</artifactId>
-                <version>${pax-exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.tinybundles</groupId>
-                <artifactId>tinybundles</artifactId>
-                <version>${tinybundles.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.swissbox</groupId>
-                <artifactId>pax-swissbox-bnd</artifactId>
-                <version>${pax-swissbox.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.base</groupId>
-                <artifactId>ops4j-base</artifactId>
-                <version>${ops4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.url</groupId>
-                <artifactId>pax-url-aether</artifactId>
-                <version>${ops4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.chameleon.testing</groupId>
-                <artifactId>tinybundles-ipojo</artifactId>
-                <version>${tinybundles-ipojo.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.easytesting</groupId>
-                <artifactId>fest-reflect</artifactId>
-                <version>${fest-reflect.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.easytesting</groupId>
-                <artifactId>fest-assert</artifactId>
-                <version>${fest-assert.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${TEST.logback-classic.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${TEST.logback-classic.version}</version>
             </dependency>
 
         </dependencies>
