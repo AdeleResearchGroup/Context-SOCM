@@ -51,93 +51,11 @@
             <artifactId>wisdom-executors</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>wisdom-vertx-engine</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>router</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.wisdom-framework</groupId>
             <artifactId>wisdom-api</artifactId>
             <version>${wisdom.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>application-configuration</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>crypto</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>content-manager</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>resource-controller</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>wisdom-monitor</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>thymeleaf-template-engine</artifactId>
-            <version>${wisdom.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-buffer</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-common</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport-sctp</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-            <version>${netty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-socks</artifactId>
-            <version>${netty.version}</version>
         </dependency>
 
         <!-- libraries -->
@@ -145,16 +63,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -167,17 +75,6 @@
             <version>2.7</version>
         </dependency>
 
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.10</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
-        </dependency>
 
         <!-- binder / parser -->
         <dependency>
@@ -206,23 +103,6 @@
             <version>${jackson.version}</version>
         </dependency>
 
-        <!-- dependencies / runtime -->
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-osgi_2.10</artifactId>
-            <version>2.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>2.10.2</version>
-        </dependency>
-
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
@@ -239,56 +119,6 @@
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
             <version>4.2.1</version>
-        </dependency>
-
-
-        <!--metrics/monitor dp -->
-        <dependency>
-            <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-jvm</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-graphite</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-
-        <!--webjar Dependency for monitor-->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>3.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>handlebars</artifactId>
-            <version>2.0.0-1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jquery</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jquery-mousewheel</artifactId>
-            <version>3.1.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>momentjs</artifactId>
-            <version>2.8.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>tablesorter</artifactId>
-            <version>2.17.8</version>
         </dependency>
     </dependencies>
 
