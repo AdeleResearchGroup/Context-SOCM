@@ -12,7 +12,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.liglab.adele.cream</groupId>
-    <artifactId>icasa.context.model.test</artifactId>
+    <artifactId>cream.model.example</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>fr.liglab.adele.cream</groupId>
-            <artifactId>cream.usage.facilities</artifactId>
+            <artifactId>cream.runtime.facilities</artifactId>
             <version>${project.version}</version>
         </dependency>
 

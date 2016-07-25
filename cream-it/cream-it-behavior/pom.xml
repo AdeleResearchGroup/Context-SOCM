@@ -98,10 +98,10 @@
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.cream</groupId>
-            <artifactId>cream-helpers</artifactId>
+            <artifactId>cream.helpers</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
-            <version>0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.easytesting</groupId>

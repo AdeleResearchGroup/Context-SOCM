@@ -69,19 +69,19 @@
 
     <modules>
         <module>cream-core</module>
-            <module>context.ipojo.module</module>
-          <module>context.model.runtime</module>
-        <module>context.model.usage.facilities</module>
-            <module>context.model.test</module>
-             <module>cream-distribution</module>
-             <module>testing</module>
-             <module>core-it</module>
-         </modules>
+        <module>cream-ipojo-module</module>
+        <module>cream-model-runtime</module>
+        <module>cream-runtime-facilities</module>
+        <module>testing</module>
+        <module>cream-it</module>
+        <module>cream-distribution</module>
+        <module>cream-model-test</module>
+    </modules>
 
-         <dependencyManagement>
-             <dependencies>
+    <dependencyManagement>
+        <dependencies>
 
-                 <!-- OSGi -->
+            <!-- OSGi -->
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>
@@ -184,7 +184,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                   <version>2.6.1</version>
+                    <version>2.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

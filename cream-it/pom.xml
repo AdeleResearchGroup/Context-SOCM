@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>core-it-behavior</module>
+        <module>cream-it-behavior</module>
     </modules>
 
 </project>

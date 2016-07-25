@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>fr.liglab.adele.cream</groupId>
-            <artifactId>cream.usage.facilities</artifactId>
+            <artifactId>cream.runtime.facilities</artifactId>
             <version>${project.version}</version>
         </dependency>
 
