@@ -57,7 +57,16 @@
             <artifactId>wisdom-api</artifactId>
             <version>${wisdom.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.wisdom-framework</groupId>
+            <artifactId>application-configuration</artifactId>
+            <version>${wisdom.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wisdom-framework</groupId>
+            <artifactId>content-manager</artifactId>
+            <version>${wisdom.version}</version>
+        </dependency>
         <!-- libraries -->
         <dependency>
             <groupId>commons-io</groupId>
