@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 
 
 @ContextEntity(services = ContextEntityDescription.class)
-@Provides(specifications = BehaviorService.class,strategy = StrategyReference.STRATEGY_PATH)
 @Behavior(id="localisableBehavior", spec = BehaviorService.class,implem = BehaviorImpl.class)
 @Behavior(id="behaviorBis", spec = BehaviorServiceBis.class,implem = BehaviorImplBis.class)
 public class ContextEntityImpl implements ContextEntityDescription {

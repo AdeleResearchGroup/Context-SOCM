@@ -21,6 +21,8 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
 
     public static final String COMPONENT_TYPE = "context-component";
 
+    public static final String CONTEXT_PROVIDE_TYPE = "context-component";
+
     public ContextEntityProcessor(ClassLoader classReferenceLoader) {
 		super(ContextEntity.class,classReferenceLoader);
 	}
@@ -77,8 +79,8 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
             provides.addAttribute(attributeStrategy);
         }
         
-        addMetadataElement(provides);
-        
+      //  addMetadataElement(provides);
+        addMetadataElement(CONTEXT_PROVIDE_TYPE,provides,null);
         /*
          * Add a static property to the component specifying all the context services implemented by the entity
          */
