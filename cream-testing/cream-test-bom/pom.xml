@@ -29,26 +29,26 @@
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.compendium</artifactId>
-                <version>4.3.0</version>
+                <version>${osgi.compendium.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>
-                <version>5.0.0</version>
+                <version>${osgi-core.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.framework</artifactId>
-                <version>5.4.0</version>
+                <version>${felix.framework.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.ipojo</artifactId>
-                <version>1.12.1</version>
+                <version>${ipojo.version}</version>
             </dependency>
 
             <dependency>
@@ -72,28 +72,28 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>1.4.0</version>
+                <version>${assertj-core.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.5</version>
+                <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.ow2.chameleon.testing</groupId>
                 <artifactId>osgi-helpers</artifactId>
-                <version>0.6.2</version>
+                <version>${osgi-helpers.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -108,7 +108,7 @@
             <dependency>
                 <groupId>org.easytesting</groupId>
                 <artifactId>fest-assert</artifactId>
-                <version>1.4</version>
+                <version>${fest-assert.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -117,28 +117,28 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.0.13</version>
+                <version>${logback.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.0.13</version>
+                <version>${logback.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.6</version>
+                <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.log</artifactId>
-                <version>1.0.1</version>
+                <version>${felix.log.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -164,7 +164,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
+                <version>${commons.io.version}</version>
             </dependency>
 
             <dependency>

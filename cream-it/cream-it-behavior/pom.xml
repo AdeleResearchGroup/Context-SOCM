@@ -24,36 +24,7 @@
 
     <!-- Project dependencies -->
     <dependencies>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <version>4.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>5.0.0</version>
-        </dependency>
-     <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>5.4.0</version>
-            <scope>test</scope>
-        </dependency>
-        <!--dependency>
-            <groupId>org.ow2.chameleon</groupId>
-            <artifactId>chameleon-core</artifactId>
-            <version>1.10.9</version>
-            <classifier>service</classifier>
-            <scope>test</scope>
-        </dependency-->
-
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo</artifactId>
-            <version>1.12.1</version>
-        </dependency>
-
+        <!--Cream Dep -->
         <dependency>
             <groupId>fr.liglab.adele.cream</groupId>
             <artifactId>cream.core</artifactId>
@@ -71,42 +42,66 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>fr.liglab.adele.cream</groupId>
+            <artifactId>cream.helpers</artifactId>
+            <classifier>tests</classifier>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.cream</groupId>
+            <artifactId>wisdom.fake.bundle</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!--OSGi+iPOJO dep-->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo</artifactId>
+        </dependency>
+
         <!--TEST-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>1.4.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.ow2.chameleon.testing</groupId>
             <artifactId>osgi-helpers</artifactId>
-            <version>0.6.2</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>fr.liglab.adele.cream</groupId>
-            <artifactId>cream.helpers</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert</artifactId>
-            <version>1.4</version>
+            <scope>test</scope>
         </dependency>
 
 
@@ -114,26 +109,25 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.0.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.6</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.log</artifactId>
-            <version>1.0.1</version>
+            <scope>test</scope>
         </dependency>
 
+        <!-- Wisdom Dep-->
         <dependency>
             <groupId>org.wisdom-framework</groupId>
             <artifactId>wisdom-executors</artifactId>
@@ -142,13 +136,8 @@
         <dependency>
             <groupId>org.wisdom-framework</groupId>
             <artifactId>wisdom-api</artifactId>
-            <version>${wisdom.version}</version>
         </dependency>
-        <dependency>
-            <groupId>fr.liglab.adele.cream</groupId>
-            <artifactId>wisdom.fake.bundle</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
 
         <!-- libraries -->
         <dependency>
