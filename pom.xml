@@ -72,7 +72,7 @@
         <module>cream-ipojo-module</module>
         <module>cream-model-runtime</module>
         <module>cream-runtime-facilities</module>
-        <module>testing</module>
+        <module>cream-testing</module>
         <module>cream-it</module>
         <module>cream-distribution</module>
         <module>cream-model-test</module>
