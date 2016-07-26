@@ -19,6 +19,7 @@
     <modules>
         <module>cream-helper</module>
         <module>wisdom-fake-bundle</module>
+        <module>cream-test-bom</module>
     </modules>
 
 </project>
