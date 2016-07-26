@@ -81,7 +81,7 @@
         <module>cream-testing</module>
         <module>cream-it</module>
         <module>cream-distribution</module>
-        <module>cream-model-test</module>
+        <module>cream-model-example</module>
     </modules>
 
     <dependencyManagement>
