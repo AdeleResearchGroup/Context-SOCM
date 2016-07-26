@@ -55,7 +55,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Export-Package>fr.liglab.adele.icasa.context.model.example;
@@ -73,13 +72,6 @@
                             <version>${project.version}</version>
                         </dependency>
                 </dependencies>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>ipojo-bundle</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
