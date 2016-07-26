@@ -38,13 +38,6 @@ public class BehaviorsProcessor extends AnnotationProcessor<Behaviors>  {
 
 	}
 
-	private boolean checkRootElement(Element root){
-		if (ContextEntityProcessor.COMPONENT_TYPE.equals(root.getName())){
-			return true;
-		}
-		return false;
-	}
-
 	private String getBehaviorParentElement(){
 		Element behaviorElement = getMetadataElement(BEHAVIOR_ELEMENT);
 
