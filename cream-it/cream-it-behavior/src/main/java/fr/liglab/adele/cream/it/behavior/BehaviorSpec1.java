@@ -7,10 +7,34 @@ import fr.liglab.adele.cream.annotations.State;
 @ContextService
 public interface BehaviorSpec1 {
 
-    public @State static String PARAM_1 = "param1";
+    public static boolean PARAM_1_INIT_VALUE = true;
 
-    boolean getterMethod();
+    public static boolean PARAM_2_VALUE = true;
 
-    void setterMethod(Boolean param1);
+    public @State static String PARAM_1_DIRECTACCESS = "directAccessParam";
+
+    public @State static String PARAM_2_PULL = "pullParam";
+
+    public @State static String PARAM_3_APPLY = "ApplyParam";
+
+    public @State static String PARAM_4_PERIODICPULL = "PeriodicPullParam";
+
+    boolean getterMethodParam1();
+
+    void setterMethodParam1(Boolean param1);
+
+    boolean getterMethodParam2();
+
+    void setterMethodParam2(Boolean param1);
+
+    boolean getterMethodParam3ReturnAlwaysNull();
+
+    boolean getterMethodParam3WithChange();
+
+    void setterMethodParam3(Boolean param1);
+
+    long getterMethodParam4();
+
+    void setterMethodParam4(long param1);
 
 }
