@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Created by aygalinc on 02/06/16.
@@ -30,14 +31,10 @@ public class RequiredBehavior implements InvocationHandler {
 
     private final Hashtable myConfiguration = new Hashtable();
 
-    public RequiredBehavior(String spec, String behaviorImpl,Hashtable config) {
+    public RequiredBehavior(String spec, String behaviorImpl,Map config) {
         myName = spec;
         myBehaviorNameImpl = behaviorImpl;
         myConfiguration.putAll(config);
-    }
-
-    public int hashCode() {
-        return super.hashCode();
     }
 
     public BehaviorFactory getFactory() {
@@ -75,11 +72,11 @@ public class RequiredBehavior implements InvocationHandler {
         try {
             myManager = (BehaviorManager) myFactory.createComponentInstance(myConfiguration,null);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
-            LOG.error(unacceptableConfiguration.toString());
+            LOG.error(UnacceptableConfiguration.class.getName(),unacceptableConfiguration);
         } catch (MissingHandlerException e) {
-            LOG.error(e.toString());
+            LOG.error(MissingHandlerException.class.getName(),e);
         } catch (ConfigurationException e) {
-            LOG.error(e.toString());
+            LOG.error(ConfigurationException.class.getName(),e);
         }
     }
 

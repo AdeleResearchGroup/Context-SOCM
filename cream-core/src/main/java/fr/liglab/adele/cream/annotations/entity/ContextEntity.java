@@ -18,26 +18,26 @@ public @interface ContextEntity {
     /**
      * The name of the service property used to describe context provider factories
      */
-    public static final String ENTITY_CONTEXT_SERVICES = "factory.context.entity.services";
+    String ENTITY_CONTEXT_SERVICES = "factory.context.entity.services";
 
     /**
      * This annotations declares a relation of the context entity
      *
      */
-    public interface Relation {
+    interface Relation {
     	
-    	public static String ID(Class<?> entity, String relation) {
+    	static String ID(Class<?> entity, String relation) {
     		return ID(entity.getSimpleName(),relation);
     	}
 
-    	public static String ID(String entity, String relation) {
+    	static String ID(String entity, String relation) {
     		return entity.toLowerCase()+"."+relation;
     	}
     	
         @Target(ElementType.FIELD)
-        public @interface Field {
+        @interface Field {
 
-        	public static final Class<?> DEFAULT_OWNER = Object.class;
+        	Class<?> DEFAULT_OWNER = Object.class;
         	
 			/**
 			 * The class of the service virtually owning the relation
@@ -56,21 +56,21 @@ public @interface ContextEntity {
 	 * This interface groups all the annotations helping entities to implement context state
 	 * 
 	 */
-	public interface State {
+	interface State {
 	
-		public static String ID(Class<?> service, String state) {
+		 static String ID(Class<?> service, String state) {
 			return ID(service.getSimpleName(),state);
 		}
 	
-		public static String ID(String service, String state) {
+		 static String ID(String service, String state) {
 			return service.toLowerCase()+"."+state;
 		}
 	
 		@Target(ElementType.FIELD)
 		@Retention(RetentionPolicy.RUNTIME)
-		public @interface Field {
+		@interface Field {
 			
-			public static final String NO_VALUE = "";
+			String NO_VALUE = "";
 	
 			/**
 			 * The class of the service defining the state to be implemented
@@ -96,7 +96,7 @@ public @interface ContextEntity {
 		}
 		
 		@Target(ElementType.FIELD)
-		public @interface Apply {
+		@interface Apply {
 	
 			/**
 			 * The class of the service defining the state to be implemented
@@ -111,7 +111,7 @@ public @interface ContextEntity {
 		}
 		
 		@Target(ElementType.FIELD)
-		public @interface Pull {
+		@interface Pull {
 	
 			/**
 			 * The class of the service defining the state to be implemented
@@ -137,7 +137,7 @@ public @interface ContextEntity {
 		}
 		
 		@Target(ElementType.METHOD)
-		public @interface Push {
+		@interface Push {
 	
 			/**
 			 * The class of the service defining the state to be implemented

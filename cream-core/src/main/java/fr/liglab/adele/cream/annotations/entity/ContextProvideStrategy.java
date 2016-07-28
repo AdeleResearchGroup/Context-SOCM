@@ -31,14 +31,8 @@ public class ContextProvideStrategy extends CreationStrategy {
      */
     private InstanceManager myManager;
 
-    /**
-     * The lists of interfaces provided by this service.
-     */
-    private String[] mySpecs;
-
     @Override
     public void onPublication(InstanceManager instance, String[] interfaces, Properties props) {
-        this.mySpecs = interfaces;
         this.myManager = instance;
     }
 
@@ -84,7 +78,7 @@ public class ContextProvideStrategy extends CreationStrategy {
         try{
             pojo = Proxy.newProxyInstance(clazz.getClassLoader(),interfaces,invocationHandler);
         }catch (java.lang.NoClassDefFoundError e){
-            LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! " + e.toString());
+            LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! ",e);
         }
         return pojo;
     }
@@ -96,19 +90,21 @@ public class ContextProvideStrategy extends CreationStrategy {
 
     private InvocationHandler getBehaviorHandler(){
         Object  handler = myManager.getHandler(HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_MANAGER_HANDLER);
-        if (handler == null) return null;
+        if (handler == null){
+            return null;
+        }
         return (InvocationHandler)  handler;
     }
 
     private class ParentSuccessorStrategy implements SuccessorStrategy {
 
-        private final static String EQUALS_METHOD_CALL = "equals";
+        private static final String EQUALS_METHOD_CALL = "equals";
 
-        private final static String HASHCODE_METHOD_CALL = "hashcode";
+        private static final String HASHCODE_METHOD_CALL = "hashcode";
 
-        private final static String TOSTRING_METHOD_CALL = "toString";
+        private static final String TOSTRING_METHOD_CALL = "toString";
 
-        private final static String NONE_OBJECT_METHOD_CALL = "None";
+        private static final String NONE_OBJECT_METHOD_CALL = "None";
         @Override
         public Object successorStrategy(Object pojo, List<InvocationHandler> successors, Object proxy, Method method, Object[] args) throws Throwable {
             String nativeMethodCode = belongToObjectMethod(  proxy,  method, args);
