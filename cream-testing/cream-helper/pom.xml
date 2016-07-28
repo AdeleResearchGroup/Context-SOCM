@@ -94,7 +94,7 @@
                             ${project.artifactId}
                         </Bundle-SymbolicName>
                         <Export-Package>
-                            fr.adele.cream.testing.helpers
+                            fr.liglab.adele.cream.testing.helpers
                         </Export-Package>
                         <Private-Package />
                         <Import-Package>

@@ -1,4 +1,4 @@
-package fr.adele.cream.testing.helpers;
+package fr.liglab.adele.cream.testing.helpers;
 
 /*
  * #%L

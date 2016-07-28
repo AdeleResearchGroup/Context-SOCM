@@ -1,4 +1,4 @@
-package fr.adele.cream.testing.helpers;
+package fr.liglab.adele.cream.testing.helpers;
 
 import org.ow2.chameleon.testing.helpers.IPOJOHelper;
 import org.ow2.chameleon.testing.helpers.OSGiHelper;

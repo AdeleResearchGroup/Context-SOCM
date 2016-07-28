@@ -1,4 +1,4 @@
-package fr.adele.cream.testing.helpers;
+package fr.liglab.adele.cream.testing.helpers;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
