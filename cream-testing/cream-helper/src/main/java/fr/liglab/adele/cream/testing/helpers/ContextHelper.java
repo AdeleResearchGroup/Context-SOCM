@@ -1,5 +1,6 @@
 package fr.liglab.adele.cream.testing.helpers;
 
+import fr.liglab.adele.cream.testing.helpers.ContextEntityHelper;
 import org.ow2.chameleon.testing.helpers.IPOJOHelper;
 import org.ow2.chameleon.testing.helpers.OSGiHelper;
 

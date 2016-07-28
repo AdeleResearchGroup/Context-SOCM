@@ -67,7 +67,7 @@
 
         <!--Plug in version-->
         <depends-maven-plugin.version>1.2</depends-maven-plugin.version>
-        <sonar-maven-plugin>2.5</sonar-maven-plugin>
+        <sonar-maven-plugin>3.0.2</sonar-maven-plugin>
         <maven-clean-plugin>3.0.0</maven-clean-plugin>
         <maven-bundle-plugin>2.5.3</maven-bundle-plugin>
         <maven-compiler-plugin>3.2</maven-compiler-plugin>
@@ -178,31 +178,26 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj-core.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.ow2.chameleon.testing</groupId>
                 <artifactId>osgi-helpers</artifactId>
                 <version>${osgi-helpers.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.easytesting</groupId>
                 <artifactId>fest-assert</artifactId>
                 <version>${fest-assert.version}</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
