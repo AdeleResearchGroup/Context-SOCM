@@ -21,7 +21,7 @@ package fr.liglab.adele.cream.it.test;
  */
 
 
-import fr.adele.cream.testing.helpers.ContextBaseTest;
+import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.it.behavior.BehaviorSpec1;
 import fr.liglab.adele.cream.it.behavior.ContextEntity1;
