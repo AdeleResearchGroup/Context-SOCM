@@ -314,10 +314,11 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
     	/*
          * Check the context entity id was specified
          */
+
 		if (configuration.get(CONTEXT_ENTITY_ID) == null) {
 			throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
 		}
-
+		stateIds.add(CONTEXT_ENTITY_ID);
 		update(CONTEXT_ENTITY_ID,configuration.get(CONTEXT_ENTITY_ID));
 
         /*

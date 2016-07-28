@@ -251,7 +251,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         if (configuration.get(CONTEXT_ENTITY_ID) == null) {
             throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
         }
-
+        stateIds.add(CONTEXT_ENTITY_ID);
         update(CONTEXT_ENTITY_ID,configuration.get(CONTEXT_ENTITY_ID));
 
         /*
@@ -335,6 +335,11 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         else {
             stateValues.remove(stateId);
         }
+
+        if (CONTEXT_ENTITY_ID.equals(stateId)){
+            return;
+        }
+
         notifyContextListener(stateId,value);
     }
 

@@ -114,9 +114,9 @@ public class ContextTest extends ContextBaseTest {
         BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
-        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
-
         assertThat(serviceObj1.getterMethodParam2()).isEqualTo(BehaviorSpec1.PARAM_2_VALUE);
+
+        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
 
     }
 
