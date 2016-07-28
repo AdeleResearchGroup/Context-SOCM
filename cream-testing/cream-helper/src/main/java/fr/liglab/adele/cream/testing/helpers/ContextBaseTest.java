@@ -66,7 +66,7 @@ public abstract class ContextBaseTest extends BaseTest {
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.model.runtime").versionAsInProject(),
                 //mavenBundle().groupId("org.ow2.chameleon").artifactId("chameleon-core").classifier("service").versionAsInProject(),
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.core").versionAsInProject(),
-                wrappedBundle(mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.helpers").classifier("tests").versionAsInProject())
+                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.helpers").versionAsInProject()
         );
     }
 

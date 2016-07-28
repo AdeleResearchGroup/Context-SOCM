@@ -71,6 +71,11 @@
         <maven-clean-plugin>3.0.0</maven-clean-plugin>
         <maven-bundle-plugin>2.5.3</maven-bundle-plugin>
         <maven-compiler-plugin>3.2</maven-compiler-plugin>
+
+        <!-- Sonar -->
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.jacoco.itReportPath>${project.basedir}/../cream-it/target/jacoco/jacoco-it.exec</sonar.jacoco.itReportPath>
+
     </properties>
 
     <modules>
@@ -79,7 +84,7 @@
         <module>cream-model-runtime</module>
         <module>cream-runtime-facilities</module>
         <module>cream-testing</module>
-        <module>cream-it</module>
+        <module>cream-it/cream-it-behavior</module>
         <module>cream-distribution</module>
         <module>cream-model-example</module>
     </modules>
@@ -199,6 +204,7 @@
                 <artifactId>fest-assert</artifactId>
                 <version>${fest-assert.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
