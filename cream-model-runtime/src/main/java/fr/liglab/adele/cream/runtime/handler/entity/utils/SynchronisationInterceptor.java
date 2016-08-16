@@ -70,8 +70,10 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
 	@Override
     public void onSet(Object pojo, String fieldName, Object value) {
     	BiConsumer<Object,Object> applyFunction = applyFunctions.get(fieldName);
-    	if (applyFunction != null) {
-    		applyFunction.accept(pojo,value);
+    	if (applyFunction != null && pojo != null) {
+    		if(value != null){
+				applyFunction.accept(pojo,value);
+			}
     	}
     }
 

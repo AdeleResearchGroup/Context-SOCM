@@ -21,11 +21,11 @@ package fr.liglab.adele.cream.it.test;
  */
 
 
-import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.it.behavior.BehaviorSpec1;
 import fr.liglab.adele.cream.it.behavior.ContextEntity1;
 import fr.liglab.adele.cream.it.behavior.ContextService1;
+import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -60,6 +60,7 @@ public class ContextTest extends ContextBaseTest {
     @Test
     public void testContextEntityFactoIsPresent()  {
         Factory contextFacto = contextHelper.getContextEntityHelper().getContextEntityFactory(ContextEntity1.class.getName());
+
         assertThat(contextFacto).isNotNull();
     }
 
@@ -87,7 +88,7 @@ public class ContextTest extends ContextBaseTest {
 
 
     @Test
-    public void testDirectAccessBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public void testDirectAccessSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
         BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
@@ -95,30 +96,75 @@ public class ContextTest extends ContextBaseTest {
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
         assertThat(serviceObj1.getterMethodParam1()).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE).overridingErrorMessage("first getter call didn't return the right value");
-
-     //   assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE).overridingErrorMessage("Service property isn't set to initial value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE).overridingErrorMessage("Service property isn't set to initial value");
 
         boolean newValue = !BehaviorSpec1.PARAM_1_INIT_VALUE;
         serviceObj1.setterMethodParam1(newValue);
+
         assertThat(serviceObj1.getterMethodParam1()).isEqualTo(newValue);
+        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(newValue).overridingErrorMessage("Service property isn't set to the modified value");
 
-  //      assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE).overridingErrorMessage("Service property isn't set to the modified value");
-
-    //TODO : Default value are not published as service property !!!!
     }
 
     @Test
-    public void testPullBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public void testPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
         BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
         assertThat(serviceObj1.getterMethodParam2()).isEqualTo(BehaviorSpec1.PARAM_2_VALUE);
+        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
 
+        serviceObj1.setterMethodParam2(!BehaviorSpec1.PARAM_2_VALUE);
+
+        assertThat(serviceObj1.getterMethodParam2()).isEqualTo(BehaviorSpec1.PARAM_2_VALUE);
         assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
 
     }
+
+   @Test
+    public void testApplySVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntity();
+
+        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
+
+        assertThat( serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
+        assertThat(serviceObj1.getterMethodParam3WithChange()).isEqualTo(true);
+        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_3_APPLY))).isEqualTo(null);
+
+        serviceObj1.setterMethodParam3(false);
+        assertThat(serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
+        assertThat(serviceObj1.getterMethodParam3WithChange()).isEqualTo(false);
+        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_3_APPLY))).isEqualTo(null);
+
+
+    }
+
+    @Test
+    public void testPullApplySVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntity();
+
+        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
+
+        assertThat( serviceObj1.getterMethodParam5()).isEqualTo(true);
+        assertThat(serviceObj1.getterMethodParam5WithChange()).isEqualTo(true);
+
+        serviceObj1.setterMethodParam5(false);
+        assertThat(serviceObj1.getterMethodParam5WithChange()).isEqualTo(false);
+
+        /**
+         * TODO : Test failed due to iPOJO bug, bugfix proposed in FELIX-5314
+         *assertThat(serviceObj1.getterMethodParam5()).isEqualTo(true);
+         */
+
+        assertThat(serviceObj1.getterMethodParam5WithChange()).isEqualTo(false);
+
+
+    }
+
 
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);

@@ -38,7 +38,7 @@
 
         <!-- Dependencies version -->
         <ipojo.version>1.12.1</ipojo.version>
-        <ipojo.plugin.version>1.12.1</ipojo.plugin.version>
+        <ipojo.plugin.version>1.12.2-SNAPSHOT</ipojo.plugin.version>
         <osgi-core.version>5.0.0</osgi-core.version>
         <osgi.compendium.version>4.3.0</osgi.compendium.version>
         <felix.framework.version>5.4.0</felix.framework.version>

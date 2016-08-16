@@ -19,6 +19,8 @@ public interface BehaviorSpec1 {
 
     public @State static String PARAM_4_PERIODICPULL = "PeriodicPullParam";
 
+    public @State static String PARAM_5_PULLAPPLY = "ApplyPullParam";
+
     boolean getterMethodParam1();
 
     void setterMethodParam1(Boolean param1);
@@ -27,14 +29,20 @@ public interface BehaviorSpec1 {
 
     void setterMethodParam2(Boolean param1);
 
-    boolean getterMethodParam3ReturnAlwaysNull();
+    Boolean getterMethodParam3ReturnAlwaysNull();
 
-    boolean getterMethodParam3WithChange();
+    Boolean getterMethodParam3WithChange();
 
     void setterMethodParam3(Boolean param1);
 
     long getterMethodParam4();
 
     void setterMethodParam4(long param1);
+
+    Boolean getterMethodParam5();
+
+    void setterMethodParam5(boolean param1);
+
+    Boolean getterMethodParam5WithChange();
 
 }

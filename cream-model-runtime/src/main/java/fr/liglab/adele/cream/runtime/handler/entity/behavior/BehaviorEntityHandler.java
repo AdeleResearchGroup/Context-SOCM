@@ -135,7 +135,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
     private void propagate(Hashtable<String,Object> properties){
         for (Map.Entry<String,Object> prop:  properties.entrySet()){
-            update(prop.getKey(),prop.getValue());
+            notifyContextListener(prop.getKey(),prop.getValue());
         }
     }
 

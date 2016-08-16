@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.it.behavior;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import org.apache.felix.ipojo.FieldInterceptor;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -20,10 +21,15 @@ public class BehviorImpl implements BehaviorSpec1 {
     @ContextEntity.State.Field(service = BehaviorSpec1.class,state = BehaviorSpec1.PARAM_3_APPLY)
     public Boolean param3;
 
-    boolean param3Apply = true;
+    Boolean param3Apply = true;
 
     @ContextEntity.State.Field(service = BehaviorSpec1.class,state = BehaviorSpec1.PARAM_4_PERIODICPULL)
     public Long param4;
+
+    @ContextEntity.State.Field(service = BehaviorSpec1.class,state = BehaviorSpec1.PARAM_5_PULLAPPLY)
+    public Boolean param5;
+
+    Boolean param5Apply = true;
 
     @ContextEntity.State.Pull(service = BehaviorSpec1.class,state = BehaviorSpec1.PARAM_2_PULL)
     Supplier<Boolean> param2Supplier = ()-> true;
@@ -33,6 +39,14 @@ public class BehviorImpl implements BehaviorSpec1 {
 
     @ContextEntity.State.Pull(service = BehaviorSpec1.class,state = BehaviorSpec1.PARAM_4_PERIODICPULL,period = 2,unit = TimeUnit.SECONDS)
     Supplier<Long> param4PeriodicSupplier = ()-> System.currentTimeMillis();
+
+
+    @ContextEntity.State.Pull(service = BehaviorSpec1.class,state = BehaviorSpec1.PARAM_5_PULLAPPLY)
+    Supplier<Boolean> param5Supplier = ()-> true;
+
+    @ContextEntity.State.Apply(service = BehaviorSpec1.class,state = BehaviorSpec1.PARAM_5_PULLAPPLY)
+    Consumer<Boolean> param5Consumer = (Boolean x)-> param5Apply = x;
+
 
     @Override
     public boolean getterMethodParam1() {
@@ -55,12 +69,12 @@ public class BehviorImpl implements BehaviorSpec1 {
     }
 
     @Override
-    public boolean getterMethodParam3ReturnAlwaysNull() {
+    public Boolean getterMethodParam3ReturnAlwaysNull() {
         return param3;
     }
 
     @Override
-    public boolean getterMethodParam3WithChange() {
+    public Boolean getterMethodParam3WithChange() {
         return param3Apply;
     }
 
@@ -77,5 +91,20 @@ public class BehviorImpl implements BehaviorSpec1 {
     @Override
     public void setterMethodParam4(long param) {
         param4 = param;
+    }
+
+    @Override
+    public Boolean getterMethodParam5() {
+        return param5;
+    }
+
+    @Override
+    public void setterMethodParam5(boolean param1) {
+        param5 = param1;
+    }
+
+    @Override
+    public Boolean getterMethodParam5WithChange() {
+        return param5Apply;
     }
 }
