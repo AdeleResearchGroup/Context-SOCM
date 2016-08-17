@@ -41,7 +41,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExamReactorStrategy(PerMethod.class)
-public class ContextTest extends ContextBaseTest {
+public class UniqueBehaviorTest extends ContextBaseTest {
 
     @Override
     protected List<String> getExtraExports() {
@@ -123,7 +123,7 @@ public class ContextTest extends ContextBaseTest {
 
     }
 
-   @Test
+    @Test
     public void testApplySVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
@@ -162,6 +162,39 @@ public class ContextTest extends ContextBaseTest {
 
         assertThat(serviceObj1.getterMethodParam5WithChange()).isEqualTo(false);
 
+
+    }
+
+    @Test
+    public void testPeriodicPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntity();
+
+        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
+/**
+ * TODO : Test fail, check init phase of behavior
+ long firstValue = (long) serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
+ **/
+        try {
+            Thread.currentThread().sleep(2500);
+        } catch (InterruptedException e) {
+            assertThat(true).isEqualTo(false);
+        }
+
+        long secondValue = (long) serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
+
+        try {
+            Thread.currentThread().sleep(2500);
+        } catch (InterruptedException e) {
+            assertThat(true).isEqualTo(false);
+        }
+        long thirdValue = (long) serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
+
+        /**
+         * see TODO
+         assertThat(secondValue).isNotEqualTo(firstValue);
+         **/
+        assertThat(secondValue).isNotEqualTo(thirdValue);
 
     }
 
