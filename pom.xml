@@ -85,6 +85,7 @@
         <module>cream-runtime-facilities</module>
         <module>cream-testing</module>
         <module>cream-it/cream-it-behavior</module>
+        <module>cream-it/cream-it-creator</module>
         <module>cream-distribution</module>
         <module>cream-model-example</module>
     </modules>
