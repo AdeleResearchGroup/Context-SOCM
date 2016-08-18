@@ -53,7 +53,7 @@ public class CreatorTest extends ContextBaseTest {
     }
 
     @Test
-    public void testMultipleBehaviorServiceExposition() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public void testCreatorWithNoParameter() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
 
         ContextServiceProvider serviceObj1 = osgiHelper.getServiceObject(ContextServiceProvider.class);
 
