@@ -21,8 +21,7 @@ package fr.liglab.adele.cream.it.test;
  */
 
 
-import fr.liglab.adele.cream.it.entity.ContextEntity1;
-import fr.liglab.adele.cream.it.entity.ContextService1;
+import fr.liglab.adele.cream.it.entity.*;
 import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -60,8 +59,36 @@ public class EntityTest extends ContextBaseTest {
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1.returnFalse()).isFalse();
     }
+    @Test
+    public void testContextExplicitServiceHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntityExplicitHeritage();
+        ContextServiceHeritage serviceObj1 = osgiHelper.getServiceObject(ContextServiceHeritage.class);
 
+        assertThat(serviceObj1).isNotNull();
+        assertThat(serviceObj1.returnTrue()).isTrue();
+        assertThat(serviceObj1.returnFalse()).isFalse();
+    }
+
+/** TODO: If all class are not implemented explicity it failed !
+    @Test
+    public void testContextImplicitServiceHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntityHeritage();
+        ContextServiceHeritage serviceObj1 = osgiHelper.getServiceObject(ContextServiceHeritage.class);
+
+        assertThat(serviceObj1).isNotNull();
+        assertThat(serviceObj1.returnTrue()).isTrue();
+        assertThat(serviceObj1.returnFalse()).isFalse();
+    }
+**/
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
+    }
+
+    private void createContextEntityHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityHeritageImpl.class.getName(),"ContextEntityHeritageTest",null);
+    }
+
+    private void createContextEntityExplicitHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityExplicitHeritageImpl.class.getName(),"ContextEntityExplicitHeritageTest",null);
     }
 }
