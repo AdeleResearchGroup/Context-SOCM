@@ -64,8 +64,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
      *
      **/
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public void configure(Element element, Dictionary rawConfiguration) throws ConfigurationException {
+    public void configure(Element element, Dictionary rawConfiguration,String handlerNameSpace,String handlerName) throws ConfigurationException {
 
 
         InstanceManager instanceManager 		= getInstanceManager();
@@ -103,7 +102,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
          */
 
         List<String> implementedStates = new ArrayList<String>();
-        for (Element entity : optional(element.getElements(HandlerReference.BEHAVIOR_ENTITY_HANDLER,HandlerReference.NAMESPACE))) {
+        for (Element entity : optional(element.getElements(handlerName,handlerNameSpace))) {
             for (Element state : optional(entity.getElements("state"))) {
 
                 String stateId 			= state.getAttribute("id");

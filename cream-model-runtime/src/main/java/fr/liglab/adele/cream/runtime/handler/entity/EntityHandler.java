@@ -331,6 +331,9 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 		return new HashMap<>(stateValues);
 	}
 
-
+	@Override
+	public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
+		super.configure(element,dictionary,HandlerReference.NAMESPACE,HandlerReference.ENTITY_HANDLER);
+	}
 
 }

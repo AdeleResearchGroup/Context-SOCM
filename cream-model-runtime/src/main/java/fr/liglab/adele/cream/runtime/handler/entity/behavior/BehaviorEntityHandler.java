@@ -4,6 +4,7 @@ import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.AbstractContextHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.StateInterceptor;
+import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.ContextListener;
 import org.apache.felix.ipojo.ContextSource;
 import org.apache.felix.ipojo.InstanceManager;
@@ -90,6 +91,11 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
     @Override
     public synchronized void start() {
 
+    }
+
+    @Override
+    public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
+        super.configure(element,dictionary,HandlerReference.NAMESPACE,HandlerReference.BEHAVIOR_ENTITY_HANDLER);
     }
 
     @Override
