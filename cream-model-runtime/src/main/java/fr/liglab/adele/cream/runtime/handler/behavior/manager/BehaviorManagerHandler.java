@@ -33,6 +33,8 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
 
     private String myContextId;
 
+    private final Object lockValidity = new Object();
+
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
@@ -63,7 +65,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
                 );
             }
         }
-
+        setValidity(false);
 
 
     }
@@ -80,11 +82,12 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
     @Override
     public  synchronized void start() {
         providerHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+
     }
 
     @Validate
     public void validate(){
-
+        checkValidity();
     }
 
     @Invalidate
@@ -120,6 +123,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
                 if (getInstanceManager().getState() == ComponentInstance.VALID){
                     entry.getValue().tryStartBehavior();
                 }
+                checkValidity();
             }
         }
     }
@@ -131,9 +135,23 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
                 entry.getValue().unRef();
             }
         }
+        checkValidity();
     }
 
-
+    private void checkValidity(){
+        for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
+            if (entry.getValue().isOperationnal()){
+                continue;
+            }
+            synchronized (lockValidity) {
+                    setValidity(false);
+                    return;
+            }
+        }
+        synchronized (lockValidity) {
+                setValidity(true);
+        }
+    }
 
 
     protected boolean match(RequiredBehavior req, Map prop) {

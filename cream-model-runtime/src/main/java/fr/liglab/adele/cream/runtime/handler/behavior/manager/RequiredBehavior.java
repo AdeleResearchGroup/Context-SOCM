@@ -80,6 +80,14 @@ public class RequiredBehavior implements InvocationHandler {
         }
     }
 
+    public synchronized boolean isOperationnal(){
+
+        if (myManager != null ){
+            return myManager.isOperationnal();
+        }
+        return false;
+    }
+
     public synchronized void tryStartBehavior(){
 
         if (myManager != null ){

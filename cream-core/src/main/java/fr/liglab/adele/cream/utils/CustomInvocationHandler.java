@@ -9,10 +9,7 @@ import org.apache.felix.ipojo.util.Callback;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by aygalinc on 03/06/16.
@@ -35,7 +32,7 @@ public class CustomInvocationHandler implements InvocationHandler {
 
         MethodMetadata[] methodsMetadata = pojoMetadata.getMethods();
         for (MethodMetadata metadata: methodsMetadata){
-            myMethods.put(new MethodIdentifier(pojoMetadata.getInterfaces(),metadata), new Callback(metadata,manager));
+                myMethods.put(new MethodIdentifier(pojoMetadata.getInterfaces(),metadata), new Callback(metadata,manager));
         }
 
     }
@@ -51,4 +48,24 @@ public class CustomInvocationHandler implements InvocationHandler {
         return mySuccessorStrategy.successorStrategy(myPojo,mySuccessor,proxy,method,args);
     }
 
+    /**private String[] getAllInterface(Object pojoType){
+        Set<String> listOfInterfaces = new HashSet<>();
+        recursiveIntrospection(listOfInterfaces,pojoType.getClass());
+       return listOfInterfaces.toArray(new String[listOfInterfaces.size()]);
+    }
+
+    private void recursiveIntrospection(Set<String> returnSet,Class pojoType) {
+        Class[] interfaz = null;
+        if (pojoType.isInterface()){
+            returnSet.add(pojoType.getName());
+        }
+        interfaz = pojoType.getInterfaces();
+        if (interfaz == null){
+            return;
+        }
+        for (Class clazz:interfaz){
+            recursiveIntrospection(returnSet,clazz);
+        }
+        return;
+    }**/
 }

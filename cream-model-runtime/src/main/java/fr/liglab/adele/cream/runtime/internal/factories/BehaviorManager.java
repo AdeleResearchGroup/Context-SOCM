@@ -5,10 +5,7 @@ import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyle
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
-import org.apache.felix.ipojo.ComponentFactory;
-import org.apache.felix.ipojo.ContextListener;
-import org.apache.felix.ipojo.HandlerManager;
-import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.*;
 import org.osgi.framework.BundleContext;
 
 import java.lang.reflect.InvocationHandler;
@@ -21,6 +18,7 @@ import java.util.List;
  */
 public class BehaviorManager extends InstanceManager {
 
+    private final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
     /**
      * Creates a new Component Manager.
      * The instance is not initialized.
@@ -39,7 +37,7 @@ public class BehaviorManager extends InstanceManager {
     }
 
     public BehaviorLifecyleHandler getBehaviorLifeCycleHandler(){
-        return (BehaviorLifecyleHandler)  getHandler(HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER);
+        return (BehaviorLifecyleHandler)  getHandler(LIFECYCLE_HANDLER);
     }
 
     public void registerBehaviorListener(ContextListener listener){
@@ -56,5 +54,18 @@ public class BehaviorManager extends InstanceManager {
         public Object successorStrategy(Object pojo,List<InvocationHandler> successors, Object proxy, Method method, Object[] args) throws Throwable {
             return SuccessorStrategy.NO_FOUND_CODE;
         }
+    }
+
+    public boolean isOperationnal(){
+        for (Handler handler : getRegisteredHandlers()){
+            HandlerFactory fact = (HandlerFactory) handler.getHandlerManager().getFactory();
+            if (fact.getHandlerName().equals(LIFECYCLE_HANDLER)) {
+                continue;
+            }
+            if (!handler.getValidity()){
+                return false;
+            }
+        }
+        return true;
     }
 }
