@@ -26,10 +26,6 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
 
     private final Set<String> stateVariable = new ConcurrentSkipListSet<>();
-    /**
-     * The provider handler of my associated iPOJO component instance
-     */
-    private ProvidedServiceHandler providerHandler;
 
     private String myContextId;
 
@@ -72,7 +68,6 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
 
     @Override
     public  synchronized void stop() {
-        providerHandler = null;
         for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             entry.getValue().tryDispose();
         }
@@ -80,9 +75,13 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
     }
 
     @Override
-    public  synchronized void start() {
-        providerHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+    public void start() {
+        //Do nothing
+    }
 
+
+    private ProvidedServiceHandler getProvideServiceHandler(){
+        return (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
     }
 
     @Validate
@@ -113,16 +112,13 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
         }
     }
 
-    @Bind(id = "behaviorF",specification = Factory.class,optional = true,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY +"="+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE +")")
+    @Bind(id = "behaviorF",specification = Factory.class,optional = false,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY +"="+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE +")")
     public void bindBehaviorFactory(Factory behaviorFactory, Map prop){
         for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             if (match(entry.getValue(),prop)){
                 entry.getValue().setFactory(behaviorFactory);
                 entry.getValue().addManager();
                 entry.getValue().registerBehaviorListener(this);
-                if (getInstanceManager().getState() == ComponentInstance.VALID){
-                    entry.getValue().tryStartBehavior();
-                }
                 checkValidity();
             }
         }
@@ -144,15 +140,32 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
                 continue;
             }
             synchronized (lockValidity) {
-                    setValidity(false);
-                    return;
+                setValidity(false);
+                return;
             }
         }
         synchronized (lockValidity) {
-                setValidity(true);
+            if (isOperationnal()) {
+                for (Map.Entry<String, RequiredBehavior> entry : myRequiredBehaviorById.entrySet()) {
+                    entry.getValue().tryStartBehavior();
+                }
+            }
+            setValidity(true);
         }
     }
 
+    public boolean isOperationnal(){
+        for (org.apache.felix.ipojo.Handler handler : this.getInstanceManager().getRegisteredHandlers()){
+            HandlerFactory fact = (HandlerFactory) handler.getHandlerManager().getFactory();
+            if (fact.getHandlerName().equals(HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_MANAGER_HANDLER)) {
+                continue;
+            }
+            if (!handler.getValidity()){
+                return false;
+            }
+        }
+        return true;
+    }
 
     protected boolean match(RequiredBehavior req, Map prop) {
         String spec = (String) prop.get(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME);
@@ -183,9 +196,9 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
     @Override
     public synchronized void update(ContextSource contextSource, String s, Object o) {
 
-        if (getInstanceManager().getState() <= InstanceManager.INVALID)
-            return;
-
+        /**  if (getInstanceManager().getState() <= InstanceManager.INVALID)
+         return;**/
+        ProvidedServiceHandler providerHandler = getProvideServiceHandler();
         if (providerHandler == null){
             return;
         }
@@ -195,7 +208,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
         property.put(s, o);
         if (o == null){
             stateVariable.remove(s);
-            providerHandler.removeProperties(property);
+            getProvideServiceHandler().removeProperties(property);
             return;
         }
 
