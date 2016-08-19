@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.utils;
 import fr.liglab.adele.cream.utils.MethodIdentifier;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.apache.felix.ipojo.util.Callback;
@@ -32,9 +33,9 @@ public class CustomInvocationHandler implements InvocationHandler {
 
         MethodMetadata[] methodsMetadata = pojoMetadata.getMethods();
         for (MethodMetadata metadata: methodsMetadata){
-                myMethods.put(new MethodIdentifier(pojoMetadata.getInterfaces(),metadata), new Callback(metadata,manager));
+                final String[] listOfInter = getAllInterface(pojo);
+                myMethods.put(new MethodIdentifier(listOfInter,metadata), new Callback(metadata,manager));
         }
-
     }
 
     @Override
@@ -48,7 +49,7 @@ public class CustomInvocationHandler implements InvocationHandler {
         return mySuccessorStrategy.successorStrategy(myPojo,mySuccessor,proxy,method,args);
     }
 
-    /**private String[] getAllInterface(Object pojoType){
+    private String[] getAllInterface(Object pojoType){
         Set<String> listOfInterfaces = new HashSet<>();
         recursiveIntrospection(listOfInterfaces,pojoType.getClass());
        return listOfInterfaces.toArray(new String[listOfInterfaces.size()]);
@@ -64,8 +65,9 @@ public class CustomInvocationHandler implements InvocationHandler {
             return;
         }
         for (Class clazz:interfaz){
+            if (!clazz.equals(Pojo.class))
             recursiveIntrospection(returnSet,clazz);
         }
         return;
-    }**/
+    }
 }

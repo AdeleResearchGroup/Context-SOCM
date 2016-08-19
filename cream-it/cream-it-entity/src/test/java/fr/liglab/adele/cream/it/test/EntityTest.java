@@ -69,7 +69,6 @@ public class EntityTest extends ContextBaseTest {
         assertThat(serviceObj1.returnFalse()).isFalse();
     }
 
-/** TODO: If all class are not implemented explicity it failed !
     @Test
     public void testContextImplicitServiceHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntityHeritage();
@@ -79,7 +78,7 @@ public class EntityTest extends ContextBaseTest {
         assertThat(serviceObj1.returnTrue()).isTrue();
         assertThat(serviceObj1.returnFalse()).isFalse();
     }
-**/
+
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
     }
