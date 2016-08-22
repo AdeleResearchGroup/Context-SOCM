@@ -1,9 +1,9 @@
-package fr.liglab.adele.cream.it.entity;
+package fr.liglab.adele.cream.it.entity.services;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 
 @ContextEntity(services = ContextServiceHeritage.class)
-public class ContextEntityExplicitHeritageImpl implements ContextServiceHeritage,ContextService1 {
+public class ContextEntityHeritageImpl implements ContextServiceHeritage {
 
     @Override
     public boolean returnFalse() {

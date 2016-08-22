@@ -21,7 +21,7 @@ package fr.liglab.adele.cream.it.test;
  */
 
 
-import fr.liglab.adele.cream.it.entity.*;
+import fr.liglab.adele.cream.it.entity.services.*;
 import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -36,12 +36,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExamReactorStrategy(PerMethod.class)
-public class EntityTest extends ContextBaseTest {
+public class EntityServiceTest extends ContextBaseTest {
 
     @Override
     protected List<String> getExtraExports() {
         return Arrays.asList(
-                "fr.liglab.adele.cream.it.entity"
+                "fr.liglab.adele.cream.it.entity.services"
         );
     }
 
