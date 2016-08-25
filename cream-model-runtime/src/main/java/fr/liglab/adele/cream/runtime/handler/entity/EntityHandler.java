@@ -288,11 +288,11 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 		@Override
 		public Element getHandlerInfo() {
 			Element handlerInfo = super.getHandlerInfo();
-			Element stateElement = new Element("state",null);
 			for (Map.Entry<String,Object> entry:dumpState().entrySet()){
+				Element stateElement = new Element("state",null);
 				stateElement.addAttribute(new Attribute(entry.getKey(),entry.getValue().toString()));
+				handlerInfo.addElement(stateElement);
 			}
-			handlerInfo.addElement(stateElement);
 			return handlerInfo;
 		}
 	}
