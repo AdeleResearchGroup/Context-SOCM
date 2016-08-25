@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.it.test;
+package fr.liglab.adele.cream.it.test.synchronisation;
 
 /*
  * #%L
@@ -21,10 +21,10 @@ package fr.liglab.adele.cream.it.test;
  */
 
 
-import fr.liglab.adele.cream.it.behavior.BehaviorSpec1;
-import fr.liglab.adele.cream.it.behavior.BehaviorSpec2;
-import fr.liglab.adele.cream.it.behavior.ContextEntity2;
-import fr.liglab.adele.cream.it.behavior.ContextService1;
+import fr.liglab.adele.cream.it.behavior.synchronisation.BehaviorSpec1;
+import fr.liglab.adele.cream.it.behavior.synchronisation.BehaviorSpec2;
+import fr.liglab.adele.cream.it.behavior.synchronisation.ContextEntity2;
+import fr.liglab.adele.cream.it.behavior.synchronisation.ContextService1;
 import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -44,7 +44,8 @@ public class MultipleBehaviorTest extends ContextBaseTest {
     @Override
     protected List<String> getExtraExports() {
         return Arrays.asList(
-                "fr.liglab.adele.cream.it.behavior"
+                "fr.liglab.adele.cream.it.behavior.injection",
+                "fr.liglab.adele.cream.it.behavior.synchronisation"
         );
     }
 

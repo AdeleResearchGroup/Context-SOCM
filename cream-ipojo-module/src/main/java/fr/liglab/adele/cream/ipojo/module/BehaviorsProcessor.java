@@ -12,8 +12,6 @@ import org.apache.felix.ipojo.metadata.Element;
  */
 public class BehaviorsProcessor extends AbstractBehaviorElementProcessor<Behaviors>  {
 
-	protected static final String BEHAVIOR_ELEMENT = HandlerReference.NAMESPACE +":"+ HandlerReference.BEHAVIOR_MANAGER_HANDLER;
-
 	public BehaviorsProcessor(ClassLoader classReferenceLoader) {
 		super(Behaviors.class,classReferenceLoader);
 	}

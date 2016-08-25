@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.it.behavior;
+package fr.liglab.adele.cream.it.behavior.synchronisation;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 

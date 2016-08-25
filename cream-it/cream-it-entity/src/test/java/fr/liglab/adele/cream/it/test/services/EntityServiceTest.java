@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.it.test;
+package fr.liglab.adele.cream.it.test.services;
 
 /*
  * #%L
@@ -41,7 +41,8 @@ public class EntityServiceTest extends ContextBaseTest {
     @Override
     protected List<String> getExtraExports() {
         return Arrays.asList(
-                "fr.liglab.adele.cream.it.entity.services"
+                "fr.liglab.adele.cream.it.entity.services",
+                "fr.liglab.adele.cream.it.entity.synchronisation"
         );
     }
 

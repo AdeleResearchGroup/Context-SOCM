@@ -10,6 +10,7 @@ import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.FieldMetadata;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -56,9 +57,17 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
             }
 
             for (Element individualBehaviorElement:behaviorIndividualElements) {
-                myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),
-                        new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME), individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME), prop)
-                );
+                RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME), individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME), prop);
+                myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),requiredBehavior);
+
+                String fieldAttribute = individualBehaviorElement.getAttribute(BehaviorReference.FIELD_ATTRIBUTE_NAME);
+                FieldMetadata fieldMetadata = null;
+                if (fieldAttribute != null){
+                    fieldMetadata = getPojoMetadata().getField(fieldAttribute);
+                }
+                if (fieldMetadata != null){
+                    getInstanceManager().register(fieldMetadata,requiredBehavior.getBehaviorInterceptor());
+                }
             }
         }
         setValidity(false);

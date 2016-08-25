@@ -6,6 +6,7 @@ import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class RequiredBehavior implements InvocationHandler {
 
     private final Hashtable myConfiguration = new Hashtable();
 
-    public RequiredBehavior(String spec, String behaviorImpl,Map config) {
+    public RequiredBehavior(String spec, String behaviorImpl, Map config) {
         myName = spec;
         myBehaviorNameImpl = behaviorImpl;
         myConfiguration.putAll(config);
@@ -132,6 +133,23 @@ public class RequiredBehavior implements InvocationHandler {
 
     public void registerBehaviorListener(ContextListener listener){
         myManager.registerBehaviorListener(listener);
+    }
+
+    public FieldInterceptor getBehaviorInterceptor(){
+        return new BehaviorInjectedInterceptor();
+    }
+
+    private class BehaviorInjectedInterceptor implements FieldInterceptor{
+
+        @Override
+        public void onSet(Object pojo, String fieldName, Object value) {
+
+        }
+
+        @Override
+        public Object onGet(Object pojo, String fieldName, Object value) {
+            return myManager.getPojoObject();
+        }
     }
 
 }

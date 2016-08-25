@@ -20,6 +20,10 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
     }
 
     protected void buildSubBehaviorElement(Behavior annotation){
+        if (getMetadataElement(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME+":"+annotation.id()) != null){
+            error("Behavior id must be unique. Duplicate id : " + annotation.id());
+        }
+
         Element behaviorIndividualElement = new Element(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
         Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,annotation.spec().getName());
         Attribute implAttr = new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,annotation.implem().getName());
@@ -28,7 +32,7 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
         behaviorIndividualElement.addAttribute(implAttr);
         behaviorIndividualElement.addAttribute(id);
 
-        addMetadataElement(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,behaviorIndividualElement,getBehaviorParentElement());
+        addMetadataElement(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME+":"+annotation.id(),behaviorIndividualElement,getBehaviorParentElement());
         addSpecToProvideElement(annotation.spec().getName());
     }
 

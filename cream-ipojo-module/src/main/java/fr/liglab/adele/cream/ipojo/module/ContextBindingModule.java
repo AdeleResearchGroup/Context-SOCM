@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.ipojo.module;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 import fr.liglab.adele.cream.annotations.behavior.Behaviors;
+import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.Relation;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
@@ -62,6 +63,12 @@ public class ContextBindingModule extends AbsBindingModule {
 				.when(and( on(ElementType.TYPE), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
 				.to(
 						new BehaviorsProcessor(classReferenceLoader)
+				);
+
+		bind(InjectedBehavior.class)
+				.when(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(AbstractBehaviorElementProcessor.BEHAVIOR_ELEMENT).exists()))
+				.to(
+						new InjectedBehaviorProcessor(classReferenceLoader)
 				);
 
 		bind(State.Field.class)
@@ -163,6 +170,12 @@ public class ContextBindingModule extends AbsBindingModule {
 				.to((BindingContext context) ->
 						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
 								Behavior.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
+				);
+		bind(InjectedBehavior.class)
+				.when(and( on(ElementType.FIELD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(AbstractBehaviorElementProcessor.BEHAVIOR_ELEMENT).exists()))))
+				.to((BindingContext context) ->
+						error(context,"Class %s must be annotated with %s and %s to use injected behavior annotation",
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),Behavior.class.getSimpleName())
 				);
 
         /*
