@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.annotations.entity;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import fr.liglab.adele.cream.utils.CreamInvocationException;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.InstanceManager;
@@ -129,7 +130,7 @@ public class ContextProvideStrategy extends CreationStrategy {
                 }
                 return returnObj;
             }
-            throw  new RuntimeException();
+            throw  new CreamInvocationException();
         }
 
         private String belongToObjectMethod(Object proxy, Method method, Object[] args){
