@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by aygalinc on 31/05/16.
  */
-public class BehaviorManager extends InstanceManager {
+public class BehaviorInstanceManager extends InstanceManager {
 
     private final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
     /**
@@ -27,7 +27,7 @@ public class BehaviorManager extends InstanceManager {
      * @param context  the bundle context to give to the instance
      * @param handlers handler object array
      */
-    public BehaviorManager(ComponentFactory factory, BundleContext context, HandlerManager[] handlers) {
+    public BehaviorInstanceManager(ComponentFactory factory, BundleContext context, HandlerManager[] handlers) {
         super(factory, context, handlers);
     }
 

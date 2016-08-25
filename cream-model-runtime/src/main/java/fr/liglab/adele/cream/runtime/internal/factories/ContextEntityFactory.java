@@ -1,15 +1,12 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
-import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.util.Logger;
 import org.osgi.framework.BundleContext;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.List;
 
 /**
  * Created by aygalinc on 31/05/16.
@@ -23,7 +20,7 @@ public class ContextEntityFactory extends ComponentFactory {
     @Override
     public ComponentInstance createInstance(Dictionary config, IPojoContext context, HandlerManager[] handlers) throws org.apache.felix.ipojo.ConfigurationException {
 
-        InstanceManager instance = new ContextEntityManager(this, context, handlers);
+        InstanceManager instance = new ContextEntityInstanceManager(this, context, handlers);
 
         try {
             instance.configure(m_componentMetadata, config);

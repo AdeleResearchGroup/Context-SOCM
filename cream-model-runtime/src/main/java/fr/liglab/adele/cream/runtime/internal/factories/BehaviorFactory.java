@@ -50,7 +50,7 @@ public class BehaviorFactory extends ComponentFactory {
     @Override
     public ComponentInstance createInstance(Dictionary config, IPojoContext context, HandlerManager[] handlers) throws ConfigurationException {
 
-        InstanceManager instance = new BehaviorManager(this, context, handlers);
+        InstanceManager instance = new BehaviorInstanceManager(this, context, handlers);
 
         try {
             instance.configure(m_componentMetadata, config);

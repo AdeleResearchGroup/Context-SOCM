@@ -12,7 +12,7 @@ import java.util.Dictionary;
 /**
  * Created by aygalinc on 31/05/16.
  */
-public class ContextEntityManager extends InstanceManager{
+public class ContextEntityInstanceManager extends InstanceManager{
 
     /**
      * Creates a new Component Manager.
@@ -22,7 +22,7 @@ public class ContextEntityManager extends InstanceManager{
      * @param context  the bundle context to give to the instance
      * @param handlers handler object array
      */
-    public ContextEntityManager(ComponentFactory factory, BundleContext context, HandlerManager[] handlers) {
+    public ContextEntityInstanceManager(ComponentFactory factory, BundleContext context, HandlerManager[] handlers) {
         super(factory, context, handlers);
 
     }

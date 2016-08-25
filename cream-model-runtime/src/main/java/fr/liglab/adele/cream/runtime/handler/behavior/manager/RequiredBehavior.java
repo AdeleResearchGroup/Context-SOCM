@@ -1,12 +1,11 @@
 package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorFactory;
-import fr.liglab.adele.cream.runtime.internal.factories.BehaviorManager;
+import fr.liglab.adele.cream.runtime.internal.factories.BehaviorInstanceManager;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ public class RequiredBehavior implements InvocationHandler {
 
     private final String myBehaviorNameImpl;
 
-    private BehaviorManager myManager;
+    private BehaviorInstanceManager myManager;
 
     private final Hashtable myConfiguration = new Hashtable();
 
@@ -68,7 +67,7 @@ public class RequiredBehavior implements InvocationHandler {
         return myBehaviorNameImpl;
     }
 
-    public synchronized BehaviorManager getManager() {
+    public synchronized BehaviorInstanceManager getManager() {
         return myManager;
     }
 
@@ -83,7 +82,7 @@ public class RequiredBehavior implements InvocationHandler {
         }
 
         try {
-            myManager = (BehaviorManager) myFactory.createComponentInstance(myConfiguration,null);
+            myManager = (BehaviorInstanceManager) myFactory.createComponentInstance(myConfiguration,null);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error(UnacceptableConfiguration.class.getName(),unacceptableConfiguration);
         } catch (MissingHandlerException e) {
