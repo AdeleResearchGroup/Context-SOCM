@@ -46,7 +46,7 @@ public class ContextEntityHelper {
         param.put("context.entity.id",contextEntityId);
 
         if (contextEntityInitParameters != null) {
-            param.putAll(contextEntityInitParameters);
+            param.put("context.entity.init",contextEntityInitParameters);
         }
         if (pojoParameters != null){
             param.putAll(pojoParameters);

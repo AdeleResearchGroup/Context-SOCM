@@ -38,10 +38,6 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
         getInstanceManager().addInstanceStateListener(this);
 
         myContextId = (String) configuration.get(ContextEntity.CONTEXT_ENTITY_ID);
-        Hashtable prop = new Hashtable();
-        if (myContextId != null){
-            prop.put(ContextEntity.CONTEXT_ENTITY_ID,myContextId);
-        }
 
         Element[] behaviorElements = metadata.getElements(HandlerReference.BEHAVIOR_MANAGER_HANDLER,HandlerReference.NAMESPACE);
 
@@ -57,7 +53,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
             }
 
             for (Element individualBehaviorElement:behaviorIndividualElements) {
-                RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME), individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME), prop);
+                RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME), individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME), configuration);
                 myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),requiredBehavior);
 
                 String fieldAttribute = individualBehaviorElement.getAttribute(BehaviorReference.FIELD_ATTRIBUTE_NAME);
