@@ -1,6 +1,8 @@
 package fr.liglab.adele.cream.ipojo.module;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.StrategyReference;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.metadata.Attribute;
@@ -57,11 +59,49 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
     }
 
     private void addSpecToProvideElement(String behaviorSpecification){
-        Element providesElements = getMetadataElement(ContextEntityProcessor.CONTEXT_PROVIDE_TYPE);
-        String specs = new String(providesElements.getAttribute("specifications"));
-        String temp = specs.substring(0,specs.length()-1);
-        String newSpecs = temp + ","+behaviorSpecification+"}";
+        Element provideElement = getProvideElement();
+        String newSpecs;
+        if (provideElement.getAttribute("specifications") == null || provideElement.getAttribute("specifications").length() == 0 ){
+            newSpecs = "{"+behaviorSpecification+"}";
+        }else {
+            String specs = new String(provideElement.getAttribute("specifications"));
+            String temp = specs.substring(0,specs.length()-1);
+            newSpecs = temp + ","+behaviorSpecification+"}";
+            Attribute newSpecAttribute= new Attribute("specifications",newSpecs);
+            provideElement.addAttribute(newSpecAttribute);
+        }
+
         Attribute newSpecAttribute= new Attribute("specifications",newSpecs);
-        providesElements.addAttribute(newSpecAttribute);
+        provideElement.addAttribute(newSpecAttribute);
+
+    }
+
+    private Element getProvideElement(){
+        Element providesElement = getMetadataElement(ContextEntityProcessor.CONTEXT_PROVIDE_TYPE);
+        if (providesElement == null){
+            Element provides = new Element("provides","");
+
+        /*
+         * Add a static property to the component specifying all the context services implemented by the entity
+         */
+            Element property  = new Element("property", "");
+
+            property.addAttribute(new Attribute("name", ContextEntity.ENTITY_CONTEXT_SERVICES));
+            property.addAttribute(new Attribute("type", "string[]"));
+            property.addAttribute(new Attribute("mandatory", "false"));
+            property.addAttribute(new Attribute("immutable", "true"));
+
+            provides.addElement(property);
+
+
+            Attribute attributeStrategy = new Attribute("strategy", StrategyReference.STRATEGY_PATH);
+            provides.addAttribute(attributeStrategy);
+
+            //  addMetadataElement(provides);
+            addMetadataElement(ContextEntityProcessor.CONTEXT_PROVIDE_TYPE,provides,null);
+            return provides;
+        }
+        return providesElement;
+
     }
 }
