@@ -18,11 +18,11 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 
 
 		FieldNode node = getAnnotatedField();
-
 		Element element = getMetadataElement(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME+":"+annotation.id());
 		if (element == null){
 			error("Wrong injected behavior id. No declared behavior corresponds to id : " + node.name);
 		}
+		checkFieldTypeCorrespondance(element,node.desc);
 
 		Attribute attributeField = new Attribute(BehaviorReference.FIELD_ATTRIBUTE_NAME,node.name);
 		element.addAttribute(attributeField);
@@ -31,32 +31,16 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 		return;
 	}
 
-
-	private void printElement(Element element2 ){
-		if (element2 == null){
-			System.out.println("Element is null");
-			return;
+	private void checkFieldTypeCorrespondance(Element behaviorElement,String desc){
+		String javaType = convertASMType(desc);
+		if (!(behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME).equals(javaType))){
+			error("Behavior injected field with id " + behaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME) + " have a specification ( "+ javaType+" ) that not match the corresponding behavior annotation ( "+ behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME)+" ).");
 		}
-		System.out.println("Element ns:" + element2.getNameSpace() + " , n: " + element2.getName());
-		Attribute[] attr = element2.getAttributes();
-		if (attr != null){
-			for (Attribute attribute:attr){
-				System.out.println("Attr ns: " + attribute.getName()+ " , n: " + attribute.getName() +" , value: " + attribute.getValue());
-			}
-		}
-
-		Element[] elements = element2.getElements();
-
-		if (elements != null){
-			System.out.println("SubElements");
-			for (Element element : elements){
-				System.out.println("Recursion ");
-				printElement(element);
-			}
-		}else {
-			System.out.println("No subElements");
-		}
-
 	}
 
+	private String convertASMType(String asmType){
+		String subAsm = asmType.substring(1,asmType.length()-1);
+		String javaType = subAsm.replaceAll("/",".");
+		return javaType;
+	}
 }
