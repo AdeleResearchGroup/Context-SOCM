@@ -1,3 +1,16 @@
+#eclipse files
+.project
+.settings
+.classpath
+
+#osgi binary folders
+logs
+felix-cache
+
+# maven folders
+target
+
+# binary files
 *.class
 
 # Mobile Tools for Java (J2ME)
