@@ -5,18 +5,16 @@ import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.AbstractContextHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.StateInterceptor;
 import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.ContextListener;
 import org.apache.felix.ipojo.ContextSource;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 
 @Handler(name = HandlerReference.BEHAVIOR_ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
 public class BehaviorEntityHandler extends AbstractContextHandler implements ContextEntity,ContextSource{

@@ -11,12 +11,12 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.ServiceController;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
-import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 @Handler(name =HandlerReference.ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
 @Provides(specifications = ContextEntity.class)
