@@ -25,6 +25,7 @@
         <netty.version>4.0.23.Final</netty.version>
         <jackson.version>2.4.4</jackson.version>
         <jackson.version>2.4.4</jackson.version>
+        <sonar.skip>true</sonar.skip>
     </properties>
 
     <dependencies>
