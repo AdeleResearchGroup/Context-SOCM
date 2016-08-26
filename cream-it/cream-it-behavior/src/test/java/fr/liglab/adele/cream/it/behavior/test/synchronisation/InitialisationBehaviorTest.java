@@ -1,10 +1,10 @@
-package fr.liglab.adele.cream.it.test.synchronisation;
+package fr.liglab.adele.cream.it.behavior.test.synchronisation;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.it.behavior.synchronisation.BehaviorInitValue;
 import fr.liglab.adele.cream.it.behavior.synchronisation.ContextEntityWithBehaviorToInit;
 import fr.liglab.adele.cream.it.behavior.synchronisation.ContextService1;
-import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
+import fr.liglab.adele.cream.it.behavior.test.BehaviorBaseCommonConfig;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
@@ -12,31 +12,13 @@ import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExamReactorStrategy(PerMethod.class)
-public class InitialisationBehaviorTest  extends ContextBaseTest {
-
-    @Override
-    protected List<String> getExtraExports() {
-        return Arrays.asList(
-                "fr.liglab.adele.cream.it.behavior.injection",
-                "fr.liglab.adele.cream.it.behavior.synchronisation"
-        );
-    }
-
-
-    @Override
-    public boolean deployTestBundle() {
-        return true;
-    }
-
-
+public class InitialisationBehaviorTest  extends BehaviorBaseCommonConfig {
 
     @Test
     public void testInitBehaviorWithTrue() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {

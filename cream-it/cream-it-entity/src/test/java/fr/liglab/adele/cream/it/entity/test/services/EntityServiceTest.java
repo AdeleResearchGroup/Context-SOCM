@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.it.test.services;
+package fr.liglab.adele.cream.it.entity.test.services;
 
 /*
  * #%L
@@ -22,7 +22,7 @@ package fr.liglab.adele.cream.it.test.services;
 
 
 import fr.liglab.adele.cream.it.entity.services.*;
-import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
+import fr.liglab.adele.cream.it.entity.test.EntityBaseCommonConfig;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
@@ -30,27 +30,11 @@ import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExamReactorStrategy(PerMethod.class)
-public class EntityServiceTest extends ContextBaseTest {
+public class EntityServiceTest extends EntityBaseCommonConfig {
 
-    @Override
-    protected List<String> getExtraExports() {
-        return Arrays.asList(
-                "fr.liglab.adele.cream.it.entity.synchronisation"
-                //By convention services package are exported by the base test
-        );
-    }
-
-
-    @Override
-    public boolean deployTestBundle() {
-        return true;
-    }
 
     @Test
     public void testSimpleContextService() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {

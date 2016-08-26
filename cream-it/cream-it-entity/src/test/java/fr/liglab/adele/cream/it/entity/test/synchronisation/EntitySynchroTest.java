@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.it.test.synchronisation;
+package fr.liglab.adele.cream.it.entity.test.synchronisation;
 
 /*
  * #%L
@@ -24,7 +24,7 @@ package fr.liglab.adele.cream.it.test.synchronisation;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.it.entity.synchronisation.ContextEntitySynchro;
 import fr.liglab.adele.cream.it.entity.synchronisation.ServiceSynchroSpec;
-import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
+import fr.liglab.adele.cream.it.entity.test.EntityBaseCommonConfig;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
@@ -33,27 +33,11 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.ServiceReference;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExamReactorStrategy(PerMethod.class)
-public class EntitySynchroTest extends ContextBaseTest {
+public class EntitySynchroTest extends EntityBaseCommonConfig {
 
-    @Override
-    protected List<String> getExtraExports() {
-        return Arrays.asList(
-                "fr.liglab.adele.cream.it.entity.synchronisation"
-                //By convention services package are exported by the base test
-        );
-    }
-
-
-    @Override
-    public boolean deployTestBundle() {
-        return true;
-    }
 
     @Test
     public void testDirectAccessSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
@@ -133,7 +117,7 @@ public class EntitySynchroTest extends ContextBaseTest {
     public void testPeriodicPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ServiceSynchroSpec serviceObj1 =createContextEntity();
 
-      ServiceReference serviceReference = osgiHelper.getServiceReference(ServiceSynchroSpec.class);
+        ServiceReference serviceReference = osgiHelper.getServiceReference(ServiceSynchroSpec.class);
 /**
  * TODO : Test fail, check init phase of behavior
  long firstValue = (long) serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
