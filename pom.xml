@@ -69,8 +69,10 @@
         <depends-maven-plugin.version>1.2</depends-maven-plugin.version>
         <sonar-maven-plugin>3.0.2</sonar-maven-plugin>
         <maven-clean-plugin>3.0.0</maven-clean-plugin>
-        <maven-bundle-plugin>2.5.3</maven-bundle-plugin>
-        <maven-compiler-plugin>3.2</maven-compiler-plugin>
+        <maven-bundle-plugin>3.2.0</maven-bundle-plugin>
+        <maven-compiler-plugin>3.5.1</maven-compiler-plugin>
+        <maven-surefire-plugin>2.19.1</maven-surefire-plugin>
+        <maven-javadoc-plugin>2.10.4</maven-javadoc-plugin>
 
         <!-- Sonar -->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -265,6 +267,11 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -308,7 +315,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>${maven-javadoc-plugin}</version>
                 <executions>
                     <execution>
                         <goals>
