@@ -3,7 +3,6 @@ package fr.liglab.adele.cream.runtime.internal.factories;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
-import fr.liglab.adele.cream.utils.CreamInvocationException;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
@@ -19,7 +18,7 @@ import java.util.List;
  */
 public class BehaviorInstanceManager extends InstanceManager {
 
-    private final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
+    private static final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
     /**
      * Creates a new Component Manager.
      * The instance is not initialized.

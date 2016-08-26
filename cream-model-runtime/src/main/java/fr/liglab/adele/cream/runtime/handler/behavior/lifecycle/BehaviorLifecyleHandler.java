@@ -11,16 +11,16 @@ import java.util.Dictionary;
 @Handler(name = HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER, namespace = HandlerReference.NAMESPACE)
 public class BehaviorLifecyleHandler extends PrimitiveHandler {
 
-    private final Object m_lock = new Object();
+    private final Object myLock = new Object();
 
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-
+        //Do nothing
     }
 
     @Override
     public synchronized void stop() {
-
+        //Do nothing
     }
 
     @Override
@@ -29,7 +29,7 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler {
     }
 
     public void stopBehavior() {
-        synchronized (m_lock) {
+        synchronized (myLock) {
             if (this.getValidity()) {
                 setValidity(false);
             }
@@ -37,7 +37,7 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler {
     }
 
     public void startBehavior(){
-        synchronized (m_lock) {
+        synchronized (myLock) {
             if (!this.getValidity()) {
                 setValidity(true);
             }

@@ -2,7 +2,6 @@ package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
-import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -28,14 +27,10 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
 
     private final Set<String> stateVariable = new ConcurrentSkipListSet<>();
 
-    private String myContextId;
-
     private final Object lockValidity = new Object();
 
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-
-        myContextId = (String) configuration.get(ContextEntity.CONTEXT_ENTITY_ID);
 
         Element[] behaviorElements = metadata.getElements(HandlerReference.BEHAVIOR_MANAGER_HANDLER,HandlerReference.NAMESPACE);
 
@@ -199,15 +194,13 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
     @Override
     public synchronized void update(ContextSource contextSource, String s, Object o) {
 
-        /**  if (getInstanceManager().getState() <= InstanceManager.INVALID)
-         return;**/
         ProvidedServiceHandler providerHandler = getProvideServiceHandler();
         if (providerHandler == null){
             return;
         }
 
 
-        Hashtable<String,Object> property = new Hashtable<String,Object>();
+        Hashtable<String,Object> property = new Hashtable<>();
         property.put(s, o);
         if (o == null){
             stateVariable.remove(s);

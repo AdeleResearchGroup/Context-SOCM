@@ -61,8 +61,8 @@ public class BehaviorFactory extends ComponentFactory {
             // methods, the instance is stopped so the architecture service is still published and so we can debug
             // the issue.
             throw e;
-        } catch (Throwable e) { // All others exception are handled here.
-            // As for the previous case, the instance is stopped.;
+        } catch (Exception e) { // All others exception are handled here.
+            // As for the previous case, the instance is stopped
             m_logger.log(Logger.INFO, "An error occurred when creating an instance of " + getFactoryName(), e);
             throw new ConfigurationException(e.getMessage(), e);
         }
@@ -76,12 +76,13 @@ public class BehaviorFactory extends ComponentFactory {
      * @return the description of the component type attached to this factory.
      * @see IPojoFactory#getComponentTypeDescription()
      */
+    @Override
     public ComponentTypeDescription getComponentTypeDescription() {
-        return new ContextEntityTypeDescription(this);
+        return new BehaviorTypeDescription(this);
     }
 
-    private class ContextEntityTypeDescription extends ComponentTypeDescription{
-        public ContextEntityTypeDescription(IPojoFactory factory) {
+    private class BehaviorTypeDescription extends ComponentTypeDescription{
+        public BehaviorTypeDescription(IPojoFactory factory) {
             super(factory);
         }
 

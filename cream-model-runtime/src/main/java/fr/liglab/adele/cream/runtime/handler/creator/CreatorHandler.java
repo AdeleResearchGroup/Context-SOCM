@@ -1,19 +1,14 @@
 package fr.liglab.adele.cream.runtime.handler.creator;
 
-import fr.liglab.adele.cream.runtime.model.impl.RelationImpl;
-import fr.liglab.adele.cream.model.ContextEntity;
-import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.annotations.provider.Creator;
+import fr.liglab.adele.cream.model.ContextEntity;
+import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.cream.model.introspection.EntityProvider;
 import fr.liglab.adele.cream.model.introspection.RelationProvider;
 import fr.liglab.adele.cream.runtime.handler.entity.EntityHandler;
-
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.InstanceManager;
-import org.apache.felix.ipojo.Pojo;
-import org.apache.felix.ipojo.PrimitiveHandler;
+import fr.liglab.adele.cream.runtime.model.impl.RelationImpl;
+import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -107,6 +102,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 	@Override
 	public void onSet(Object pojo, String fieldName, Object value) {
+		//Do nothnig
 	}
 
 	/**
@@ -132,10 +128,12 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 	@Override
 	public void start() {
+		//do nothing
 	}
 
 	@Override
 	public void stop() {
+		//do nothing
 	}
 
 
@@ -208,7 +206,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 				.collect(Collectors.toSet());
 
 		for (String instance : instances) {
-			creators.get(contextItem).delete(instance);
+			creators.get(contextItem).deleteComponent(instance);
 		}
 
 		return true;
@@ -216,6 +214,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 	private static class RelationCreator extends ComponentCreator implements Creator.Relation<Object,Object> {
 
+		private static final String ERROR_MESSAGE = "source or target object is not a context entity";
 		/**
 		 * The relation created by this factory
 		 */
@@ -261,17 +260,17 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			if ((source instanceof Pojo) && (target instanceof Pojo)) {
 				return create(EntityHandler.getContextEntity((Pojo)source).getId(),EntityHandler.getContextEntity((Pojo)target).getId());
 			}
-			
-			throw new IllegalArgumentException("source or target object is not a context entity");
+
+			throw new IllegalArgumentException(ERROR_MESSAGE);
 		}
-		
+
 		@Override
 		public String create(Object source, String targetId) {
 			if ((source instanceof Pojo) && (targetId != null)) {
 				return create(EntityHandler.getContextEntity((Pojo)source).getId(),targetId);
 			}
-			
-			throw new IllegalArgumentException("source or target object is not a context entity");
+
+			throw new IllegalArgumentException(ERROR_MESSAGE);
 		}
 
 		@Override
@@ -279,11 +278,11 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			if ((sourceId != null) && (target instanceof Pojo)) {
 				return create(sourceId,EntityHandler.getContextEntity((Pojo)target).getId());
 			}
-			
-			throw new IllegalArgumentException("source or target object is not a context entity");
+
+			throw new IllegalArgumentException(ERROR_MESSAGE);
 		}
-		
-		
+
+
 		@Override
 		public Set<String> getInstances() {
 			return getInstanceDeclarations()
@@ -295,7 +294,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		public Relation getInstance(String id) {
 			if (id == null)
 				return null;
-			
+
 			InstanceDeclaration declaration = this.instances.get(id);
 			if (declaration == null) {
 				return null;
@@ -316,9 +315,9 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		public List<Relation> getInstancesRelatedTo(String sourceId) {
 			List<Relation> relations = new ArrayList<>();
 			for (String relationId : this.instances.keySet()) {
-				Relation relation = getInstance(relationId);
-				if (relation != null && relation.getSource().equals(sourceId)) {
-					relations.add(relation);
+				Relation extractedRelation = getInstance(relationId);
+				if (extractedRelation != null && extractedRelation.getSource().equals(sourceId)) {
+					relations.add(extractedRelation);
 				}
 			}
 			return relations;
@@ -329,13 +328,13 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			if (source instanceof Pojo) {
 				return getInstancesRelatedTo(EntityHandler.getContextEntity((Pojo)source).getId());
 			}
-			
+
 			throw new IllegalArgumentException("source object is not a context entity");
 		}
 
 		@Override
 		public void delete(String id) {
-			super.delete(id);
+			super.deleteComponent(id);
 		}
 
 		@Override
@@ -363,7 +362,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 				delete(sourceId,EntityHandler.getContextEntity((Pojo)target).getId());
 			}
 		}
-		
+
 		@Override
 		public void deleteAll() {
 			Set<String> instances = getInstances();
@@ -408,7 +407,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			int endPackageName = entity.lastIndexOf('.');
 			String qualifiedName = (endPackageName != -1 ? entity.substring(0, endPackageName+1) : "")+id;
 
-			Dictionary<String, Object> configuration = new Hashtable<String,Object>();
+			Dictionary<String, Object> configuration = new Hashtable<>();
 
 			configuration.put("instance.name",qualifiedName);
 			configuration.put(ContextEntity.CONTEXT_ENTITY_ID,id);
@@ -425,9 +424,9 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 					/**
 					 * For entities we try to save the state of the entity before disposing it
 					 */
-					ContextEntity entity = EntityHandler.getContextEntity(this.instance);
-					if (entity != null) {
-						configuration.put("context.entity.init",entity.dumpState());
+					ContextEntity entityToSave = EntityHandler.getContextEntity(this.instance);
+					if (entityToSave != null) {
+						configuration.put("context.entity.init",entityToSave.dumpState());
 					}
 
 					super.dispose();
@@ -438,7 +437,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 		@Override
 		public void delete(String id) {
-			super.delete(id);
+			super.deleteComponent(id);
 		}
 
 		@Override
@@ -488,6 +487,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			super(CreatorHandler.this);
 		}
 
+		@Override
 		public synchronized Element getHandlerInfo() {
 
 			Element creatorHandlerDescription = super.getHandlerInfo();

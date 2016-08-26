@@ -32,7 +32,7 @@ public class ContextEntityFactory extends ComponentFactory {
             // the issue.
             instance.stop();
             throw e;
-        } catch (Throwable e) { // All others exception are handled here.
+        } catch (Exception e) { // All others exception are handled here.
             // As for the previous case, the instance is stopped.
             instance.stop();
             m_logger.log(Logger.INFO, "An error occurred when creating an instance of " + getFactoryName(), e);
@@ -47,6 +47,7 @@ public class ContextEntityFactory extends ComponentFactory {
      * @return the description of the component type attached to this factory.
      * @see org.apache.felix.ipojo.IPojoFactory#getComponentTypeDescription()
      */
+    @Override
     public ComponentTypeDescription getComponentTypeDescription() {
         return new ContextEntityTypeDescription(this);
     }

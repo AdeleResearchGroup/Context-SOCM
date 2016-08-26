@@ -64,7 +64,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
             instanceIsActive = true;
 
 
-            propagate(new Hashtable<>(stateValues));
+            propagate(new HashMap<>(stateValues));
 
             /*
              * restart state handlers
@@ -90,7 +90,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
     @Override
     public synchronized void start() {
-
+//Do nothing
     }
 
     @Override
@@ -120,7 +120,9 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         assert stateId != null && stateIds.contains(stateId);
 
         Object oldValue 	= stateValues.get(stateId);
-        boolean noChange 	= (oldValue == null && value == null) || (oldValue != null && value != null) && oldValue.equals(value);
+        boolean bothNull 	= (oldValue == null && value == null);
+        boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
+        boolean noChange = bothNull && equals;
 
         if (noChange)
             return;
@@ -139,7 +141,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         notifyContextListener(stateId,value);
     }
 
-    private void propagate(Hashtable<String,Object> properties){
+    private void propagate(Map<String,Object> properties){
         for (Map.Entry<String,Object> prop:  properties.entrySet()){
             notifyContextListener(prop.getKey(),prop.getValue());
         }

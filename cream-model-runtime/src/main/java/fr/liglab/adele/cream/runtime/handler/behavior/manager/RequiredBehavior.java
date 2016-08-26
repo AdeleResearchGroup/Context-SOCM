@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Created by aygalinc on 02/06/16.
@@ -37,13 +39,12 @@ public class RequiredBehavior implements InvocationHandler {
         /**
          * Extract Dictionnary properrties
          */
-        int i=0;
         Enumeration enumeration = config.keys();
         config.size();
         while (enumeration.hasMoreElements()){
             Object key = enumeration.nextElement();
             Object value = config.get(key);
-            if (!(key.equals("instance.name"))){
+            if (!("instance.name".equals(key))){
                 myConfiguration.put(key,value);
             }
         }
@@ -154,7 +155,7 @@ public class RequiredBehavior implements InvocationHandler {
 
         @Override
         public void onSet(Object pojo, String fieldName, Object value) {
-
+//On set method do nothing
         }
 
         @Override

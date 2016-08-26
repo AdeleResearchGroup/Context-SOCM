@@ -1,13 +1,9 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
 import org.apache.felix.ipojo.ComponentFactory;
-import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.HandlerManager;
 import org.apache.felix.ipojo.InstanceManager;
-import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.BundleContext;
-
-import java.util.Dictionary;
 
 /**
  * Created by aygalinc on 31/05/16.
@@ -26,11 +22,4 @@ public class ContextEntityInstanceManager extends InstanceManager{
         super(factory, context, handlers);
 
     }
-
-    public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-        super.configure(metadata,configuration);
-    }
-
-
-
 }

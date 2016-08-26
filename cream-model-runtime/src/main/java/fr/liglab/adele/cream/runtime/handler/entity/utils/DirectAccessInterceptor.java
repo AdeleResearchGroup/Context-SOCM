@@ -68,10 +68,12 @@ public class DirectAccessInterceptor implements StateInterceptor, FieldIntercept
 
 	@Override
 	public void validate() {
+		//Do nothing
 	}
 
 	@Override
 	public void invalidate() {
+		//Do nothing
 	}
 
 }

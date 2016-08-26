@@ -7,13 +7,17 @@ import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class gathers information about an instance that must be created
  *
  */
 public class InstanceDeclaration {
-	
+
+	private static final Logger LOG = LoggerFactory.getLogger(InstanceDeclaration.class);
+
 	/**
 	 * The name of the instance
 	 */
@@ -59,7 +63,8 @@ public class InstanceDeclaration {
 			try {
 				instance = factory.createComponentInstance(configuration);
 			} catch (UnacceptableConfiguration | MissingHandlerException | ConfigurationException ignored) {
-				ignored.printStackTrace();
+				LOG.error("instantiation failed caused by:  ",ignored);
+
 			}
 		}
 	}

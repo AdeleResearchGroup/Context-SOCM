@@ -74,7 +74,7 @@ public abstract class ComponentCreator {
 	/**
 	 * Destroys the specified instance and remove it from the list of created items
 	 */
-	protected void delete(String id) {
+	protected void deleteComponent(String id) {
 		InstanceDeclaration instance = instances.get(id);
 		if (instance != null) {
 			instance.dispose();

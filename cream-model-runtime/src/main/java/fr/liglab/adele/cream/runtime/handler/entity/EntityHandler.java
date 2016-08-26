@@ -1,13 +1,9 @@
 package fr.liglab.adele.cream.runtime.handler.entity;
 
-import fr.liglab.adele.cream.annotations.ContextService;
-import fr.liglab.adele.cream.annotations.State;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.AbstractContextHandler;
-import fr.liglab.adele.cream.runtime.handler.entity.utils.DirectAccessInterceptor;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.StateInterceptor;
-import fr.liglab.adele.cream.runtime.handler.entity.utils.SynchronisationInterceptor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -17,11 +13,8 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,24 +28,12 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 	private final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
 
 	/**
-	 * service controller to align life-cycle of the generic ContextEntity service with
-	 * the life-cycle of the domain-specific context services of the entity
-	 */
-	@ServiceController(value=false, specification=ContextEntity.class)
-	private boolean instanceIsActive;
-
-	@Override
-	protected boolean isInstanceActive() {
-		return instanceIsActive;
-	}
-
-	/**
 	 * The provider handler of my associated iPOJO component instance
 	 */
 	private ProvidedServiceHandler providerHandler;
 
 	/**
-	 * The list of iPOJO context listeners to notify on state updates. 
+	 * The list of iPOJO context listeners to notify on state updates.
 	 *
 	 * This handler implements ContextSource to allow state variables to be used in
 	 * dependency filters.
@@ -60,11 +41,22 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 	private final Set<ContextListener> contextSourceListeners	= new HashSet<>();
 
 	/**
+	 * service controller to align life-cycle of the generic ContextEntity service with
+	 * the life-cycle of the domain-specific context services of the entity
+	 */
+	@ServiceController(value=false, specification=ContextEntity.class)
+	private boolean instanceIsActive;
+
+	/**
 	 * The Wisdom Scheduler used to handle periodic tasks
 	 */
 	@Requires(id="scheduler",proxy = false)
 	public ManagedScheduledExecutorService scheduler;
 
+	@Override
+	protected boolean isInstanceActive() {
+		return instanceIsActive;
+	}
 
 	@Override
 	protected ManagedScheduledExecutorService getScheduler() {
@@ -80,7 +72,10 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 		assert stateId != null && stateIds.contains(stateId);
 
 		Object oldValue 	= stateValues.get(stateId);
-		boolean noChange 	= (oldValue == null && value == null) || (oldValue != null && value != null) && oldValue.equals(value);
+		boolean bothNull 	= (oldValue == null && value == null);
+		boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
+		boolean noChange = bothNull && equals;
+
 
 		if (noChange)
 			return;
@@ -106,7 +101,7 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 		if (getInstanceManager().getState() <= InstanceManager.INVALID)
 			return;
 
-		Hashtable<String,Object> property = new Hashtable<String,Object>();
+		Hashtable<String,Object> property = new Hashtable<>();
 		property.put(stateId, value);
 
 		if ( value != null && isUpdate) {
