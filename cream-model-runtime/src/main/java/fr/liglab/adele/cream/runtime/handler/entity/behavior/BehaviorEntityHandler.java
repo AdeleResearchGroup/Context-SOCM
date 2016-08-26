@@ -19,22 +19,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Handler(name = HandlerReference.BEHAVIOR_ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
-public class BehaviorEntityHandler extends AbstractContextHandler implements ContextSource{
-
-    /**
-     * The current values of the state properties
-     */
-    private final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
+public class BehaviorEntityHandler extends AbstractContextHandler implements ContextEntity,ContextSource{
 
     private boolean instanceIsActive=false;
-
-    /**
-     * The list of iPOJO context listeners to notify on state updates.
-     *
-     * This handler implements ContextSource to allow state variables to be used in
-     * dependency filters.
-     */
-    private final Set<ContextListener> contextSourceListeners	= new HashSet<>();
 
     @Override
     protected boolean isInstanceActive() {
@@ -100,7 +87,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
     @Override
     public synchronized void stop() {
-        contextSourceListeners.clear();
+        super.stop();
     }
 
 
@@ -120,7 +107,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         assert stateId != null && stateIds.contains(stateId);
 
         Object oldValue 	= stateValues.get(stateId);
-        boolean bothNull 	= (oldValue == null && value == null);
+        boolean bothNull 	= oldValue == null && value == null;
         boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
         boolean noChange = bothNull && equals;
 
@@ -147,131 +134,10 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         }
     }
 
-    /**
-     *
-     * Context Entity Implementation
-     *
-     */
-
-    @Override
-    public Set<String> getServices() {
-        return services;
-    }
-
-    @Override
-    public String getId() {
-        return (String) stateValues.get(CONTEXT_ENTITY_ID);
-    }
-
-    @Override
-    public Object getStateValue(String state) {
-        if (state == null)
-            return null;
-
-        return stateValues.get(state);
-    }
-
-    @Override
-    public Set<String> getStates() {
-        return new HashSet<>(stateIds);
-    }
-
-    @Override
-    public Map<String, Object> dumpState() {
-        return new HashMap<>(stateValues);
-    }
-
-    @Override
-    public HandlerDescription getDescription() {
-        return new BehaviorEntityHandlerDescription();
-    }
-
-    /**
-     *Context Source Implementation
-     */
-
-    @Override
-    public Object getProperty(String property) {
-        return stateValues.get(property);
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Dictionary getContext() {
-        return new Hashtable<>(stateValues);
-    }
-
-    @Override
-    public void registerContextListener(ContextListener listener, String[] properties) {
-        if (!contextSourceListeners.contains(listener)){
-            contextSourceListeners.add(listener);
-        }
-    }
-
-    @Override
-    public synchronized void unregisterContextListener(ContextListener listener) {
-        contextSourceListeners.remove(listener);
-    }
-
-    /**
-     * Notify All the context listener
-     */
-    private void notifyContextListener(String property,Object value){
-        for (ContextListener listener : contextSourceListeners){
-            listener.update(this,property,value);
-        }
-    }
 
 
-    /**
-     * The description of the handler.
-     *
-     * This class exposes the generic interface ContextEntity to allow external code to introspect the
-     * component instance and obtain the current state values.
-     *
-     */
-    public class BehaviorEntityHandlerDescription extends HandlerDescription implements ContextEntity {
 
-        private BehaviorEntityHandlerDescription() {
-            super(BehaviorEntityHandler.this);
-        }
 
-        @Override
-        public Set<String> getServices() {
-            return BehaviorEntityHandler.this.getServices();
-        }
 
-        @Override
-        public String getId() {
-            return BehaviorEntityHandler.this.getId();
-        }
 
-        @Override
-        public Object getStateValue(String getStateValue) {
-            return BehaviorEntityHandler.this.getStateValue(getStateValue);
-        }
-
-        @Override
-        public Set<String> getStates() {
-            return BehaviorEntityHandler.this.getStates();
-        }
-
-        @Override
-        public Map<String, Object> dumpState() {
-            return BehaviorEntityHandler.this.dumpState();
-        }
-
-        @Override
-        public Element getHandlerInfo() {
-            Element handlerInfo = super.getHandlerInfo();
-
-            for (Map.Entry<String,Object> entry:dumpState().entrySet()){
-                Element stateElement = new Element("state",null);
-                stateElement.addAttribute(new Attribute(entry.getKey(),entry.getValue().toString()));
-                handlerInfo.addElement(stateElement);
-            }
-
-            return handlerInfo;
-        }
-    }
 }

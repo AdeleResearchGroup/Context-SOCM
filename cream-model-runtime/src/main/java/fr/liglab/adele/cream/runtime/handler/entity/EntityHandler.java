@@ -23,22 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EntityHandler extends AbstractContextHandler implements ContextEntity, ContextSource {
 
 	/**
-	 * The current values of the state properties
-	 */
-	private final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
-
-	/**
 	 * The provider handler of my associated iPOJO component instance
 	 */
 	private ProvidedServiceHandler providerHandler;
-
-	/**
-	 * The list of iPOJO context listeners to notify on state updates.
-	 *
-	 * This handler implements ContextSource to allow state variables to be used in
-	 * dependency filters.
-	 */
-	private final Set<ContextListener> contextSourceListeners	= new HashSet<>();
 
 	/**
 	 * service controller to align life-cycle of the generic ContextEntity service with
@@ -72,7 +59,7 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 		assert stateId != null && stateIds.contains(stateId);
 
 		Object oldValue 	= stateValues.get(stateId);
-		boolean bothNull 	= (oldValue == null && value == null);
+		boolean bothNull 	= oldValue == null && value == null;
 		boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
 		boolean noChange = bothNull && equals;
 
@@ -167,52 +154,8 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 
 	@Override
 	public synchronized void stop() {
+		super.stop();
 		providerHandler = null;
-	}
-
-
-	/**
-	 *Context Source Implementation
-	 */
-
-	@Override
-	public Object getProperty(String property) {
-		return stateValues.get(property);
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Dictionary getContext() {
-		return new Hashtable<>(stateValues);
-	}
-
-	@Override
-	public void registerContextListener(ContextListener listener, String[] properties) {
-		if (!contextSourceListeners.contains(listener)){
-			contextSourceListeners.add(listener);
-		}
-	}
-
-	@Override
-	public synchronized void unregisterContextListener(ContextListener listener) {
-		contextSourceListeners.remove(listener);
-	}
-
-	/**
-	 * Notify All the context listener
-	 */
-	private void notifyContextListener(String property,Object value){
-		for (ContextListener listener : contextSourceListeners){
-			listener.update(this,property,value);
-		}
-	}
-
-	/**
-	 * Hanlder description
-	 */
-	@Override
-	public HandlerDescription getDescription() {
-		return new EntityHandlerDescription();
 	}
 
 	/**
@@ -239,91 +182,6 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 	 */
 	public static ContextEntity getContextEntity(Pojo pojo) {
 		return getContextEntity(pojo.getComponentInstance());
-	}
-
-
-	/**
-	 * The description of the handler.
-	 *
-	 * This class exposes the generic interface ContextEntity to allow external code to introspect the
-	 * component instance and obtain the current state values.
-	 *
-	 */
-	public class EntityHandlerDescription extends HandlerDescription implements ContextEntity {
-
-		private EntityHandlerDescription() {
-			super(EntityHandler.this);
-		}
-
-		@Override
-		public Set<String> getServices() {
-			return EntityHandler.this.getServices();
-		}
-
-		@Override
-		public String getId() {
-			return EntityHandler.this.getId();
-		}
-
-		@Override
-		public Object getStateValue(String getStateValue) {
-			return EntityHandler.this.getStateValue(getStateValue);
-		}
-
-		@Override
-		public Set<String> getStates() {
-			return EntityHandler.this.getStates();
-		}
-
-		@Override
-		public Map<String, Object> dumpState() {
-			return EntityHandler.this.dumpState();
-		}
-
-		@Override
-		public Element getHandlerInfo() {
-			Element handlerInfo = super.getHandlerInfo();
-			for (Map.Entry<String,Object> entry:dumpState().entrySet()){
-				Element stateElement = new Element("state",null);
-				stateElement.addAttribute(new Attribute(entry.getKey(),entry.getValue().toString()));
-				handlerInfo.addElement(stateElement);
-			}
-			return handlerInfo;
-		}
-	}
-
-	/**
-	 *
-	 * Context Entity Implementation
-	 *
-	 */
-
-	@Override
-	public Set<String> getServices() {
-		return services;
-	}
-
-	@Override
-	public String getId() {
-		return (String) stateValues.get(CONTEXT_ENTITY_ID);
-	}
-
-	@Override
-	public Object getStateValue(String state) {
-		if (state == null)
-			return null;
-
-		return stateValues.get(state);
-	}
-
-	@Override
-	public Set<String> getStates() {
-		return new HashSet<>(stateIds);
-	}
-
-	@Override
-	public Map<String, Object> dumpState() {
-		return new HashMap<>(stateValues);
 	}
 
 	@Override

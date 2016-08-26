@@ -1,6 +1,8 @@
 package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 
+import org.apache.felix.ipojo.FieldInterceptor;
+
 /**
  * This is the base class for all interceptors that are charged to handle the instrumenttaion
  * of context state fields.
@@ -8,7 +10,7 @@ package fr.liglab.adele.cream.runtime.handler.entity.utils;
  * @author vega
  *
  */
-public interface StateInterceptor {
+public interface StateInterceptor extends FieldInterceptor {
 
 	/**
 	 * Notifies the interceptor that the iPOJO instance has been activated

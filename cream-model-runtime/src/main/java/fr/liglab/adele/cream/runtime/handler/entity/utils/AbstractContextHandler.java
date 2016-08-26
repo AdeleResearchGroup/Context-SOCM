@@ -3,9 +3,9 @@ package fr.liglab.adele.cream.runtime.handler.entity.utils;
 import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
 import fr.liglab.adele.cream.model.ContextEntity;
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.InstanceManager;
-import org.apache.felix.ipojo.PrimitiveHandler;
+import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.util.Property;
@@ -17,13 +17,14 @@ import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
  * Created by aygalinc on 19/07/16.
  */
-public abstract class AbstractContextHandler extends PrimitiveHandler implements ContextEntity {
+public abstract class AbstractContextHandler extends PrimitiveHandler implements ContextEntity,ContextSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractContextHandler.class);
 
@@ -31,6 +32,14 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
      * Utility function to handle optional configuration
      */
     private static final  Element[] EMPTY_OPTIONAL = new Element[0];
+
+    /**
+     * The list of iPOJO context listeners to notify on state updates.
+     *
+     * This handler implements ContextSource to allow state variables to be used in
+     * dependency filters.
+     */
+    private final Set<ContextListener> contextSourceListeners	= new HashSet<>();
 
     /**
      * The list of exposed context services
@@ -47,6 +56,10 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
      */
     protected final Set<StateInterceptor>	interceptors	= new HashSet<>();
 
+    /**
+     * The current values of the state properties
+     */
+    protected final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
 
     /**
      * Get The scheduler
@@ -248,6 +261,144 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         }
         for (Class<?> inheritedService : service.getInterfaces()){
             extractDefinedStatesForService(inheritedService);
+        }
+    }
+
+
+    /**
+     * HandlerLifecycle
+     */
+    @Override
+    public synchronized void stop() {
+        contextSourceListeners.clear();
+    }
+
+    /**
+     *
+     * Context Entity Implementation
+     *
+     */
+
+    @Override
+    public Set<String> getServices() {
+        return services;
+    }
+
+    @Override
+    public String getId() {
+        return (String) stateValues.get(CONTEXT_ENTITY_ID);
+    }
+
+    @Override
+    public Object getStateValue(String state) {
+        if (state == null)
+            return null;
+
+        return stateValues.get(state);
+    }
+
+    @Override
+    public Set<String> getStates() {
+        return new HashSet<>(stateIds);
+    }
+
+    @Override
+    public Map<String, Object> dumpState() {
+        return new HashMap<>(stateValues);
+    }
+
+
+
+    /**
+     *Context Source Implementation
+     */
+
+    @Override
+    public Object getProperty(String property) {
+        return stateValues.get(property);
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Dictionary getContext() {
+        return new Hashtable<>(stateValues);
+    }
+
+    @Override
+    public void registerContextListener(ContextListener listener, String[] properties) {
+        if (!contextSourceListeners.contains(listener)){
+            contextSourceListeners.add(listener);
+        }
+    }
+
+    @Override
+    public synchronized void unregisterContextListener(ContextListener listener) {
+        contextSourceListeners.remove(listener);
+    }
+
+    /**
+     * Notify All the context listener
+     */
+    protected void notifyContextListener(String property,Object value){
+        for (ContextListener listener : contextSourceListeners){
+            listener.update(this,property,value);
+        }
+    }
+
+    @Override
+    public HandlerDescription getDescription() {
+        return new EntityHandlerDescription();
+    }
+
+    /**
+     * The description of the handler.
+     *
+     * This class exposes the generic interface ContextEntity to allow external code to introspect the
+     * component instance and obtain the current state values.
+     *
+     */
+    public class EntityHandlerDescription extends HandlerDescription implements ContextEntity {
+
+        private EntityHandlerDescription() {
+            super(AbstractContextHandler.this);
+        }
+
+        @Override
+        public Set<String> getServices() {
+            return AbstractContextHandler.this.getServices();
+        }
+
+        @Override
+        public String getId() {
+            return AbstractContextHandler.this.getId();
+        }
+
+        @Override
+        public Object getStateValue(String getStateValue) {
+            return AbstractContextHandler.this.getStateValue(getStateValue);
+        }
+
+        @Override
+        public Set<String> getStates() {
+            return AbstractContextHandler.this.getStates();
+        }
+
+        @Override
+        public Map<String, Object> dumpState() {
+            return AbstractContextHandler.this.dumpState();
+        }
+
+        @Override
+        public Element getHandlerInfo() {
+            Element handlerInfo = super.getHandlerInfo();
+
+            for (Map.Entry<String,Object> entry:dumpState().entrySet()){
+                Element stateElement = new Element("state",null);
+                stateElement.addAttribute(new Attribute(entry.getKey(),entry.getValue().toString()));
+                handlerInfo.addElement(stateElement);
+            }
+
+            return handlerInfo;
         }
     }
 

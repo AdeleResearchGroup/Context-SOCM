@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * Interceptor to handle state fields that are not handler by direct access, but using synchronization
  * functions (push,pull,apply) 
  */
-public class SynchronisationInterceptor implements StateInterceptor, FieldInterceptor, MethodInterceptor {
+public class SynchronisationInterceptor extends AbstractStateInterceptor implements StateInterceptor, FieldInterceptor, MethodInterceptor {
 
 	/**
 	 * The invocation handlers used in every field access
@@ -39,11 +39,6 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
 	 * The associated entity handler in charge of keeping the context state
 	 */
 	private final AbstractContextHandler abstractContextHandler;
-
-	/**
-	 * The mapping from fields handled by this interceptor to states of the context
-	 */
-	private final Map<String,String> fieldToState = new HashMap<>();
 
 	/**
 	 * The mapping from methods handled by this interceptor to states of the context
@@ -71,7 +66,7 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
 	public void onSet(Object pojo, String fieldName, Object value) {
 		BiConsumer<Object,Object> applyFunction = applyFunctions.get(fieldName);
 		if (applyFunction != null && pojo != null && value != null) {
-				applyFunction.accept(pojo,value);
+			applyFunction.accept(pojo,value);
 		}
 	}
 
@@ -83,26 +78,12 @@ public class SynchronisationInterceptor implements StateInterceptor, FieldInterc
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public void handleState(InstanceManager component, PojoMetadata componentMetadata, Element state) throws ConfigurationException {
 
-		String stateId		= state.getAttribute("id");
-		String stateField	= state.getAttribute("field");
-		
-		/*
-		 * Check the association field to state
-		 */
-		if (stateField == null) {
-			throw new ConfigurationException("Malformed Manifest : a state variable is declared with no 'field' attribute");
-		}
-
-		FieldMetadata fieldMetadata = componentMetadata.getField(stateField);
-		if (fieldMetadata == null) {
-			throw new ConfigurationException("Malformed Manifest : the specified field doesn't exists "+stateField);
-		}
-
-		fieldToState.put(stateField,stateId);
-		component.register(fieldMetadata,this);
-
+		super.handleState( component, componentMetadata,state);
+		String stateId				= state.getAttribute("id");
+		String stateField			= state.getAttribute("field");
         /*
          * If a pull function was defined, register a function that will be invoked on every field access 
          */
