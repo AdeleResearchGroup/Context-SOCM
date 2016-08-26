@@ -10,5 +10,5 @@ public @ContextService interface BehaviorInitValue {
 
     @State String PARAM_TO_INIT = "paramToInit";
 
-    Boolean returnInitValue();
+    boolean returnInitValue();
 }

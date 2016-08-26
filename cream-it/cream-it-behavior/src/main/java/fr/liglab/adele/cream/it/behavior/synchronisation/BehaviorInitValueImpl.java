@@ -7,10 +7,10 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 public class BehaviorInitValueImpl implements BehaviorInitValue {
 
     @ContextEntity.State.Field(service = BehaviorInitValue.class,state = BehaviorInitValue.PARAM_TO_INIT)
-    public Boolean paramToInit;
+    public boolean paramToInit;
 
     @Override
-    public Boolean returnInitValue() {
+    public boolean returnInitValue() {
         return paramToInit;
     }
 }

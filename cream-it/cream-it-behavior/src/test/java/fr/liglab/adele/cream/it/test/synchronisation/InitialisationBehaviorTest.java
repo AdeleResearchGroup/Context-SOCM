@@ -10,6 +10,8 @@ import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.junit.Test;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,9 +20,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Created by aygalinc on 25/08/16.
- */
+@ExamReactorStrategy(PerMethod.class)
 public class InitialisationBehaviorTest  extends ContextBaseTest {
 
     @Override
@@ -40,7 +40,7 @@ public class InitialisationBehaviorTest  extends ContextBaseTest {
 
 
     @Test
-    public void testInitBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public void testInitBehaviorWithTrue() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntityToInit("InitWithTrue",true);
 
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
@@ -48,18 +48,20 @@ public class InitialisationBehaviorTest  extends ContextBaseTest {
 
         assertThat(serviceObj1).isNotNull();
         assertThat(behaviorInitValue1).isNotNull();
-
         assertThat(behaviorInitValue1.returnInitValue()).isTrue();
+    }
 
+    @Test
+    public void testInitBehaviorWithFalse() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntityToInit("InitWithFalse",false);
 
-        Object serviceObj2 = osgiHelper.getServiceObject(ContextService1.class);
-        BehaviorInitValue behaviorInitValue2 = osgiHelper.getServiceObject(BehaviorInitValue.class);
+        Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
+        BehaviorInitValue behaviorInitValue1 = osgiHelper.getServiceObject(BehaviorInitValue.class);
 
-        assertThat(serviceObj2).isNotNull();
-        assertThat(behaviorInitValue2).isNotNull();
+        assertThat(serviceObj1).isNotNull();
+        assertThat(behaviorInitValue1).isNotNull();
 
-        assertThat(behaviorInitValue2.returnInitValue()).isFalse();
+        assertThat(behaviorInitValue1.returnInitValue()).isFalse();
 
     }
 
