@@ -97,7 +97,6 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
             Attribute attributeStrategy = new Attribute("strategy", StrategyReference.STRATEGY_PATH);
             provides.addAttribute(attributeStrategy);
 
-            //  addMetadataElement(provides);
             addMetadataElement(ContextEntityProcessor.CONTEXT_PROVIDE_TYPE,provides,null);
             return provides;
         }

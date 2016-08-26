@@ -1,10 +1,9 @@
 package fr.liglab.adele.cream.ipojo.module;
 
-import org.apache.felix.ipojo.metadata.Attribute;
-import org.apache.felix.ipojo.metadata.Element;
-
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.Relation;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import org.apache.felix.ipojo.metadata.Attribute;
+import org.apache.felix.ipojo.metadata.Element;
 
 public class RelationProcessor extends AnnotationProcessor<Relation.Field> {
 
@@ -22,7 +21,7 @@ public class RelationProcessor extends AnnotationProcessor<Relation.Field> {
 		Element relation 	= new Element(HandlerReference.RELATION_HANDLER,HandlerReference.NAMESPACE);
 		relation.addAttribute(new Attribute("relation",relationId));
 		relation.addAttribute(new Attribute("field",getAnnotatedField().name));
-		
+
 		addMetadataElement(relation);
 	}
 

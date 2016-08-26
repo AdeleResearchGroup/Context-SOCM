@@ -38,9 +38,8 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 		}
 	}
 
-	private String convertASMType(String asmType){
+	private static String convertASMType(String asmType){
 		String subAsm = asmType.substring(1,asmType.length()-1);
-		String javaType = subAsm.replaceAll("/",".");
-		return javaType;
+		return subAsm.replaceAll("/",".");
 	}
 }

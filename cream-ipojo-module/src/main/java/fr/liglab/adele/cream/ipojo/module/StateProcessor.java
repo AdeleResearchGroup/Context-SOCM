@@ -1,25 +1,25 @@
 package fr.liglab.adele.cream.ipojo.module;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
-
-import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class StateProcessor<A extends Annotation> extends AnnotationProcessor<A> {
 
-
-	protected StateProcessor(Class<A> annotationType, ClassLoader classReferenceLoader) {
-		super(annotationType, classReferenceLoader);
-	}
+	private static final  List<String> SYNCHRONISATION_ATTRIBUTES = Arrays.asList(new String[] {"push","pull","apply"});
 
 	/**
 	 * The annotation currently processed
 	 */
 	private A annotation;
+
+	protected StateProcessor(Class<A> annotationType, ClassLoader classReferenceLoader) {
+		super(annotationType, classReferenceLoader);
+	}
 
 	@Override
 	public final void process(A annotation) {
@@ -55,7 +55,7 @@ public abstract class StateProcessor<A extends Annotation> extends AnnotationPro
 		if (stateElement == null) {
 			stateElement = new Element("state", "");
 			stateElement.addAttribute(new Attribute("id",stateId));
-			
+
 			addMetadataElement(stateId,stateElement,getParentElement());
 		}
 
@@ -68,7 +68,7 @@ public abstract class StateProcessor<A extends Annotation> extends AnnotationPro
 	protected final boolean hasDirectAccess() {
 		return  Boolean.valueOf(getStateElement().getAttribute("directAccess"));
 	}
-	
+
 	/**
 	 * Adds the direct access attribute for the state
 	 */
@@ -80,7 +80,7 @@ public abstract class StateProcessor<A extends Annotation> extends AnnotationPro
          */
 		if (directAccess && hasSynchronisationAttributes()){
 			warn(" State Element " + getStateId() + " is in direct access but own synchro function (PUSH, PULL or APPLY). At runtime this function will not be used by the framework and affects the state.");
-        }
+		}
 
 	}
 
@@ -88,8 +88,6 @@ public abstract class StateProcessor<A extends Annotation> extends AnnotationPro
 		return SYNCHRONISATION_ATTRIBUTES.stream().anyMatch(attribute -> getStateElement().getAttribute(attribute) != null);
 	}
 
-	private final static List<String> SYNCHRONISATION_ATTRIBUTES = Arrays.asList(new String[] {"push","pull","apply"});
-	
 	/**
 	 * Adds an attribute of the state element
 	 */

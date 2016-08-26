@@ -1,11 +1,10 @@
 package fr.liglab.adele.cream.ipojo.module;
 
-import java.util.List;
-
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 
-import fr.liglab.adele.cream.annotations.provider.Creator;
+import java.util.List;
 
 public class EntityProviderProcessor extends ProviderProcessor<Creator.Field> {
 
@@ -14,10 +13,10 @@ public class EntityProviderProcessor extends ProviderProcessor<Creator.Field> {
 	}
 
 	@Override
-	protected void processCreator(Element creator) {		
+	protected void processCreator(Element creator) {
 		List<String> typeArguments	= new TypeArgumentExtractor(getAnnotatedField().signature).getTypeArguments();
-		String entityType			= typeArguments.size() == 1 ? typeArguments.get(0) : null; 
-		
+		String entityType			= typeArguments.size() == 1 ? typeArguments.get(0) : null;
+
 		if (entityType != null) {
 			creator.addAttribute(new Attribute("entity",entityType));
 		} else {

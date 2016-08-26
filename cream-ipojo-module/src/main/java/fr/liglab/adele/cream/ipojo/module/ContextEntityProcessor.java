@@ -94,7 +94,6 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
             Attribute attributeStrategy = new Attribute("strategy", StrategyReference.STRATEGY_PATH);
             provides.addAttribute(attributeStrategy);
 
-            //  addMetadataElement(provides);
             addMetadataElement(CONTEXT_PROVIDE_TYPE,provides,null);
         }
 

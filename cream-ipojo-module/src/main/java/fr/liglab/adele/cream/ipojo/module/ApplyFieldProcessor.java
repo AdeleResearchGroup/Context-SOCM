@@ -8,7 +8,7 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
 public class ApplyFieldProcessor extends StateProcessor<State.Apply> {
 
 
-    public ApplyFieldProcessor(ClassLoader classReferenceLoader) {
+	public ApplyFieldProcessor(ClassLoader classReferenceLoader) {
 		super(State.Apply.class,classReferenceLoader);
 	}
 
