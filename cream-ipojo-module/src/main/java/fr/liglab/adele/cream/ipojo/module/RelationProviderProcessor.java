@@ -25,7 +25,7 @@ public class RelationProviderProcessor extends ProviderProcessor<Creator.Field> 
 		
 		if (sourceEntity != null  && targetEntity != null && ! relation.equals(Creator.Field.NO_PARAMETER)) {
 			creator.addAttribute(new Attribute("entity",sourceEntity));
-			creator.addAttribute(new Attribute("relation",Relation.ID(getSimpleClassName(sourceEntity),relation)));
+			creator.addAttribute(new Attribute("relation",Relation.id(getSimpleClassName(sourceEntity),relation)));
 			creator.addAttribute(new Attribute("target",targetEntity));
 		} 
 		else if (sourceEntity == null || targetEntity == null){

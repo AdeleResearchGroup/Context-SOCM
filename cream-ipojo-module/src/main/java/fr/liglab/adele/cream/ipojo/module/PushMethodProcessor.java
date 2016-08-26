@@ -13,7 +13,7 @@ public class PushMethodProcessor extends StateProcessor<State.Push>  {
 
 	@Override
 	protected String getStateId() {
-		return State.ID(getAnnotation().service(), getAnnotation().state());
+		return State.id(getAnnotation().service(), getAnnotation().state());
 	}
     
 	@Override

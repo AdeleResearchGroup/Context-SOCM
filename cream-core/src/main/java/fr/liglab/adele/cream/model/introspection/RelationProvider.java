@@ -14,11 +14,11 @@ public interface RelationProvider {
     public boolean isEnabled(String relation);
 
     public boolean enable(String relation);
-    
+
     public boolean disable(String relation);
 
     public Set<String> getInstances(String relation, boolean includePending);
 
     public boolean deleteInstances(String relation, boolean onlyPending);
-	
+
 }

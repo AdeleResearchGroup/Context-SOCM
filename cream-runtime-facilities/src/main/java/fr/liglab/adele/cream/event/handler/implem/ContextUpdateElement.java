@@ -39,7 +39,7 @@ public class ContextUpdateElement {
         myStateElementName =stateElementName;
         myManager = manager;
         String simpleClassName = specName.substring(specName.lastIndexOf('.') + 1);
-        myPropertyName = ContextEntity.State.ID(simpleClassName,stateElementName);
+        myPropertyName = ContextEntity.State.id(simpleClassName,stateElementName);
         myContext = manager.getContext();
         myCallback = new Callback(metadata,manager);
     }

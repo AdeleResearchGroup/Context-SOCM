@@ -97,13 +97,13 @@ public class UniqueBehaviorTest extends ContextBaseTest {
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
         assertThat(serviceObj1.getterMethodParam1()).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE).overridingErrorMessage("first getter call didn't return the right value");
-        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE).overridingErrorMessage("Service property isn't set to initial value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE).overridingErrorMessage("Service property isn't set to initial value");
 
         boolean newValue = !BehaviorSpec1.PARAM_1_INIT_VALUE;
         serviceObj1.setterMethodParam1(newValue);
 
         assertThat(serviceObj1.getterMethodParam1()).isEqualTo(newValue);
-        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(newValue).overridingErrorMessage("Service property isn't set to the modified value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(newValue).overridingErrorMessage("Service property isn't set to the modified value");
 
     }
 
@@ -115,12 +115,12 @@ public class UniqueBehaviorTest extends ContextBaseTest {
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
         assertThat(serviceObj1.getterMethodParam2()).isEqualTo(BehaviorSpec1.PARAM_2_VALUE);
-        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
 
         serviceObj1.setterMethodParam2(!BehaviorSpec1.PARAM_2_VALUE);
 
         assertThat(serviceObj1.getterMethodParam2()).isEqualTo(BehaviorSpec1.PARAM_2_VALUE);
-        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_2_PULL))).isEqualTo(BehaviorSpec1.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
 
     }
 
@@ -133,12 +133,12 @@ public class UniqueBehaviorTest extends ContextBaseTest {
 
         assertThat( serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
         assertThat(serviceObj1.getterMethodParam3WithChange()).isEqualTo(true);
-        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_3_APPLY))).isEqualTo(null);
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_3_APPLY))).isEqualTo(null);
 
         serviceObj1.setterMethodParam3(false);
         assertThat(serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
         assertThat(serviceObj1.getterMethodParam3WithChange()).isEqualTo(false);
-        assertThat(serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_3_APPLY))).isEqualTo(null);
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_3_APPLY))).isEqualTo(null);
 
 
     }
@@ -174,7 +174,7 @@ public class UniqueBehaviorTest extends ContextBaseTest {
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 /**
  * TODO : Test fail, check init phase of behavior
- long firstValue = (long) serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
+ long firstValue = (long) serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
  **/
         try {
             Thread.currentThread().sleep(2500);
@@ -182,14 +182,14 @@ public class UniqueBehaviorTest extends ContextBaseTest {
             assertThat(true).isEqualTo(false);
         }
 
-        long secondValue = (long) serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
+        long secondValue = (long) serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
 
         try {
             Thread.currentThread().sleep(2500);
         } catch (InterruptedException e) {
             assertThat(true).isEqualTo(false);
         }
-        long thirdValue = (long) serviceReference.getProperty(ContextEntity.State.ID(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
+        long thirdValue = (long) serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_4_PERIODICPULL));
 
         /**
          * see TODO

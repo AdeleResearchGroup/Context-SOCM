@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.utils;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Created by aygalinc on 03/06/16.
@@ -56,6 +57,11 @@ public class MethodIdentifier {
             return super.equals(o);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return Arrays.hashCode(interfaces) + Arrays.hashCode(paramsType)+methodName.hashCode()+methodReturnType.hashCode();
     }
 
     private boolean equalParamType(Method method){

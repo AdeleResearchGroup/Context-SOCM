@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.runtime.internal.factories;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
+import fr.liglab.adele.cream.utils.CreamInvocationException;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
@@ -51,7 +52,7 @@ public class BehaviorInstanceManager extends InstanceManager {
     private class NotFoundStrategy implements SuccessorStrategy{
 
         @Override
-        public Object successorStrategy(Object pojo,List<InvocationHandler> successors, Object proxy, Method method, Object[] args) throws Throwable {
+        public Object successorStrategy(Object pojo,List<InvocationHandler> successors, Object proxy, Method method, Object[] args){
             return SuccessorStrategy.NO_FOUND_CODE;
         }
     }

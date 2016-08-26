@@ -2,7 +2,6 @@ package fr.liglab.adele.cream.it.test.synchronisation;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.it.behavior.synchronisation.BehaviorInitValue;
-import fr.liglab.adele.cream.it.behavior.synchronisation.ContextEntity2;
 import fr.liglab.adele.cream.it.behavior.synchronisation.ContextEntityWithBehaviorToInit;
 import fr.liglab.adele.cream.it.behavior.synchronisation.ContextService1;
 import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
@@ -67,7 +66,7 @@ public class InitialisationBehaviorTest  extends ContextBaseTest {
 
     private void createContextEntityToInit(String name,boolean initValue) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         Map<String,Object> properties = new HashMap<>();
-        properties.put(ContextEntity.State.ID(BehaviorInitValue.class,BehaviorInitValue.PARAM_TO_INIT),initValue);
+        properties.put(ContextEntity.State.id(BehaviorInitValue.class,BehaviorInitValue.PARAM_TO_INIT),initValue);
         contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithBehaviorToInit.class.getName(),name,properties);
     }
 }

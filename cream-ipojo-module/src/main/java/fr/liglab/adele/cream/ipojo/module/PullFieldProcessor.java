@@ -13,7 +13,7 @@ public class PullFieldProcessor extends StateProcessor<State.Pull>  {
 
 	@Override
 	protected String getStateId() {
-		return State.ID(getAnnotation().service(), getAnnotation().state());
+		return State.id(getAnnotation().service(), getAnnotation().state());
 	}
     
 	@Override

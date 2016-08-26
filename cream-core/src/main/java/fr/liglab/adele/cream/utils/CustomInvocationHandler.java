@@ -1,7 +1,5 @@
 package fr.liglab.adele.cream.utils;
 
-import fr.liglab.adele.cream.utils.MethodIdentifier;
-import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.parser.MethodMetadata;
@@ -19,7 +17,7 @@ public class CustomInvocationHandler implements InvocationHandler {
 
     private final SuccessorStrategy mySuccessorStrategy;
 
-    final private Object myPojo;
+    private final  Object myPojo;
 
     private final Map<MethodIdentifier,Callback> myMethods = new HashMap<>();
 
@@ -56,11 +54,11 @@ public class CustomInvocationHandler implements InvocationHandler {
     }
 
     private void recursiveIntrospection(Set<String> returnSet,Class pojoType) {
-        Class[] interfaz = null;
+
         if (pojoType.isInterface()){
             returnSet.add(pojoType.getName());
         }
-        interfaz = pojoType.getInterfaces();
+        Class[] interfaz = pojoType.getInterfaces();
         if (interfaz == null){
             return;
         }

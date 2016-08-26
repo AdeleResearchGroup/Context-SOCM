@@ -14,7 +14,7 @@ public class ApplyFieldProcessor extends StateProcessor<State.Apply> {
 
 	@Override
 	protected String getStateId() {
-		return State.ID(getAnnotation().service(), getAnnotation().state());
+		return State.id(getAnnotation().service(), getAnnotation().state());
 	}
 
 	@Override

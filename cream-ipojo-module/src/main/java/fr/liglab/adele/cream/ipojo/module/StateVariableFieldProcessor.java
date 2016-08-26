@@ -14,7 +14,7 @@ public class StateVariableFieldProcessor extends StateProcessor<State.Field> {
 
 	@Override
 	protected String getStateId() {
-		return State.ID(getAnnotation().service(), getAnnotation().state());
+		return State.id(getAnnotation().service(), getAnnotation().state());
 	}
     
 	@Override

@@ -17,7 +17,7 @@ public class RelationProcessor extends AnnotationProcessor<Relation.Field> {
 	public final void process(Relation.Field annotation) {
 
 		String owner		= Relation.Field.DEFAULT_OWNER.equals(annotation.owner()) ? getAnnotatedClassName(true) : getSimpleClassName(annotation.owner().getName());
-		String relationId	= Relation.ID(owner,annotation.value());
+		String relationId	= Relation.id(owner,annotation.value());
 
 		Element relation 	= new Element(HandlerReference.RELATION_HANDLER,HandlerReference.NAMESPACE);
 		relation.addAttribute(new Attribute("relation",relationId));

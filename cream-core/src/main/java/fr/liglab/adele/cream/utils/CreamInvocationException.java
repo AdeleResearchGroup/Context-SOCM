@@ -5,4 +5,11 @@ package fr.liglab.adele.cream.utils;
  */
 public class CreamInvocationException extends RuntimeException{
 
+    public CreamInvocationException(){
+        super();
+    }
+
+    public CreamInvocationException(String message,Throwable cause){
+        super(message,cause);
+    }
 }

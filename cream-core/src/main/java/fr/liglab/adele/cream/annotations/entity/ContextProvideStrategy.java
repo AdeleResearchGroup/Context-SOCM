@@ -39,7 +39,7 @@ public class ContextProvideStrategy extends CreationStrategy {
 
     @Override
     public void onUnpublication() {
-
+        //Do nothing on publication
     }
 
     @Override
@@ -49,9 +49,9 @@ public class ContextProvideStrategy extends CreationStrategy {
         Class clazz = myManager.getClazz();
 
         Behavior[] behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
-        Class<?> clazzInterface[] = clazz.getInterfaces();
+        Class<?>[] clazzInterface = clazz.getInterfaces();
 
-        Class<?> interfaces[] = new Class[behaviors.length+clazzInterface.length];
+        Class<?>[] interfaces = new Class[behaviors.length+clazzInterface.length];
 
         int i = 0;
         for (Behavior behavior:behaviors){
@@ -65,7 +65,7 @@ public class ContextProvideStrategy extends CreationStrategy {
             i++;
         }
 
-        List<InvocationHandler> successor = new ArrayList<InvocationHandler>();
+        List<InvocationHandler> successor = new ArrayList<>();
 
         InvocationHandler behaviorHandler = getBehaviorHandler();
 
@@ -86,7 +86,7 @@ public class ContextProvideStrategy extends CreationStrategy {
 
     @Override
     public void ungetService(Bundle bundle, ServiceRegistration serviceRegistration, Object o) {
-
+        //Do nothing on unget service
     }
 
     private InvocationHandler getBehaviorHandler(){
@@ -106,9 +106,10 @@ public class ContextProvideStrategy extends CreationStrategy {
         private static final String TOSTRING_METHOD_CALL = "toString";
 
         private static final String NONE_OBJECT_METHOD_CALL = "None";
+
         @Override
-        public Object successorStrategy(Object pojo, List<InvocationHandler> successors, Object proxy, Method method, Object[] args) throws Throwable {
-            String nativeMethodCode = belongToObjectMethod(  proxy,  method, args);
+        public Object successorStrategy(Object pojo, List<InvocationHandler> successors, Object proxy, Method method, Object[] args) {
+            String nativeMethodCode = belongToObjectMethod(method, args);
             if (!NONE_OBJECT_METHOD_CALL.equals(nativeMethodCode)){
                 if (EQUALS_METHOD_CALL.equals(nativeMethodCode)){
                     return pojo.equals(args[0]);
@@ -117,23 +118,15 @@ public class ContextProvideStrategy extends CreationStrategy {
                     return pojo.hashCode();
                 }
                 else if (TOSTRING_METHOD_CALL.equals(nativeMethodCode)){
-
                     return pojo.toString();
                 }
-
             }
 
-            for (InvocationHandler successor : successors){
-                Object returnObj = successor.invoke(proxy,method,args);
-                if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)){
-                    continue;
-                }
-                return returnObj;
-            }
-            throw  new CreamInvocationException();
+            return applySuccessionStrategy(successors,proxy,method,args);
+
         }
 
-        private String belongToObjectMethod(Object proxy, Method method, Object[] args){
+        private String belongToObjectMethod(Method method, Object[] args){
             if (TOSTRING_METHOD_CALL.equals(method.getName()) && args == null ){
                 return TOSTRING_METHOD_CALL;
             }
@@ -144,6 +137,22 @@ public class ContextProvideStrategy extends CreationStrategy {
                 return EQUALS_METHOD_CALL;
             }
             return NONE_OBJECT_METHOD_CALL;
+        }
+
+        private Object applySuccessionStrategy(List<InvocationHandler> successors, Object proxy, Method method, Object[] args)  {
+            for (InvocationHandler successor : successors){
+                Object returnObj = null;
+                try {
+                    returnObj = successor.invoke(proxy,method,args);
+                } catch (Throwable throwable) {
+                    throw new CreamInvocationException("cause by",throwable);
+                }
+                if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)){
+                    continue;
+                }
+                return returnObj;
+            }
+            throw  new CreamInvocationException();
         }
     }
 }
