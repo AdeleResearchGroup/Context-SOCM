@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
-public class BehaviorManagerHandler extends PrimitiveHandler implements InstanceStateListener,InvocationHandler,ContextListener {
+public class BehaviorManagerHandler extends PrimitiveHandler implements InvocationHandler,ContextListener {
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
 
@@ -34,8 +34,6 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
 
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-
-        getInstanceManager().addInstanceStateListener(this);
 
         myContextId = (String) configuration.get(ContextEntity.CONTEXT_ENTITY_ID);
 
@@ -103,7 +101,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Instance
      * Issue : behavior must be deactivate before instance become Invalid ...
      */
     @Override
-    public  void stateChanged(ComponentInstance instance, int newState) {
+    public  void stateChanged(int newState) {
         if (newState == ComponentInstance.VALID){
             for (Map.Entry<String,RequiredBehavior> behavior: myRequiredBehaviorById.entrySet()){
                 behavior.getValue().tryStartBehavior();
