@@ -38,12 +38,6 @@ public class ContextEntityVisitorTest extends UtilityProcessorTest{
         assertEquals(FakeComponentClass.class.getName(), root.getAttribute("classname"));
     }
 
-    private ClassNode clazz() {
-        ClassNode node = new ClassNode();
-        node.name = "my/Component";
-        return node;
-    }
-
     private class ContextEntityImpl extends AbstractAnnotationTest implements ContextEntity{
 
         @Override
