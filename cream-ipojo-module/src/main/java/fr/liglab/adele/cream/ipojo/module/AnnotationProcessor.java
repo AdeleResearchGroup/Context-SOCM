@@ -130,7 +130,7 @@ public abstract class AnnotationProcessor<A extends Annotation> implements Annot
 	/**
 	 * Process the annotation instance in the specified binding context
 	 */
-	private void process(BindingContext context, A annotation) {
+	public void process(BindingContext context, A annotation) {
 		this.context	= context;
 		process(annotation);
 	}
