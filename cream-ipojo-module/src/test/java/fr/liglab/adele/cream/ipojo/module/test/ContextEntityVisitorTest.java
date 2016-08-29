@@ -4,9 +4,7 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.ipojo.module.AnnotationBuilder;
 import fr.liglab.adele.cream.ipojo.module.ContextEntityProcessor;
 import org.apache.felix.ipojo.manipulator.spi.BindingContext;
-import org.apache.felix.ipojo.metadata.Element;
 import org.junit.Test;
-import org.objectweb.asm.tree.ClassNode;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,9 +13,6 @@ import static org.junit.Assert.assertNotNull;
  * Created by aygalinc on 26/08/16.
  */
 public class ContextEntityVisitorTest extends UtilityProcessorTest{
-
-    Element root;
-    Element instance;
 
     /*
     	 * The loader used to load the classes referenced in annotations. Notice that we try to load classes using
