@@ -1,7 +1,9 @@
 package fr.liglab.adele.cream.ipojo.module.test;
 
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.ipojo.module.AnnotationBuilder;
+import fr.liglab.adele.cream.ipojo.module.BehaviorProcessor;
 import fr.liglab.adele.cream.ipojo.module.ContextEntityProcessor;
 import org.apache.felix.ipojo.manipulator.spi.BindingContext;
 import org.junit.Test;
@@ -26,12 +28,20 @@ public class ContextEntityVisitorTest extends UtilityProcessorTest{
 
         BindingContext context = this.createTestWorkbench(FakeComponentClass.class);
         ContextEntityProcessor processorFactory = new ContextEntityProcessor(classReferenceLoader);
-        ContextEntity contextEntity = new ContextEntityImpl();
+
+        ContextEntity contextEntity = Component.class.getAnnotation(ContextEntity.class);
+
         processorFactory.process(context,contextEntity);
 
         assertNotNull(root);
         assertEquals(FakeComponentClass.class.getName(), root.getAttribute("classname"));
+
+
     }
+
+
+    @ContextEntity(services={FakeComponentClass.class})
+    private class Component {}
 
     private class ContextEntityImpl extends AbstractAnnotationTest implements ContextEntity{
 
