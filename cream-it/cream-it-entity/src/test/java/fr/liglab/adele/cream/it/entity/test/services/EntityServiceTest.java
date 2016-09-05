@@ -23,9 +23,7 @@ package fr.liglab.adele.cream.it.entity.test.services;
 
 import fr.liglab.adele.cream.it.entity.services.*;
 import fr.liglab.adele.cream.it.entity.test.EntityBaseCommonConfig;
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.UnacceptableConfiguration;
+import org.apache.felix.ipojo.*;
 import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
@@ -62,6 +60,23 @@ public class EntityServiceTest extends EntityBaseCommonConfig {
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1.returnTrue()).isTrue();
         assertThat(serviceObj1.returnFalse()).isFalse();
+    }
+
+    @Test
+    public void tesPojoInterfaceInvocation() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntity();
+
+        Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
+
+        assertThat(serviceObj1 instanceof ContextService1).isTrue();
+        assertThat(serviceObj1 instanceof Pojo).isTrue();
+
+        Pojo pojo = (Pojo)serviceObj1;
+
+        ComponentInstance instance = pojo.getComponentInstance();
+
+        assertThat(instance).isNotNull();
+
     }
 
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
