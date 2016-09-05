@@ -6,6 +6,7 @@ import fr.liglab.adele.cream.utils.CreamInvocationException;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.handlers.providedservice.CreationStrategy;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
@@ -103,6 +104,8 @@ public class ContextProvideStrategy extends CreationStrategy {
 
         private static final String HASHCODE_METHOD_CALL = "hashcode";
 
+        private static final String GETCOMPONENTINSTANCE_METHOD_CALL = "getComponentInstance";
+
         private static final String TOSTRING_METHOD_CALL = "toString";
 
         private static final String NONE_OBJECT_METHOD_CALL = "None";
@@ -122,6 +125,10 @@ public class ContextProvideStrategy extends CreationStrategy {
                 }
             }
 
+            if (belongToPojoInterfaceMethod(method,args)){
+                return ((Pojo) pojo).getComponentInstance();
+            }
+
             return applySuccessionStrategy(successors,proxy,method,args);
 
         }
@@ -137,6 +144,13 @@ public class ContextProvideStrategy extends CreationStrategy {
                 return EQUALS_METHOD_CALL;
             }
             return NONE_OBJECT_METHOD_CALL;
+        }
+
+        private boolean belongToPojoInterfaceMethod(Method method, Object[] args){
+            if (GETCOMPONENTINSTANCE_METHOD_CALL.equals(method.getName()) && args == null && Pojo.class.equals(method.getDeclaringClass())){
+                return true;
+            }
+            return false;
         }
 
         private Object applySuccessionStrategy(List<InvocationHandler> successors, Object proxy, Method method, Object[] args)  {
