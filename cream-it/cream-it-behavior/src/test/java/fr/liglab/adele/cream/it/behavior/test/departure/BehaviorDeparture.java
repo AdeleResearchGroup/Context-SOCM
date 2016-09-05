@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.it.behavior.test.injection;
+package fr.liglab.adele.cream.it.behavior.test.departure;
 
 /*
  * #%L
@@ -26,6 +26,7 @@ import fr.liglab.adele.cream.it.behavior.injection.ContextServiceUsingMultipleIn
 import fr.liglab.adele.cream.it.behavior.injection.ServiceContext;
 import fr.liglab.adele.cream.it.behavior.injection.ServiceContextPrime;
 import fr.liglab.adele.cream.it.behavior.test.BehaviorBaseCommonConfig;
+import fr.liglab.adele.cream.testing.helpers.BehaviorHelper;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -37,38 +38,23 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExamReactorStrategy(PerMethod.class)
-public class InjectedBehaviorTest extends BehaviorBaseCommonConfig {
+public class BehaviorDeparture extends BehaviorBaseCommonConfig {
 
     @Test
     public void testSimpleBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        createContextEntity();
+        ComponentInstance instance = createContextEntity();
 
-        ServiceContext serviceObj1 = osgiHelper.waitForService(ServiceContext.class,null,((long)25000));
+        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
+        behaviorHelper.getBehavior(instance,"injectedBehavior");
+
+        ServiceContext serviceObj1 = osgiHelper.getServiceObject(ServiceContext.class);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1.returnTrueFromTheInjectedBehavior()).isTrue();
     }
 
-
-
-    @Test
-    public void testMultipleBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        createMultipleContextEntityInjectedBehavior();
-
-        ServiceContextPrime serviceObj1 = osgiHelper.getServiceObject(ServiceContextPrime.class);
-
-        assertThat(serviceObj1).isNotNull();
-        assertThat(serviceObj1.returnTrueFromAnInjectedBehavior()).isTrue();
-
-        assertThat(serviceObj1.returnFalseFromAnInjectedBehavior()).isFalse();
-    }
-
-
     private ComponentInstance createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         return contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingInjectedBehavior.class.getName(),"ContextServiceUsingInjectedBehavior",null);
     }
 
-    private void createMultipleContextEntityInjectedBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingMultipleInjectedBehavior.class.getName(),"ContextServiceUsingMultipleInjectedBehavior",null);
-    }
 }

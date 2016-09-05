@@ -1,15 +1,19 @@
 package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorStateListener;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
+import org.apache.felix.ipojo.handlers.providedservice.ProvidedService;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
+import org.apache.felix.ipojo.parser.ParseUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -21,13 +25,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
-public class BehaviorManagerHandler extends PrimitiveHandler implements InvocationHandler,ContextListener {
+public class BehaviorManagerHandler extends PrimitiveHandler implements InvocationHandler,ContextListener,BehaviorStateListener {
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
 
     private final Set<String> stateVariable = new ConcurrentSkipListSet<>();
-
-    private final Object lockValidity = new Object();
 
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
@@ -38,6 +40,8 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
             throw new ConfigurationException("Behavior Elements are null ");
         }
 
+        ProvidedService providedService = getContextEntityProvidedService(metadata);
+
         for (Element element:behaviorElements){
             Element[] behaviorIndividualElements = element.getElements(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
 
@@ -46,7 +50,14 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
             }
 
             for (Element individualBehaviorElement:behaviorIndividualElements) {
-                RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME), individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME), configuration);
+                RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),
+                        individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME),
+                        individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME),
+                        configuration,
+                        this,
+                        providedService,
+                        getProvideServiceHandler()
+                );
                 myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),requiredBehavior);
 
                 String fieldAttribute = individualBehaviorElement.getAttribute(BehaviorReference.FIELD_ATTRIBUTE_NAME);
@@ -57,11 +68,52 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
                 if (fieldMetadata != null){
                     getInstanceManager().register(fieldMetadata,requiredBehavior.getBehaviorInterceptor());
                 }
+
             }
         }
-        setValidity(false);
+    }
 
+    private ProvidedService getContextEntityProvidedService(Element config){
+        String[] contextEntitySpecs = getContextEntitySpec(config);
+        ProvidedServiceHandler providedServiceHandler = getProvideServiceHandler();
+        ProvidedService[] providedServices = providedServiceHandler.getProvidedServices();
+        for (ProvidedService providedService:providedServices){
+            String[] serviceSpecifications = providedService.getServiceSpecifications();
+            if (compare(contextEntitySpecs,serviceSpecifications)){
+                return providedService;
+            }
+        }
+        return null;
+    }
 
+    private String[] getContextEntitySpec(Element config){
+        Element[] providesElements = config.getElements("provides");
+        for (Element provides : providesElements){
+            Element[] propertyElements = provides.getElements("property");
+            for (Element property : propertyElements){
+                String name = property.getAttribute("name");
+                if (ContextEntity.ENTITY_CONTEXT_SERVICES.equals(name)){
+                    return ParseUtils.parseArrays(provides.getAttribute("specifications"));
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean compare(String[] contextEntitySpecs,String[] providedServiceSpecs){
+        for (String contextEntitySpec : contextEntitySpecs){
+            boolean find = false;
+            for (String providedServiceSpec : providedServiceSpecs){
+                if (contextEntitySpec.equals(providedServiceSpec)){
+                    find = true;
+                    continue;
+                }
+            }
+            if (!find){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -69,7 +121,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
         for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             entry.getValue().tryDispose();
         }
-        stateVariable.clear();
+        myRequiredBehaviorById.clear();
     }
 
     @Override
@@ -82,21 +134,11 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
         return (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
     }
 
-    @Validate
-    public void validate(){
-        checkValidity();
-    }
-
-    @Invalidate
-    public void invalidate(){
-        stateVariable.clear();
-    }
-
     /**
      * Issue : behavior must be deactivate before instance become Invalid ...
      */
     @Override
-    public  void stateChanged(int newState) {
+    public synchronized void stateChanged(int newState) {
         if (newState == ComponentInstance.VALID){
             for (Map.Entry<String,RequiredBehavior> behavior: myRequiredBehaviorById.entrySet()){
                 behavior.getValue().tryStartBehavior();
@@ -110,59 +152,27 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
         }
     }
 
-    @Bind(id = "behaviorF",specification = Factory.class,optional = false,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY +"="+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE +")")
-    public void bindBehaviorFactory(Factory behaviorFactory, Map prop){
+    @Bind(id = "behaviorF",specification = Factory.class,optional = true,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY +"="+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE +")")
+    public synchronized void bindBehaviorFactory(Factory behaviorFactory, Map prop){
         for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             if (match(entry.getValue(),prop)){
                 entry.getValue().setFactory(behaviorFactory);
                 entry.getValue().addManager();
                 entry.getValue().registerBehaviorListener(this);
-                checkValidity();
+                if (getInstanceManager().getState() == ComponentInstance.VALID){
+                    entry.getValue().tryStartBehavior();
+                }
             }
         }
     }
 
     @Unbind(id = "behaviorF")
-    public void unbindBehaviorFactory(Factory behaviorFactory,Map prop){
+    public synchronized void unbindBehaviorFactory(Factory behaviorFactory,Map prop){
         for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
             if (match(entry.getValue(),prop)){
                 entry.getValue().unRef();
             }
         }
-        checkValidity();
-    }
-
-    private void checkValidity(){
-        for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
-            if (entry.getValue().isOperationnal()){
-                continue;
-            }
-            synchronized (lockValidity) {
-                setValidity(false);
-                return;
-            }
-        }
-        synchronized (lockValidity) {
-            if (isOperationnal()) {
-                for (Map.Entry<String, RequiredBehavior> entry : myRequiredBehaviorById.entrySet()) {
-                    entry.getValue().tryStartBehavior();
-                }
-            }
-            setValidity(true);
-        }
-    }
-
-    public boolean isOperationnal(){
-        for (org.apache.felix.ipojo.Handler handler : this.getInstanceManager().getRegisteredHandlers()){
-            HandlerFactory fact = (HandlerFactory) handler.getHandlerManager().getFactory();
-            if (fact.getHandlerName().equals(HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_MANAGER_HANDLER)) {
-                continue;
-            }
-            if (!handler.getValidity()){
-                return false;
-            }
-        }
-        return true;
     }
 
     protected boolean match(RequiredBehavior req, Map prop) {
@@ -214,6 +224,11 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
             stateVariable.add(s);
             providerHandler.addProperties(property);
         }
+
+    }
+
+    @Override
+    public void behaviorStateChange(int state) {
 
     }
 

@@ -18,4 +18,6 @@ public interface BehaviorReference {
     public static final String BEHAVIOR_FACTORY_TYPE_PROPERTY = "behavior.factory.property";
 
     public static final String BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE = "behavior.factory" ;
+
+    public static final String BEHAVIOR_ID_CONFIG = "behavior.id";
 }

@@ -52,7 +52,7 @@ public class UniqueBehaviorTest extends BehaviorBaseCommonConfig {
     public void testServiceExposedByContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        Object serviceObj2 = osgiHelper.getServiceObject(BehaviorSpec1.class);
+        Object serviceObj2 = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)0),true);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj2).isNotNull();
@@ -74,7 +74,7 @@ public class UniqueBehaviorTest extends BehaviorBaseCommonConfig {
     public void testDirectAccessSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        BehaviorSpec1 serviceObj1 = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)0),true);
 
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
@@ -93,7 +93,8 @@ public class UniqueBehaviorTest extends BehaviorBaseCommonConfig {
     public void testPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        BehaviorSpec1 serviceObj1 = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)0),true);
+
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
         assertThat(serviceObj1.getterMethodParam2()).isEqualTo(BehaviorSpec1.PARAM_2_VALUE);
@@ -110,7 +111,7 @@ public class UniqueBehaviorTest extends BehaviorBaseCommonConfig {
     public void testApplySVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        BehaviorSpec1 serviceObj1 = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)0),true);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
         assertThat( serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
@@ -129,7 +130,7 @@ public class UniqueBehaviorTest extends BehaviorBaseCommonConfig {
     public void testPullApplySVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        BehaviorSpec1 serviceObj1 = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)0),true);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
         assertThat( serviceObj1.getterMethodParam5()).isEqualTo(true);
@@ -152,7 +153,7 @@ public class UniqueBehaviorTest extends BehaviorBaseCommonConfig {
     public void testPeriodicPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        BehaviorSpec1 serviceObj1 = (BehaviorSpec1) osgiHelper.getServiceObject(ContextService1.class);
+        BehaviorSpec1 serviceObj1 = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)0),true);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 /**
  * TODO : Test fail, check init phase of behavior

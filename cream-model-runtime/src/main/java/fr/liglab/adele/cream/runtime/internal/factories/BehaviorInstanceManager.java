@@ -1,16 +1,21 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
+import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.architecture.InstanceDescription;
+import org.apache.felix.ipojo.metadata.Attribute;
+import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.BundleContext;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 
 /**
@@ -19,6 +24,9 @@ import java.util.List;
 public class BehaviorInstanceManager extends InstanceManager {
 
     private static final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
+
+    private String id;
+
     /**
      * Creates a new Component Manager.
      * The instance is not initialized.
@@ -68,4 +76,29 @@ public class BehaviorInstanceManager extends InstanceManager {
         }
         return true;
     }
+
+    public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+        if (configuration.get(BehaviorReference.BEHAVIOR_ID_CONFIG) == null){
+            throw new ConfigurationException(BehaviorReference.BEHAVIOR_ID_CONFIG + "config parameter must be provided");
+        }
+        id = (String) configuration.get(BehaviorReference.BEHAVIOR_ID_CONFIG);
+        super.configure(metadata,configuration);
+    }
+
+
+    /**
+     * Gets the description of the current instance.
+     *
+     * @return the instance description.
+     * @see org.apache.felix.ipojo.ComponentInstance#getInstanceDescription()
+     */
+    @Override
+    public InstanceDescription getInstanceDescription() {
+        InstanceDescription description = super.getInstanceDescription();
+        if (description.getDescription().getAttribute(BehaviorReference.BEHAVIOR_ID_CONFIG) != null){
+            description.getDescription().addAttribute(new Attribute(BehaviorReference.BEHAVIOR_ID_CONFIG,id));
+        }
+        return description;
+    }
+
 }

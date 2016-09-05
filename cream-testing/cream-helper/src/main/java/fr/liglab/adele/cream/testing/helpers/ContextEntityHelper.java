@@ -1,9 +1,6 @@
 package fr.liglab.adele.cream.testing.helpers;
 
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.UnacceptableConfiguration;
+import org.apache.felix.ipojo.*;
 import org.ow2.chameleon.testing.helpers.IPOJOHelper;
 import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
@@ -35,11 +32,11 @@ public class ContextEntityHelper {
         return (Factory)this.osgiHelper.waitForService(Factory.class, "(factory.name=" + factoryName + ")", timeout, fail);
     }
 
-    public void createContextEntity(String contextEntityType, String contextEntityId, Map<String,Object> contextEntityInitParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        createContextEntity(contextEntityType,contextEntityId,contextEntityInitParameters,null);
+    public ComponentInstance createContextEntity(String contextEntityType, String contextEntityId, Map<String,Object> contextEntityInitParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        return createContextEntity(contextEntityType,contextEntityId,contextEntityInitParameters,null);
     }
 
-    public void createContextEntity(String contextEntityType, String contextEntityId, Map<String,Object> contextEntityInitParameters,Map<String,Object> pojoParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public ComponentInstance createContextEntity(String contextEntityType, String contextEntityId, Map<String,Object> contextEntityInitParameters, Map<String,Object> pojoParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         Factory contextEntityFactory = getContextEntityFactory(contextEntityType);
         Hashtable param = new Hashtable();
 
@@ -52,7 +49,6 @@ public class ContextEntityHelper {
             param.putAll(pojoParameters);
         }
 
-        contextEntityFactory.createComponentInstance(param);
-
+        return contextEntityFactory.createComponentInstance(param);
     }
 }

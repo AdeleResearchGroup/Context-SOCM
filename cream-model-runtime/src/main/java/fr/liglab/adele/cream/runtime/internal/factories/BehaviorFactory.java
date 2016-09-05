@@ -8,6 +8,7 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.util.Logger;
 import org.osgi.framework.BundleContext;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
 
@@ -41,9 +42,10 @@ public class BehaviorFactory extends ComponentFactory {
 
     @Override
     public List<RequiredHandler> getRequiredHandlerList() {
-        List<RequiredHandler> returnList = super.getRequiredHandlerList();
+        List<RequiredHandler> returnList = new ArrayList<>();
         RequiredHandler behaviorLifecycleHandler = new RequiredHandler(HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER,HandlerReference.NAMESPACE);
         returnList.add(behaviorLifecycleHandler);
+        returnList.addAll(super.getRequiredHandlerList());
         return returnList;
     }
 

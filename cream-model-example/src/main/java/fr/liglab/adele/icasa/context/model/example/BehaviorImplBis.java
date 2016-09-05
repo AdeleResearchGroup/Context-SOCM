@@ -3,11 +3,15 @@ package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import org.apache.felix.ipojo.annotations.Requires;
 
 import java.util.function.Supplier;
 
 @BehaviorProvider(spec = BehaviorServiceBis.class)
 public class BehaviorImplBis implements BehaviorServiceBis {
+
+    @Requires
+    NotExposedServices exposedServices;
 
     @ContextEntity.State.Field(service = BehaviorServiceBis.class, state = BehaviorServiceBis.BEHAVIOR_STATE, directAccess = false)
     private String hello;

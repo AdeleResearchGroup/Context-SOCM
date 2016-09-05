@@ -43,12 +43,13 @@ public class MultipleBehaviorTest extends BehaviorBaseCommonConfig {
         createContextEntity();
 
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        Object serviceObj2 = osgiHelper.getServiceObject(BehaviorSpec1.class);
-        Object serviceObj3 = osgiHelper.getServiceObject(BehaviorSpec2.class);
 
         assertThat(serviceObj1).isNotNull();
-        assertThat(serviceObj2).isNotNull();
-        assertThat(serviceObj3).isNotNull();
+
+        Object serviceObj2 = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)0),true);
+        Object serviceObj3 = osgiHelper.waitForService(BehaviorSpec2.class,null,((long)0),true);
+
+
 
         assertThat(serviceObj1 instanceof ContextService1).isTrue();
         assertThat(serviceObj1 instanceof BehaviorSpec1).isTrue();

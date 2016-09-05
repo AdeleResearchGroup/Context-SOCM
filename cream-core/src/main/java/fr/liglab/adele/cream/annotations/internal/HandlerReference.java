@@ -43,4 +43,5 @@ public interface HandlerReference {
 	 * The handler in charge of behavior tracking, instantiation and property propagation
 	 */
 	String BEHAVIOR_MANAGER_HANDLER = "behavior-manager";
+
 }

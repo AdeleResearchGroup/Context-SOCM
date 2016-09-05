@@ -14,14 +14,21 @@ public class ContextHelper{
 
     private final ContextEntityHelper contextEntityHelper;
 
+    private final BehaviorHelper behaviorHelper;
+
     public ContextHelper(OSGiHelper osGiHelper, IPOJOHelper ipojoHelper) {
         this.osGiHelper = osGiHelper;
         this.ipojoHelper = ipojoHelper;
+        behaviorHelper = new BehaviorHelper(osGiHelper,ipojoHelper);
         contextEntityHelper = new ContextEntityHelper(osGiHelper,ipojoHelper);
     }
 
     public ContextEntityHelper getContextEntityHelper(){
         return contextEntityHelper;
+    }
+
+    public BehaviorHelper getBehaviorHelper(){
+        return behaviorHelper;
     }
 
 

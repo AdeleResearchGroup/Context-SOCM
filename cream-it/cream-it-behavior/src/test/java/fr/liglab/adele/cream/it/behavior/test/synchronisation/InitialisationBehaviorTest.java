@@ -25,7 +25,7 @@ public class InitialisationBehaviorTest  extends BehaviorBaseCommonConfig {
         createContextEntityToInit("InitWithTrue",true);
 
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        BehaviorInitValue behaviorInitValue1 = osgiHelper.getServiceObject(BehaviorInitValue.class);
+        BehaviorInitValue behaviorInitValue1 = osgiHelper.waitForService(BehaviorInitValue.class,null,((long)0),true);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(behaviorInitValue1).isNotNull();
@@ -37,7 +37,7 @@ public class InitialisationBehaviorTest  extends BehaviorBaseCommonConfig {
         createContextEntityToInit("InitWithFalse",false);
 
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        BehaviorInitValue behaviorInitValue1 = osgiHelper.getServiceObject(BehaviorInitValue.class);
+        BehaviorInitValue behaviorInitValue1 = osgiHelper.waitForService(BehaviorInitValue.class,null,((long)0),true);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(behaviorInitValue1).isNotNull();

@@ -1,10 +1,14 @@
 package fr.liglab.adele.cream.runtime.handler.behavior.manager;
 
+import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
+import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorStateListener;
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorFactory;
 import fr.liglab.adele.cream.runtime.internal.factories.BehaviorInstanceManager;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
+import org.apache.felix.ipojo.handlers.providedservice.ProvidedService;
+import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +22,15 @@ import java.util.Hashtable;
 /**
  * Created by aygalinc on 02/06/16.
  */
-public class RequiredBehavior implements InvocationHandler {
+public class RequiredBehavior implements InvocationHandler,BehaviorStateListener{
+
+    private static final String BEHAVIOR_CONTROLLER_FIELD = "behavior.controller.";
 
     private static final Logger LOG = LoggerFactory.getLogger(RequiredBehavior.class);
 
     private BehaviorFactory myFactory;
 
-    private final String myName;
+    private final String mySpecification;
 
     private final String myBehaviorNameImpl;
 
@@ -32,9 +38,16 @@ public class RequiredBehavior implements InvocationHandler {
 
     private final Hashtable myConfiguration = new Hashtable();
 
-    public RequiredBehavior(String spec, String behaviorImpl, Dictionary config) {
-        myName = spec;
+    private final BehaviorStateListener parent;
+
+    private final ProvidedServiceHandler myProvideServiceHandler;
+
+    private final String myId ;
+    public RequiredBehavior(String id, String spec, String behaviorImpl, Dictionary config, BehaviorStateListener parent, ProvidedService providedService, ProvidedServiceHandler providedServiceHandler) {
+        mySpecification = spec;
         myBehaviorNameImpl = behaviorImpl;
+        myId = id;
+        myProvideServiceHandler = providedServiceHandler;
 
         /**
          * Extract Dictionnary properrties
@@ -48,6 +61,10 @@ public class RequiredBehavior implements InvocationHandler {
                 myConfiguration.put(key,value);
             }
         }
+        myConfiguration.put(BehaviorReference.BEHAVIOR_ID_CONFIG,id);
+        this.parent = parent;
+        providedService.setController(BEHAVIOR_CONTROLLER_FIELD+myId,false, mySpecification);
+        System.out.println("Set controller & Hide Behavior");
     }
 
     public BehaviorFactory getFactory() {
@@ -61,7 +78,7 @@ public class RequiredBehavior implements InvocationHandler {
     }
 
     public String getSpecName() {
-        return myName;
+        return mySpecification;
     }
 
     public String getImplName() {
@@ -84,6 +101,7 @@ public class RequiredBehavior implements InvocationHandler {
 
         try {
             myManager = (BehaviorInstanceManager) myFactory.createComponentInstance(myConfiguration,null);
+            myManager.getBehaviorLifeCycleHandler().registerBehaviorListener(this);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error(UnacceptableConfiguration.class.getName(),unacceptableConfiguration);
         } catch (MissingHandlerException e) {
@@ -115,6 +133,8 @@ public class RequiredBehavior implements InvocationHandler {
 
     public synchronized void tryInvalid(){
         if (myManager != null && myManager.isStarted() ){
+            System.out.println("UNREGISTER behavior manager try to invalidate it");
+            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
             myManager.getBehaviorLifeCycleHandler().stopBehavior();
 
         }
@@ -122,6 +142,10 @@ public class RequiredBehavior implements InvocationHandler {
 
     public synchronized void tryDispose(){
         if (myManager != null){
+
+            System.out.println("UNREGISTER behavior because manager try to dispose it");
+            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
+            myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
             myManager.dispose();
         }
     }
@@ -149,6 +173,20 @@ public class RequiredBehavior implements InvocationHandler {
 
     public FieldInterceptor getBehaviorInterceptor(){
         return new BehaviorInjectedInterceptor();
+    }
+
+    @Override
+    public void behaviorStateChange(int state) {
+        System.out.println("State Notif " + state);
+        if (state == ComponentInstance.VALID){
+            System.out.println("REGISTER behavior because behavior instance became VALID");
+               myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,true);
+        }
+        else if (state == ComponentInstance.INVALID){
+            System.out.println("UNREGISTER behavior because behavior instance became INVALID");
+               myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
+        }
+        parent.behaviorStateChange(state);
     }
 
     private class BehaviorInjectedInterceptor implements FieldInterceptor{
