@@ -1,0 +1,1866 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b74d39b9-63a8-4969-a541-07651ec92217" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/SynchronisationInterceptor.java" afterPath="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/SynchronisationInterceptor.java" />
+    </list>
+    <ignored path="context.socm.reactor.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/testing/wisdom-fake-bundle/target/" />
+    <ignored path="$PROJECT_DIR$/cream-core/target/" />
+    <ignored path="$PROJECT_DIR$/cream-it/cream-it-behavior/target/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <ignored path="$PROJECT_DIR$/cream-model-runtime/target/" />
+    <ignored path="$PROJECT_DIR$/cream-runtime-facilities/target/" />
+    <ignored path="$PROJECT_DIR$/cream-distribution/target/" />
+    <ignored path="$PROJECT_DIR$/cream-ipojo-module/target/" />
+    <ignored path="$PROJECT_DIR$/testing/cream-helper/target/" />
+    <ignored path="$PROJECT_DIR$/testing/target/" />
+    <ignored path="$PROJECT_DIR$/cream-model-test/target/" />
+    <ignored path="$PROJECT_DIR$/cream-it/target/" />
+    <ignored mask="*.iml" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <ignored path=".idea/" />
+    <ignored mask="*.log" />
+    <ignored path="$PROJECT_DIR$/cream-testing/cream-helper/target/" />
+    <ignored path="$PROJECT_DIR$/cream-testing/target/" />
+    <ignored path="$PROJECT_DIR$/cream-testing/wisdom-fake-bundle/target/" />
+    <ignored path="$PROJECT_DIR$/cream-testing/cream-test-bom/target/" />
+    <ignored path="$PROJECT_DIR$/cream-model-example/target/" />
+    <ignored path="$PROJECT_DIR$/cream-it/cream-it-creator/target/" />
+    <ignored path="$PROJECT_DIR$/cream-it/cream-it-entity/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/context.socm.reactor$All_in_cream_it_behavior__1_.coverage" NAME="All in cream.it.behavior (1) Coverage Results" MODIFIED="1472225671271" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/context.socm.reactor$All_in_cream_it_behavior.coverage" NAME="All in cream.it.behavior Coverage Results" MODIFIED="1472225568553" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/context.socm.reactor$Unnamed.coverage" NAME="Unnamed Coverage Results" MODIFIED="1469707874959" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="jacoco" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/context.socm.reactor$All_in_cream_it_behavior__5_.coverage" NAME="All in cream.it.behavior (5) Coverage Results" MODIFIED="1469707752735" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DatabaseView">
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="context.socm.reactor" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="SynchronisationInterceptor.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/SynchronisationInterceptor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.33834586">
+              <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/BehaviorsProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/EntityProviderProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/InjectedBehaviorProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/ProviderProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/PullFieldProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/PushMethodProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/RelationProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/RelationProviderProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/StateProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/StateVariableFieldProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/TypeArgumentExtractor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/AnnotationBuilder.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/StateInterceptor.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/AbstractStateInterceptor.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/AbstractContextHandler.java" />
+        <option value="$PROJECT_DIR$/cream-distribution/pom.xml" />
+        <option value="$PROJECT_DIR$/cream-model-example/pom.xml" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/EntityHandler.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/behavior/BehaviorEntityHandler.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/DirectAccessInterceptor.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/pom.xml" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/test/java/fr/liglab/adele/cream/ipojo/module/test/AbstractAnnotationTest.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/AnnotationProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/test/java/fr/liglab/adele/cream/ipojo/module/test/UtilityProcessorTest.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/internal/factories/BehaviorFactory.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/behavior/lifecycle/BehaviorStateListener.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/test/java/fr/liglab/adele/cream/ipojo/module/test/ContextEntityVisitorTest.java" />
+        <option value="$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/departure/InjectedBehaviorTest.java" />
+        <option value="$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/annotations/internal/BehaviorReference.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/internal/factories/BehaviorInstanceManager.java" />
+        <option value="$PROJECT_DIR$/cream-testing/cream-helper/pom.xml" />
+        <option value="$PROJECT_DIR$/cream-testing/cream-helper/src/main/java/fr/liglab/adele/cream/testing/helpers/ContextHelper.java" />
+        <option value="$PROJECT_DIR$/cream-testing/cream-helper/src/main/java/fr/liglab/adele/cream/testing/helpers/ContextEntityHelper.java" />
+        <option value="$PROJECT_DIR$/cream-testing/cream-helper/src/main/java/fr/liglab/adele/cream/testing/helpers/BehaviorHelper.java" />
+        <option value="$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/annotations/internal/HandlerReference.java" />
+        <option value="$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/annotations/internal/ProvideReference.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/ContextEntityProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/AbstractBehaviorElementProcessor.java" />
+        <option value="$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/synchronisation/MultipleBehaviorTest.java" />
+        <option value="$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/departure/BehaviorDeparture.java" />
+        <option value="$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/synchronisation/InitialisationBehaviorTest.java" />
+        <option value="$PROJECT_DIR$/cream-model-example/src/main/java/fr/liglab/adele/icasa/context/model/example/BehaviorImplBis.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/behavior/manager/BehaviorManagerHandler.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/behavior/lifecycle/BehaviorLifecyleHandler.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/behavior/manager/RequiredBehavior.java" />
+        <option value="$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/injection/InjectedBehaviorTest.java" />
+        <option value="$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/annotations/entity/ContextProvideStrategy.java" />
+        <option value="$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/synchronisation/UniqueBehaviorTest.java" />
+        <option value="$PROJECT_DIR$/cream-it/cream-it-entity/src/test/java/fr/liglab/adele/cream/it/entity/test/services/EntityServiceTest.java" />
+        <option value="$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/SynchronisationInterceptor.java" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" />
+  <component name="JsBuildToolPackageJson" detection-done="true" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$USER_HOME$/maven/apache-maven-3.2.3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="cream.it.behavior" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Dependencies" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependenciesNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="cream.it.behavior" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Dependencies" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependenciesNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="org.ow2.chameleon.testing:osgi-helpers:0.6.2" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependencyNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="org.ops4j.pax.url:pax-url-wrap:1.5.2" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependencyNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="org.ops4j.pax.url:pax-url-commons:1.5.2" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependencyNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="cream.it.behavior" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Dependencies" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependenciesNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="fr.liglab.adele.cream:cream.helpers:0.1-SNAPSHOT" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependencyNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="cream.it.behavior" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Dependencies" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependenciesNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="fr.liglab.adele.cream:cream.helpers:0.1-SNAPSHOT" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependencyNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="org.ops4j.pax.exam:pax-exam:3.0.1" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$DependencyNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="cream.it.behavior" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+    </treeState>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-1" />
+    <option name="y" value="27" />
+    <option name="width" value="1922" />
+    <option name="height" value="1174" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="context.socm.reactor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="context.socm.reactor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Context-SOCM" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../felix" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/cream-it/cream-it-entity/src/main/java/fr/liglab/adele/cream/it" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="fr.liglab.adele.cream.it.behavior" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="fr.liglab.adele.cream.it.behavior.test.departure" />
+      <recent name="fr.liglab.adele.cream.it.behavior.synchronisation" />
+      <recent name="fr.liglab.adele.cream.it.behavior.injection" />
+      <recent name="fr.liglab.adele.cream.it.test" />
+      <recent name="fr.liglab.adele.cream.ipojo.module" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/cream-it/cream-it-entity/src/test/java/fr/liglab/adele/cream/it/entity/test" />
+      <recent name="$PROJECT_DIR$/cream-it/cream-it-entity/src/main/java/fr/liglab/adele/cream/it/entity/synchronisation" />
+      <recent name="$PROJECT_DIR$/cream-it/cream-it-entity" />
+      <recent name="$PROJECT_DIR$/cream-it" />
+      <recent name="$PROJECT_DIR$/cream-it/cream-it-creator" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.UniqueBehaviorTest.tesPojoInterfaceInvocation">
+    <configuration default="false" name="ContextEntityVisitorTest.testDefaultNameIsClassname" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="fr.liglab.adele.cream.ipojo.module.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="cream.ipojo.module" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.liglab.adele.cream.ipojo.module.test" />
+      <option name="MAIN_CLASS_NAME" value="fr.liglab.adele.cream.ipojo.module.test.ContextEntityVisitorTest" />
+      <option name="METHOD_NAME" value="testDefaultNameIsClassname" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="ContextEntityVisitorTest.testDefaultName2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="fr.liglab.adele.cream.ipojo.module.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="cream.ipojo.module" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.liglab.adele.cream.ipojo.module.test" />
+      <option name="MAIN_CLASS_NAME" value="fr.liglab.adele.cream.ipojo.module.test.ContextEntityVisitorTest" />
+      <option name="METHOD_NAME" value="testDefaultName2" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="BehaviorDeparture.testSimpleBehaviorInjection" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="fr.liglab.adele.cream.it.behavior.test.departure.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="cream.it.behavior" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.liglab.adele.cream.it.behavior.test.departure" />
+      <option name="MAIN_CLASS_NAME" value="fr.liglab.adele.cream.it.behavior.test.departure.BehaviorDeparture" />
+      <option name="METHOD_NAME" value="testSimpleBehaviorInjection" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="InjectedBehaviorTest.testSimpleBehaviorInjection" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="fr.liglab.adele.cream.it.behavior.test.injection.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="cream.it.behavior" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.liglab.adele.cream.it.behavior.test.injection" />
+      <option name="MAIN_CLASS_NAME" value="fr.liglab.adele.cream.it.behavior.test.injection.InjectedBehaviorTest" />
+      <option name="METHOD_NAME" value="testSimpleBehaviorInjection" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="UniqueBehaviorTest.tesPojoInterfaceInvocation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="fr.liglab.adele.cream.it.behavior.test.synchronisation.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="cream.it.behavior" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="fr.liglab.adele.cream.it.behavior.test.synchronisation" />
+      <option name="MAIN_CLASS_NAME" value="fr.liglab.adele.cream.it.behavior.test.synchronisation.UniqueBehaviorTest" />
+      <option name="METHOD_NAME" value="tesPojoInterfaceInvocation" />
+      <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
+      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
+      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
+      <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="USE_LAST_SELECTED_DEVICE" value="false" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
+      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
+      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
+      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
+      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
+      <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <module />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="ArquillianTestNG" factoryName="">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="myFilePath" />
+      <option name="GLUE" />
+      <option name="myNameFilter" />
+      <option name="myGeneratedName" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="FlashRunConfigurationType" factoryName="Flash App">
+      <option name="BCName" value="" />
+      <option name="IOSSimulatorSdkPath" value="" />
+      <option name="adlOptions" value="" />
+      <option name="airProgramParameters" value="" />
+      <option name="appDescriptorForEmulator" value="Android" />
+      <option name="debugTransport" value="USB" />
+      <option name="debuggerSdkRaw" value="BC SDK" />
+      <option name="emulator" value="NexusOne" />
+      <option name="emulatorAdlOptions" value="" />
+      <option name="fastPackaging" value="true" />
+      <option name="fullScreenHeight" value="0" />
+      <option name="fullScreenWidth" value="0" />
+      <option name="launchUrl" value="false" />
+      <option name="launcherParameters">
+        <LauncherParameters>
+          <option name="browser" value="a7bb68e0-33c0-4d6f-a81a-aac1fdb870c8" />
+          <option name="launcherType" value="OSDefault" />
+          <option name="newPlayerInstance" value="false" />
+          <option name="playerPath" value="/usr/bin/flashplayerdebugger" />
+        </LauncherParameters>
+      </option>
+      <option name="mobileRunTarget" value="Emulator" />
+      <option name="moduleName" value="" />
+      <option name="overriddenMainClass" value="" />
+      <option name="overriddenOutputFileName" value="" />
+      <option name="overrideMainClass" value="false" />
+      <option name="runTrusted" value="true" />
+      <option name="screenDpi" value="0" />
+      <option name="screenHeight" value="0" />
+      <option name="screenWidth" value="0" />
+      <option name="url" value="http://" />
+      <option name="usbDebugPort" value="7936" />
+      <method />
+    </configuration>
+    <configuration default="true" type="FlexUnitRunConfigurationType" factoryName="FlexUnit" appDescriptorForEmulator="Android" class_name="" emulatorAdlOptions="" method_name="" package_name="" scope="Class">
+      <option name="BCName" value="" />
+      <option name="launcherParameters">
+        <LauncherParameters>
+          <option name="browser" value="a7bb68e0-33c0-4d6f-a81a-aac1fdb870c8" />
+          <option name="launcherType" value="OSDefault" />
+          <option name="newPlayerInstance" value="false" />
+          <option name="playerPath" value="/usr/bin/flashplayerdebugger" />
+        </LauncherParameters>
+      </option>
+      <option name="moduleName" value="" />
+      <option name="trusted" value="true" />
+      <method />
+    </configuration>
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="GrailsRunConfigurationType" factoryName="Grails">
+      <module name="" />
+      <setting name="vmparams" value="" />
+      <setting name="cmdLine" value="run-app" />
+      <setting name="depsClasspath" value="false" />
+      <setting name="passParentEnv" value="true" />
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <setting name="launchBrowser" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnitTestDiscovery" factoryName="JUnit Test Discovery" changeList="All">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Java Scratch" factoryName="Java Scratch">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="SCRATCH_FILE_ID" value="0" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="context.socm.reactor" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="filePath" />
+      <option name="vmParameters" />
+      <option name="alternativeJrePath" />
+      <option name="programParameters" />
+      <option name="passParentEnvs" value="true" />
+      <option name="workingDirectory" />
+      <option name="isAlternativeJrePathEnabled" value="false" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list />
+            </option>
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <module name="cream.it.behavior" />
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNGTestDiscovery" factoryName="TestNG Test Discovery" changeList="All">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run-script" />
+      <scripts />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-options />
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+    <configuration default="true" type="osgi.bnd.run" factoryName="Run Launcher">
+      <method />
+    </configuration>
+    <configuration default="true" type="osgi.bnd.run" factoryName="Test Launcher (JUnit)">
+      <method />
+    </configuration>
+    <configuration default="false" name="Remote Surefire" type="Remote" factoryName="Remote">
+      <module name="cream.it.behavior" />
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="5005" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method />
+    </configuration>
+    <configuration default="false" name="iCasa" type="Remote" factoryName="Remote">
+      <module name="cream.it.behavior" />
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="8000" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="8000" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method />
+    </configuration>
+    <list size="7">
+      <item index="0" class="java.lang.String" itemvalue="Remote.Remote Surefire" />
+      <item index="1" class="java.lang.String" itemvalue="Remote.iCasa" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.ContextEntityVisitorTest.testDefaultNameIsClassname" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.ContextEntityVisitorTest.testDefaultName2" />
+      <item index="4" class="java.lang.String" itemvalue="JUnit.BehaviorDeparture.testSimpleBehaviorInjection" />
+      <item index="5" class="java.lang.String" itemvalue="JUnit.InjectedBehaviorTest.testSimpleBehaviorInjection" />
+      <item index="6" class="java.lang.String" itemvalue="JUnit.UniqueBehaviorTest.tesPojoInterfaceInvocation" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.UniqueBehaviorTest.tesPojoInterfaceInvocation" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.InjectedBehaviorTest.testSimpleBehaviorInjection" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.BehaviorDeparture.testSimpleBehaviorInjection" />
+        <item index="3" class="java.lang.String" itemvalue="JUnit.ContextEntityVisitorTest.testDefaultName2" />
+        <item index="4" class="java.lang.String" itemvalue="JUnit.ContextEntityVisitorTest.testDefaultNameIsClassname" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b74d39b9-63a8-4969-a541-07651ec92217" name="Default" comment="" />
+      <created>1469458182788</created>
+      <option name="number" value="Default" />
+      <updated>1469458182788</updated>
+      <workItem from="1469458185778" duration="791000" />
+      <workItem from="1469521194945" duration="17498000" />
+      <workItem from="1469604963715" duration="3362000" />
+      <workItem from="1469612269992" duration="9874000" />
+      <workItem from="1469692841685" duration="20176000" />
+      <workItem from="1469774371705" duration="16001000" />
+      <workItem from="1471336663579" duration="3723000" />
+      <workItem from="1471435508445" duration="3886000" />
+      <workItem from="1471439595885" duration="5462000" />
+      <workItem from="1471506916168" duration="4362000" />
+      <workItem from="1471518916650" duration="13007000" />
+      <workItem from="1471592351170" duration="10564000" />
+      <workItem from="1471854428609" duration="3955000" />
+      <workItem from="1471938201060" duration="41000" />
+      <workItem from="1472040747498" duration="11946000" />
+      <workItem from="1472110645232" duration="19363000" />
+      <workItem from="1472138010963" duration="3216000" />
+      <workItem from="1472198744016" duration="25487000" />
+      <workItem from="1472458716085" duration="7711000" />
+      <workItem from="1472476703117" duration="1099000" />
+      <workItem from="1472554066903" duration="2764000" />
+      <workItem from="1472562712097" duration="737000" />
+      <workItem from="1472630665924" duration="10694000" />
+      <workItem from="1472720686792" duration="9239000" />
+      <workItem from="1472814718094" duration="15868000" />
+      <workItem from="1473060877738" duration="6899000" />
+    </task>
+    <task id="LOCAL-00011" summary="refactor">
+      <created>1469605587100</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1469605587100</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Add behavior Test">
+      <created>1469631690140</created>
+      <option name="number" value="00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1469631690140</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Fix assert exception">
+      <created>1469697657172</created>
+      <option name="number" value="00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1469697657172</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Refactor package name">
+      <created>1469708056110</created>
+      <option name="number" value="00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1469708056110</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Refactor package name">
+      <created>1469708070907</created>
+      <option name="number" value="00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1469708070907</updated>
+    </task>
+    <task id="LOCAL-00016" summary="remove maven jar plug in">
+      <created>1469710025901</created>
+      <option name="number" value="00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1469710025901</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Refactor test helpers">
+      <created>1469710347451</created>
+      <option name="number" value="00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1469710347451</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Fix minor issue">
+      <created>1469710365259</created>
+      <option name="number" value="00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1469710365259</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Refactor code in order to integrate mvn jacoco plug in to enable sonar test coverage">
+      <created>1469722136142</created>
+      <option name="number" value="00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1469722136142</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Refactor common code">
+      <created>1469774918059</created>
+      <option name="number" value="00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1469774918059</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Some bugFix">
+      <created>1471342393248</created>
+      <option name="number" value="00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1471342393248</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Add behavior test">
+      <created>1471444082069</created>
+      <option name="number" value="00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1471444082069</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Add creator test project">
+      <created>1471444111514</created>
+      <option name="number" value="00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1471444111514</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Fix issue in configure">
+      <created>1471514112307</created>
+      <option name="number" value="00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1471514112307</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Rename test method">
+      <created>1471520401160</created>
+      <option name="number" value="00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1471520401160</updated>
+    </task>
+    <task id="LOCAL-00026" summary="add entity it project">
+      <created>1471520675192</created>
+      <option name="number" value="00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1471520675192</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Fix test classes">
+      <created>1471536797440</created>
+      <option name="number" value="00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1471536797440</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Add new entity Test">
+      <created>1471536836424</created>
+      <option name="number" value="00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1471536836424</updated>
+    </task>
+    <task id="LOCAL-00029" summary="change test order">
+      <created>1471536858888</created>
+      <option name="number" value="00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1471536858888</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Instance start only if behavior can start">
+      <created>1471536885528</created>
+      <option name="number" value="00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1471536885528</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Change management of behavior lifecycle, behavior must be started before the main instance.">
+      <created>1471615740147</created>
+      <option name="number" value="00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1471615740148</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Perform recursive introspection in order to determine implicit interfface heritage">
+      <created>1471617407586</created>
+      <option name="number" value="00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1471617407586</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Add synchro test">
+      <created>1471856575606</created>
+      <option name="number" value="00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1471856575606</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Add injected behavior annotation">
+      <created>1472116967871</created>
+      <option name="number" value="00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1472116967871</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Add specification check between injected behavior and declared behavior.">
+      <created>1472118589320</created>
+      <option name="number" value="00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1472118589320</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Change construction of provides element. Now context entity can be declared with no context services.">
+      <created>1472125131765</created>
+      <option name="number" value="00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1472125131765</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Fix behavior initialisation and provide  test">
+      <created>1472132504720</created>
+      <option name="number" value="00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1472132504720</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Fix handler description">
+      <created>1472137387109</created>
+      <option name="number" value="00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1472137387109</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Add cream Runtime exception in order to detect invocation exception">
+      <created>1472137437794</created>
+      <option name="number" value="00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1472137437794</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Fix intelliJ issue">
+      <created>1472138056661</created>
+      <option name="number" value="00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1472138056661</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Code Refactoring">
+      <created>1472138719123</created>
+      <option name="number" value="00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1472138719123</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Fix test">
+      <created>1472199375385</created>
+      <option name="number" value="00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1472199375385</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Used handler statechanged method instead of registering a InstanceListener">
+      <created>1472199590642</created>
+      <option name="number" value="00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1472199590642</updated>
+    </task>
+    <task id="LOCAL-00044" summary="cream-core refactoring">
+      <created>1472206259272</created>
+      <option name="number" value="00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1472206259272</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Remove duplicated exported extra package">
+      <created>1472211841242</created>
+      <option name="number" value="00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1472211841242</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Refactor test code">
+      <created>1472212684374</created>
+      <option name="number" value="00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1472212684374</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Update plug in">
+      <created>1472213866301</created>
+      <option name="number" value="00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1472213866301</updated>
+    </task>
+    <task id="LOCAL-00048" summary="cream runtime refactoring">
+      <created>1472217582669</created>
+      <option name="number" value="00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1472217582669</updated>
+    </task>
+    <task id="LOCAL-00049" summary="cream ipojo module  refactoring">
+      <created>1472219737633</created>
+      <option name="number" value="00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1472219737633</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Refactor duplicate code">
+      <created>1472221982373</created>
+      <option name="number" value="00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1472221982425</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Code cleaning">
+      <created>1472226553104</created>
+      <option name="number" value="00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1472226553104</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Exclude from sonar analysis">
+      <created>1472226572910</created>
+      <option name="number" value="00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1472226572910</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Annotation processor test  leads">
+      <created>1472464716864</created>
+      <option name="number" value="00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1472464716865</updated>
+    </task>
+    <task id="LOCAL-00054" summary="code clean">
+      <created>1472469669734</created>
+      <option name="number" value="00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1472469669734</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Fix">
+      <created>1472469790542</created>
+      <option name="number" value="00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1472469790542</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Improve AnnotationTest">
+      <created>1472741182709</created>
+      <option name="number" value="00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1472741182710</updated>
+    </task>
+    <task id="LOCAL-00057" summary="provides workaround">
+      <created>1473071408674</created>
+      <option name="number" value="00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1473071408674</updated>
+    </task>
+    <task id="LOCAL-00058" summary="pull function update stateValue table and exposed properties">
+      <created>1473071903232</created>
+      <option name="number" value="00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1473071903232</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Add invocation of the pojo interface method">
+      <created>1473075479100</created>
+      <option name="number" value="00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1473075479100</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 22m 50s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 24m 01s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 28m 31s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 43m 42s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 44m 57s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 46m 04s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 47m 03s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 16h 59m 29s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="InjectedBehaviorTest_testSimpleBehaviorInjection - 2016.09.02 at 17h 03m 41s.xml">
+      <configuration name="InjectedBehaviorTest.testSimpleBehaviorInjection" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="UniqueBehaviorTest_tesPojoInterfaceInvocation - 2016.09.05 at 13h 10m 56s.xml">
+      <configuration name="UniqueBehaviorTest.tesPojoInterfaceInvocation" configurationId="JUnit" />
+    </history-entry>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="227725000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-1" y="27" width="1922" height="1174" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32824427" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33683205" sideWeight="0.50213444" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3405377" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33683205" sideWeight="0.49786553" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32824427" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.52099234" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23852721" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="SonarQube" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919848" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2497332" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40648854" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="CDI" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32977587" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3283721" sideWeight="0.49786553" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add specification check between injected behavior and declared behavior." />
+    <MESSAGE value="Change construction of provides element. Now context entity can be declared with no context services." />
+    <MESSAGE value="Fix behavior initialisation and provide  test" />
+    <MESSAGE value="Fix handler description" />
+    <MESSAGE value="Add cream Runtime exception in order to detect invocation exception" />
+    <MESSAGE value="Fix intelliJ issue" />
+    <MESSAGE value="Code Refactoring" />
+    <MESSAGE value="Fix test" />
+    <MESSAGE value="Used handler statechanged method instead of registering a InstanceListener" />
+    <MESSAGE value="cream-core refactoring" />
+    <MESSAGE value="Remove duplicated exported extra package" />
+    <MESSAGE value="Refactor test code" />
+    <MESSAGE value="Update plug in" />
+    <MESSAGE value="cream runtime refactoring" />
+    <MESSAGE value="cream ipojo module  refactoring" />
+    <MESSAGE value="Refactor duplicate code" />
+    <MESSAGE value="Code cleaning" />
+    <MESSAGE value="Exclude from sonar analysis" />
+    <MESSAGE value="Annotation processor test  leads" />
+    <MESSAGE value="code clean" />
+    <MESSAGE value="Fix" />
+    <MESSAGE value="Improve AnnotationTest" />
+    <MESSAGE value="provides workaround" />
+    <MESSAGE value="pull function update stateValue table and exposed properties" />
+    <MESSAGE value="Add invocation of the pojo interface method" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add invocation of the pojo interface method" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="java-line">
+          <url>jar://$MAVEN_REPOSITORY$/org/ow2/chameleon/testing/osgi-helpers/0.6.2/osgi-helpers-0.6.2-sources.jar!/org/ow2/chameleon/testing/helpers/TestBundleOption.java</url>
+          <line>88</line>
+          <properties />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/behavior/BehaviorEntityHandler.java</url>
+          <properties />
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <default-breakpoints>
+        <breakpoint type="java-exception">
+          <properties>
+            <option name="NOTIFY_CAUGHT" value="false" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="121" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/cream-testing/cream-helper/src/main/java/fr/liglab/adele/cream/testing/helpers/ContextHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="29" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/internal/factories/BehaviorFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="54" column="50" selection-start-line="54" selection-start-column="50" selection-end-line="54" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/BehaviorBaseCommonConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15789473">
+          <caret line="10" column="59" selection-start-line="10" selection-start-column="59" selection-end-line="10" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/architecture/HandlerDescription.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.3175676">
+          <caret line="74" column="19" selection-start-line="74" selection-start-column="19" selection-end-line="74" selection-end-column="19" />
+          <folding>
+            <element signature="e#1992#1993#0" expanded="false" />
+            <element signature="e#2028#2029#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-testing/cream-helper/src/main/java/fr/liglab/adele/cream/testing/helpers/ContextBaseTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5413534">
+          <caret line="35" column="22" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/architecture/InstanceDescription.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.02255639">
+          <caret line="118" column="0" selection-start-line="118" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/PrimitiveInstanceDescription.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5488722">
+          <caret line="164" column="0" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-testing/cream-helper/src/main/java/fr/liglab/adele/cream/testing/helpers/ContextEntityHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.43609023">
+          <caret line="35" column="15" selection-start-line="35" selection-start-column="15" selection-end-line="35" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/BehaviorProviderProcessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.18045112">
+          <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/BehaviorsProcessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15789473">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/AbstractBehaviorElementProcessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6706767">
+          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/BehaviorProcessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15789473">
+          <caret line="7" column="58" selection-start-line="7" selection-start-column="58" selection-end-line="7" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/annotations/internal/HandlerReference.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8805031">
+          <caret line="45" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-ipojo-module/src/main/java/fr/liglab/adele/cream/ipojo/module/ContextEntityProcessor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.60902256">
+          <caret line="84" column="93" selection-start-line="84" selection-start-column="56" selection-end-line="84" selection-end-column="93" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1.jar!/org/apache/felix/ipojo/metadata/Element.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3474843">
+          <caret line="132" column="21" selection-start-line="132" selection-start-column="21" selection-end-line="132" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/annotations/internal/BehaviorReference.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.45112783">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.framework/5.4.0/org.apache.felix.framework-5.4.0.jar!/org/apache/felix/framework/BundleContextImpl.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6356589">
+          <caret line="242" column="78" selection-start-line="242" selection-start-column="72" selection-end-line="242" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0.jar!/org/osgi/framework/BundleContext.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6263566">
+          <caret line="63" column="60" selection-start-line="63" selection-start-column="40" selection-end-line="63" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/ow2/chameleon/testing/osgi-helpers/0.6.2/osgi-helpers-0.6.2-sources.jar!/org/ow2/chameleon/testing/helpers/ServiceHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.57715136">
+          <caret line="514" column="0" selection-start-line="514" selection-start-column="0" selection-end-line="514" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/main/java/fr/liglab/adele/cream/it/behavior/injection/ServiceContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15578635">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/ow2/chameleon/testing/osgi-helpers/0.6.2/osgi-helpers-0.6.2-sources.jar!/org/ow2/chameleon/testing/helpers/OSGiHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33281493">
+          <caret line="395" column="39" selection-start-line="395" selection-start-column="23" selection-end-line="395" selection-end-column="39" />
+          <folding>
+            <element signature="e#13599#13600#0" expanded="false" />
+            <element signature="e#13653#13654#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/synchronisation/MultipleBehaviorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="48" column="94" selection-start-line="48" selection-start-column="74" selection-end-line="48" selection-end-column="94" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/synchronisation/InitialisationBehaviorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="30" column="51" selection-start-line="30" selection-start-column="51" selection-end-line="30" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/main/java/fr/liglab/adele/cream/it/behavior/synchronisation/ContextService1.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1266892">
+          <caret line="5" column="17" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/IPojoFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="879" column="0" selection-start-line="879" selection-start-column="0" selection-end-line="879" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/InstanceManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33277026">
+          <caret line="503" column="0" selection-start-line="503" selection-start-column="0" selection-end-line="503" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/main/java/fr/liglab/adele/cream/it/behavior/injection/ContextServiceUsingInjectedBehavior.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="5" column="40" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/PrimitiveHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="3.387097">
+          <caret line="32" column="65" selection-start-line="32" selection-start-column="65" selection-end-line="32" selection-end-column="65" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-example/src/main/java/fr/liglab/adele/icasa/context/model/example/BehaviorImplBis.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/behavior/lifecycle/BehaviorLifecyleHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="67" column="35" selection-start-line="67" selection-start-column="35" selection-end-line="67" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/ComponentInstance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="29" column="17" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/internal/factories/BehaviorInstanceManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4560811">
+          <caret line="88" column="7" selection-start-line="88" selection-start-column="7" selection-end-line="88" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/behavior/BehaviorEntityHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.0912163">
+          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-distribution/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/behavior/manager/BehaviorManagerHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="27" selection-start-line="47" selection-start-column="27" selection-end-line="47" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/behavior/manager/RequiredBehavior.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="34" column="82" selection-start-line="34" selection-start-column="82" selection-end-line="34" selection-end-column="82" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/injection/InjectedBehaviorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="44" column="87" selection-start-line="44" selection-start-column="87" selection-end-line="44" selection-end-column="87" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/EntityHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="121" column="29" selection-start-line="121" selection-start-column="29" selection-end-line="121" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/AbstractContextHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="26" column="44" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/StateInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2706767">
+          <caret line="12" column="17" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/AbstractStateInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.15789473">
+          <caret line="14" column="64" selection-start-line="14" selection-start-column="64" selection-end-line="14" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/Pojo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33834586">
+          <caret line="32" column="42" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#1276#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/handlers/providedservice/ProvidedServiceHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2962406">
+          <caret line="430" column="0" selection-start-line="430" selection-start-column="0" selection-end-line="430" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/apache/felix/org.apache.felix.ipojo/1.12.1/org.apache.felix.ipojo-1.12.1-sources.jar!/org/apache/felix/ipojo/handlers/providedservice/ProvidedService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.2949527">
+          <caret line="872" column="0" selection-start-line="872" selection-start-column="0" selection-end-line="872" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/utils/CustomInvocationHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-core/src/main/java/fr/liglab/adele/cream/annotations/entity/ContextProvideStrategy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="153" column="9" selection-start-line="153" selection-start-column="9" selection-end-line="153" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-behavior/src/test/java/fr/liglab/adele/cream/it/behavior/test/synchronisation/UniqueBehaviorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-it/cream-it-entity/src/test/java/fr/liglab/adele/cream/it/entity/test/services/EntityServiceTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5714286">
+          <caret line="80" column="0" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cream-model-runtime/src/main/java/fr/liglab/adele/cream/runtime/handler/entity/utils/SynchronisationInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33834586">
+          <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

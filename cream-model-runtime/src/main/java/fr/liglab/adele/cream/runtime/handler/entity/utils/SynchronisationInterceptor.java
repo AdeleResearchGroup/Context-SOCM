@@ -56,7 +56,8 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
 	public Object onGet(Object pojo, String fieldName, Object value) {
 		Function<Object,Object> pullFunction = pullFunctions.get(fieldName);
 		if (pullFunction != null) {
-			this.abstractContextHandler.update(fieldToState.get(fieldName),pullFunction.apply(pojo));
+			Object pulledValue =  pullFunction.apply(pojo);
+			abstractContextHandler.update(fieldToState.get(fieldName),pulledValue);
 		}
 
 		return abstractContextHandler.getStateValue(fieldToState.get(fieldName));

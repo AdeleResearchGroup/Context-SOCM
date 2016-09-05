@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-distribution" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-ipojo-module" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-it" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-it/cream-it-behavior" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-it/cream-it-creator" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-it/cream-it-entity" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-model-example" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-model-runtime" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-runtime-facilities" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-testing" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-testing/cream-helper" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-testing/cream-test-bom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cream-testing/wisdom-fake-bundle" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>
