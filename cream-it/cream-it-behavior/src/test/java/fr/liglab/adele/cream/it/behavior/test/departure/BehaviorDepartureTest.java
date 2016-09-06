@@ -37,7 +37,7 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExamReactorStrategy(PerMethod.class)
-public class BehaviorDeparture extends BehaviorBaseCommonConfig {
+public class BehaviorDepartureTest extends BehaviorBaseCommonConfig {
 
     @Test
     public void testBehaviorDeparture() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
