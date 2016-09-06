@@ -43,7 +43,7 @@ public class InjectedBehaviorTest extends BehaviorBaseCommonConfig {
     public void testSimpleBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        ServiceContext serviceObj1 = osgiHelper.waitForService(ServiceContext.class,null,((long)25000));
+        ServiceContext serviceObj1 = osgiHelper.waitForService(ServiceContext.class,null,((long)2000));
 
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1.returnTrueFromTheInjectedBehavior()).isTrue();

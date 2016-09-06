@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.testing.helpers;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.ComponentInstance;
+import org.apache.felix.ipojo.architecture.Architecture;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
@@ -43,13 +44,24 @@ public class BehaviorHelper {
         HandlerDescription managerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_MANAGER_HANDLER);
         Element element = managerDescription.getHandlerInfo();
 
+        Element[] behaviorInstanceElement = element.getElements("instance");
         String instanceName = null;
-        for (Element singleElement: element.getElements()){
-            String id = singleElement.getAttribute(BehaviorReference.BEHAVIOR_ID_CONFIG);
-            if (id != null && id.equals(behaviorId)){
-                instanceName = singleElement.getAttribute("name");
+        for (Element element1 : behaviorInstanceElement){
+            Element[] handlerElement = element1.getElements("handler");
+            for (Element element2:handlerElement){
+                if ((HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER).equals(element2.getAttribute("name"))){
+                    String id = element2.getAttribute(BehaviorReference.BEHAVIOR_ID_CONFIG);
+                    if (id.equals(behaviorId)){
+                        instanceName = element1.getAttribute("name");
+                        Architecture behaviorArchitecture = ipojoHelper.getArchitectureByName(instanceName);
+                        InstanceDescription behaviorInstanceDescription = behaviorArchitecture.getInstanceDescription();
+                        ComponentInstance behaviorInstance = behaviorInstanceDescription.getInstance();
+                        return behaviorInstance;
+                    }
+                }
             }
         }
-        return ipojoHelper.getInstanceByName(instanceName);
+        return null;
+
     }
 }

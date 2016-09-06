@@ -6,8 +6,9 @@ import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorStateListener;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;
+import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedService;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
@@ -17,15 +18,14 @@ import org.apache.felix.ipojo.parser.ParseUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
 public class BehaviorManagerHandler extends PrimitiveHandler implements InvocationHandler,ContextListener,BehaviorStateListener {
+
+    private static final String CONTEXT_ENTITY_CONTROLLER_FIELD_NAME = " context.entity.controller.";
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
 
@@ -41,7 +41,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
         }
 
         ProvidedService providedService = getContextEntityProvidedService(metadata);
-
+        List<String> behaviorSpecs = new ArrayList<>();
         for (Element element:behaviorElements){
             Element[] behaviorIndividualElements = element.getElements(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
 
@@ -69,12 +69,27 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
                     getInstanceManager().register(fieldMetadata,requiredBehavior.getBehaviorInterceptor());
                 }
 
+                behaviorSpecs.add( individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+            }
+        }
+
+        /**Due to service controller issue we must create a controller Always on true for contextEntitySpec**/
+        createControllerForContextEntity(metadata,behaviorSpecs);
+    }
+
+    private void createControllerForContextEntity(Element metadata,List<String> behaviorSpecs){
+        ProvidedService providedService = getContextEntityProvidedService(metadata);
+        int i=0;
+        for(String spec:getContextEntitySpec(metadata)){
+            if (!behaviorSpecs.contains(spec)){
+                providedService.setController(CONTEXT_ENTITY_CONTROLLER_FIELD_NAME+i,true,spec);
+                i++;
             }
         }
     }
 
-    private ProvidedService getContextEntityProvidedService(Element config){
-        String[] contextEntitySpecs = getContextEntitySpec(config);
+    private ProvidedService getContextEntityProvidedService(Element metadata){
+        String[] contextEntitySpecs = getContextEntitySpec(metadata);
         ProvidedServiceHandler providedServiceHandler = getProvideServiceHandler();
         ProvidedService[] providedServices = providedServiceHandler.getProvidedServices();
         for (ProvidedService providedService:providedServices){
@@ -86,8 +101,8 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
         return null;
     }
 
-    private String[] getContextEntitySpec(Element config){
-        Element[] providesElements = config.getElements("provides");
+    private String[] getContextEntitySpec(Element metadata){
+        Element[] providesElements = metadata.getElements("provides");
         for (Element provides : providesElements){
             Element[] propertyElements = provides.getElements("property");
             for (Element property : propertyElements){

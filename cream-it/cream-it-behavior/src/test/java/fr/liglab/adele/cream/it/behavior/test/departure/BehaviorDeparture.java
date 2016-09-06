@@ -21,10 +21,9 @@ package fr.liglab.adele.cream.it.behavior.test.departure;
  */
 
 
-import fr.liglab.adele.cream.it.behavior.injection.ContextServiceUsingInjectedBehavior;
-import fr.liglab.adele.cream.it.behavior.injection.ContextServiceUsingMultipleInjectedBehavior;
-import fr.liglab.adele.cream.it.behavior.injection.ServiceContext;
-import fr.liglab.adele.cream.it.behavior.injection.ServiceContextPrime;
+import fr.liglab.adele.cream.it.behavior.synchronisation.BehaviorSpec1;
+import fr.liglab.adele.cream.it.behavior.synchronisation.ContextEntity1;
+import fr.liglab.adele.cream.it.behavior.synchronisation.ContextService1;
 import fr.liglab.adele.cream.it.behavior.test.BehaviorBaseCommonConfig;
 import fr.liglab.adele.cream.testing.helpers.BehaviorHelper;
 import org.apache.felix.ipojo.ComponentInstance;
@@ -41,20 +40,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BehaviorDeparture extends BehaviorBaseCommonConfig {
 
     @Test
-    public void testSimpleBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public void testBehaviorDeparture() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ComponentInstance instance = createContextEntity();
 
-        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
-        behaviorHelper.getBehavior(instance,"injectedBehavior");
-
-        ServiceContext serviceObj1 = osgiHelper.getServiceObject(ServiceContext.class);
-
+        ContextService1 serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
         assertThat(serviceObj1).isNotNull();
-        assertThat(serviceObj1.returnTrueFromTheInjectedBehavior()).isTrue();
+
+        BehaviorSpec1 behavior = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)2000));
+        assertThat(behavior).isNotNull();
+
+        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
+        assertThat(behaviorHelper.getBehavior(instance,"Behavior1")).isNotNull();
+
+        behaviorHelper.stopBehavior(instance,"Behavior1");
+
+        BehaviorSpec1 behavior2 = osgiHelper.getServiceObject(BehaviorSpec1.class);
+        assertThat(behavior2).isNull();
+
+
     }
 
     private ComponentInstance createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingInjectedBehavior.class.getName(),"ContextServiceUsingInjectedBehavior",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
     }
 
 }
