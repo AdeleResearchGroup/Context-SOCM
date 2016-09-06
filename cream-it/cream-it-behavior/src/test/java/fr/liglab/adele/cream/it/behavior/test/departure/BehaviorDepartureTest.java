@@ -21,9 +21,7 @@ package fr.liglab.adele.cream.it.behavior.test.departure;
  */
 
 
-import fr.liglab.adele.cream.it.behavior.synchronisation.BehaviorSpec1;
-import fr.liglab.adele.cream.it.behavior.synchronisation.ContextEntity1;
-import fr.liglab.adele.cream.it.behavior.synchronisation.ContextService1;
+import fr.liglab.adele.cream.it.behavior.synchronisation.*;
 import fr.liglab.adele.cream.it.behavior.test.BehaviorBaseCommonConfig;
 import fr.liglab.adele.cream.testing.helpers.BehaviorHelper;
 import org.apache.felix.ipojo.ComponentInstance;
@@ -40,8 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BehaviorDepartureTest extends BehaviorBaseCommonConfig {
 
     @Test
-    public void testBehaviorDeparture() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        ComponentInstance instance = createContextEntity();
+    public void testSimpleBehaviorDeparture() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        ComponentInstance instance = createContextEntityWithOneBehavior();
 
         ContextService1 serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
         assertThat(serviceObj1).isNotNull();
@@ -57,11 +55,54 @@ public class BehaviorDepartureTest extends BehaviorBaseCommonConfig {
         BehaviorSpec1 behavior2 = osgiHelper.getServiceObject(BehaviorSpec1.class);
         assertThat(behavior2).isNull();
 
+        ContextService1 serviceObj1SideEffect = osgiHelper.getServiceObject(ContextService1.class);
+        assertThat(serviceObj1SideEffect).isNotNull();
 
     }
 
-    private ComponentInstance createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    @Test
+    public void testMultipleBehaviorDeparture() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        ComponentInstance instance = createContextEntityWithMultipleBehavior();
+
+        ContextService1 serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
+        assertThat(serviceObj1).isNotNull();
+
+        BehaviorSpec1 behavior = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)2000));
+        BehaviorSpec2 behavior2 = osgiHelper.waitForService(BehaviorSpec2.class,null,((long)2000));
+        assertThat(behavior).isNotNull();
+        assertThat(behavior2).isNotNull();
+
+        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
+        assertThat(behaviorHelper.getBehavior(instance,"Behavior1")).isNotNull();
+        assertThat(behaviorHelper.getBehavior(instance,"Behavior2")).isNotNull();
+
+        behavior = null;
+        behavior2 = null;
+
+        behaviorHelper.stopBehavior(instance,"Behavior1");
+        BehaviorSpec1 behaviorSpec1Null = osgiHelper.getServiceObject(BehaviorSpec1.class);
+        BehaviorSpec2 behaviorSpec2NotNullSideEffect = osgiHelper.getServiceObject(BehaviorSpec2.class);
+        assertThat(behaviorSpec1Null).isNull();
+        assertThat(behaviorSpec2NotNullSideEffect).isNotNull();
+
+        behaviorSpec2NotNullSideEffect = null;
+
+        behaviorHelper.stopBehavior(instance,"Behavior2");
+        BehaviorSpec2 behaviorSpec2Null = osgiHelper.getServiceObject(BehaviorSpec2.class);
+        assertThat(behaviorSpec2Null).isNull();
+
+        BehaviorSpec1 behaviorSpec1NullCheckSideEffect = osgiHelper.getServiceObject(BehaviorSpec1.class);
+        assertThat(behaviorSpec1NullCheckSideEffect).isNull();
+
+    }
+
+    private ComponentInstance createContextEntityWithOneBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         return contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
+    }
+
+
+    private ComponentInstance createContextEntityWithMultipleBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextEntity2.class.getName(),"ContextEntityTest",null);
     }
 
 }
