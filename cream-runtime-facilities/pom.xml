@@ -55,10 +55,12 @@
                     <instructions>
                         <Export-Package>
                             fr.liglab.adele.cream.event.handler.annotation.*,
+                            fr.liglab.adele.cream.requirement.handler.annotation.*,
                         </Export-Package>
-                        <Export-Package>
-                            fr.liglab.adele.cream.event.handler.implem.*
-                        </Export-Package>
+                        <Private-Package>
+                            fr.liglab.adele.cream.event.handler.impl.*,
+                            fr.liglab.adele.cream.requirement.handler.impl.*,
+                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

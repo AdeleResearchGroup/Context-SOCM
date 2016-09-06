@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.event.handler.implem;
+package fr.liglab.adele.cream.event.handler.impl;
 
 import fr.liglab.adele.cream.event.handler.annotation.ContextUpdate;
 import fr.liglab.adele.cream.event.handler.annotation.EventReference;

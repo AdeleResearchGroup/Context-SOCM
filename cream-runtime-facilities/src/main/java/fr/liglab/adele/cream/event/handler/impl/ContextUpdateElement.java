@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.event.handler.implem;
+package fr.liglab.adele.cream.event.handler.impl;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import org.apache.felix.ipojo.ComponentInstance;
