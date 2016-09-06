@@ -5,5 +5,5 @@ package fr.liglab.adele.cream.runtime.handler.behavior.lifecycle;
  */
 public interface BehaviorStateListener {
 
-    public void behaviorStateChange(int state);
+    public void behaviorStateChange(int state,String behaviorId);
 }

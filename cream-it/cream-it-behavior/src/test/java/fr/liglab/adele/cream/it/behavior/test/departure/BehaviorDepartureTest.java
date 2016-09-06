@@ -21,6 +21,9 @@ package fr.liglab.adele.cream.it.behavior.test.departure;
  */
 
 
+import fr.liglab.adele.cream.it.behavior.injection.BehaviorToInject;
+import fr.liglab.adele.cream.it.behavior.injection.ContextServiceUsingInjectedBehavior;
+import fr.liglab.adele.cream.it.behavior.injection.ServiceContext;
 import fr.liglab.adele.cream.it.behavior.synchronisation.*;
 import fr.liglab.adele.cream.it.behavior.test.BehaviorBaseCommonConfig;
 import fr.liglab.adele.cream.testing.helpers.BehaviorHelper;
@@ -94,6 +97,35 @@ public class BehaviorDepartureTest extends BehaviorBaseCommonConfig {
         BehaviorSpec1 behaviorSpec1NullCheckSideEffect = osgiHelper.getServiceObject(BehaviorSpec1.class);
         assertThat(behaviorSpec1NullCheckSideEffect).isNull();
 
+    }
+
+    @Test
+    public void testSimpleBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        ComponentInstance instance = createContextEntityInjectedBehavior();
+
+        ServiceContext serviceObj1 = osgiHelper.waitForService(ServiceContext.class,null,((long)2000));
+        assertThat(serviceObj1).isNotNull();
+
+        BehaviorToInject behaviorToInject = osgiHelper.waitForService(BehaviorToInject.class,null,((long)2000));
+        assertThat(behaviorToInject).isNotNull();
+
+        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
+        assertThat(behaviorHelper.getBehavior(instance,"injectedBehavior")).isNotNull();
+
+        behaviorToInject = null;
+        serviceObj1 = null;
+
+        behaviorHelper.stopBehavior(instance,"injectedBehavior");
+
+        serviceObj1 = osgiHelper.getServiceObject(ServiceContext.class);
+        behaviorToInject = osgiHelper.getServiceObject(BehaviorToInject.class);
+
+        assertThat(behaviorToInject).isNull();
+        assertThat(serviceObj1).isNull();
+    }
+
+    private ComponentInstance createContextEntityInjectedBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingInjectedBehavior.class.getName(),"ContextServiceUsingInjectedBehavior",null);
     }
 
     private ComponentInstance createContextEntityWithOneBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {

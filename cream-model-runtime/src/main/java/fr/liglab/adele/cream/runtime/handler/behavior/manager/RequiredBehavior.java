@@ -159,6 +159,13 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         }
     }
 
+    public synchronized boolean isValid(){
+        if (myManager != null){
+            return (myManager.getState() == ComponentInstance.VALID);
+        }
+        return false;
+    }
+
     @Override
     public synchronized Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (myManager != null && myManager.isStarted()){
@@ -176,7 +183,7 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
     }
 
     @Override
-    public void behaviorStateChange(int state) {
+    public void behaviorStateChange(int state,String id) {
         System.out.println("State Notif " + state);
         if (state == ComponentInstance.VALID){
             System.out.println("REGISTER behavior because behavior instance became VALID");
@@ -186,7 +193,7 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
             System.out.println("UNREGISTER behavior because behavior instance became INVALID");
                myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
         }
-        parent.behaviorStateChange(state);
+        parent.behaviorStateChange(state,id);
     }
 
     private class BehaviorInjectedInterceptor implements FieldInterceptor{

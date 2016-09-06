@@ -19,7 +19,6 @@ import org.apache.felix.ipojo.parser.ParseUtils;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
@@ -27,9 +26,11 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
 
     private static final String CONTEXT_ENTITY_CONTROLLER_FIELD_NAME = " context.entity.controller.";
 
-    private final Map<String,RequiredBehavior> myRequiredBehaviorById = new ConcurrentHashMap<>();
+    private final Map<String,RequiredBehavior> myRequiredBehaviorById = new HashMap<>();
 
     private final Set<String> stateVariable = new ConcurrentSkipListSet<>();
+
+    private final Set<String> mandatoryBehavior = new HashSet<>();
 
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
@@ -67,6 +68,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
                 }
                 if (fieldMetadata != null){
                     getInstanceManager().register(fieldMetadata,requiredBehavior.getBehaviorInterceptor());
+                    mandatoryBehavior.add(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME));
                 }
 
                 behaviorSpecs.add( individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
@@ -75,6 +77,10 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
 
         /**Due to service controller issue we must create a controller Always on true for contextEntitySpec**/
         createControllerForContextEntity(metadata,behaviorSpecs);
+
+        if (!mandatoryBehavior.isEmpty()){
+            setValidity(false);
+        }
     }
 
     private void createControllerForContextEntity(Element metadata,List<String> behaviorSpecs){
@@ -141,7 +147,9 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
 
     @Override
     public void start() {
-        //Do nothing
+        for (String mandatoryBehaviorId : mandatoryBehavior){
+            myRequiredBehaviorById.get(mandatoryBehaviorId).tryStartBehavior();
+        }
     }
 
 
@@ -243,8 +251,26 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
     }
 
     @Override
-    public void behaviorStateChange(int state) {
+    public void behaviorStateChange(int state,String id) {
+        if (ComponentInstance.INVALID == state){
+            if (mandatoryBehavior.contains(id)){
+                setValidity(false);
+            }
+        }
+        if (ComponentInstance.VALID == state){
+            if (checkRequiredBehavior()){
+                setValidity(true);
+            }
+        }
+    }
 
+    private boolean checkRequiredBehavior(){
+        for (String mandatoryBehaviorId : mandatoryBehavior){
+            if(!myRequiredBehaviorById.get(mandatoryBehaviorId).isValid()){
+                return false;
+            }
+        }
+        return true;
     }
 
     public class BehaviorHandlerDescription extends HandlerDescription {

@@ -74,7 +74,7 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler {
 
     private void notifyListener(int state){
         for (BehaviorStateListener behaviorStateListener: stateListeners){
-            behaviorStateListener.behaviorStateChange(state);
+            behaviorStateListener.behaviorStateChange(state,id);
         }
     }
 
