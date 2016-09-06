@@ -64,7 +64,6 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         myConfiguration.put(BehaviorReference.BEHAVIOR_ID_CONFIG,id);
         this.parent = parent;
         providedService.setController(BEHAVIOR_CONTROLLER_FIELD+myId,false, mySpecification);
-        System.out.println("Set controller & Hide Behavior");
     }
 
     public BehaviorFactory getFactory() {
@@ -111,14 +110,6 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         }
     }
 
-    public synchronized boolean isOperationnal(){
-
-        if (myManager != null ){
-            return myManager.isOperationnal();
-        }
-        return false;
-    }
-
     public synchronized void tryStartBehavior(){
 
         if (myManager != null ){
@@ -133,7 +124,6 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     public synchronized void tryInvalid(){
         if (myManager != null && myManager.isStarted() ){
-            System.out.println("UNREGISTER behavior manager try to invalidate it");
             myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
             myManager.getBehaviorLifeCycleHandler().stopBehavior();
 
@@ -142,8 +132,6 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     public synchronized void tryDispose(){
         if (myManager != null){
-
-            System.out.println("UNREGISTER behavior because manager try to dispose it");
             myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
             myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
             myManager.dispose();
@@ -184,13 +172,10 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     @Override
     public void behaviorStateChange(int state,String id) {
-        System.out.println("State Notif " + state);
         if (state == ComponentInstance.VALID){
-            System.out.println("REGISTER behavior because behavior instance became VALID");
                myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,true);
         }
         else if (state == ComponentInstance.INVALID){
-            System.out.println("UNREGISTER behavior because behavior instance became INVALID");
                myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
         }
         parent.behaviorStateChange(state,id);

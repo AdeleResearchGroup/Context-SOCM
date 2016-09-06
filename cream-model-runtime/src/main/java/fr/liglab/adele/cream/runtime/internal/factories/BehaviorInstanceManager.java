@@ -62,19 +62,4 @@ public class BehaviorInstanceManager extends InstanceManager {
             return SuccessorStrategy.NO_FOUND_CODE;
         }
     }
-
-    public boolean isOperationnal(){
-        for (Handler handler : getRegisteredHandlers()){
-            HandlerFactory fact = (HandlerFactory) handler.getHandlerManager().getFactory();
-            if (fact.getHandlerName().equals(LIFECYCLE_HANDLER)) {
-                continue;
-            }
-            if (!handler.getValidity()){
-                return false;
-            }
-        }
-        return true;
-    }
-
-
 }
