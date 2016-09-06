@@ -25,7 +25,9 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 		checkFieldTypeCorrespondance(element,node.desc);
 
 		Attribute attributeField = new Attribute(BehaviorReference.FIELD_ATTRIBUTE_NAME,node.name);
+		Attribute mandatoryAttribute = new Attribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME,String.valueOf(true));
 		element.addAttribute(attributeField);
+		element.addAttribute(mandatoryAttribute);
 
 
 		return;

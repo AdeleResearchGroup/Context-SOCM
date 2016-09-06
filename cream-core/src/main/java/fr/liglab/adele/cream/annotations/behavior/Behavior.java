@@ -12,4 +12,6 @@ public @interface Behavior {
     Class implem();
 
     String id();
+
+    boolean mandatory() default false;
 }

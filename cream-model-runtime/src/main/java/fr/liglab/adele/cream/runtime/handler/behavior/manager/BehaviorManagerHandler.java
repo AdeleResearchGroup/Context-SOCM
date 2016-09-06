@@ -68,9 +68,13 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
                 }
                 if (fieldMetadata != null){
                     getInstanceManager().register(fieldMetadata,requiredBehavior.getBehaviorInterceptor());
-                    mandatoryBehavior.add(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME));
+
                 }
 
+                boolean mandatoryField = Boolean.valueOf(individualBehaviorElement.getAttribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME));
+                if (mandatoryField){
+                    mandatoryBehavior.add(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME));
+                }
                 behaviorSpecs.add( individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
             }
         }

@@ -30,9 +30,11 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
         Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,annotation.spec().getName());
         Attribute implAttr = new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,annotation.implem().getName());
         Attribute id = new Attribute(BehaviorReference.ID_ATTRIBUTE_NAME,annotation.id());
+        Attribute mandatory = new Attribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME,String.valueOf(annotation.mandatory()));
         behaviorIndividualElement.addAttribute(specAttr);
         behaviorIndividualElement.addAttribute(implAttr);
         behaviorIndividualElement.addAttribute(id);
+        behaviorIndividualElement.addAttribute(mandatory);
 
         addMetadataElement(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME+":"+annotation.id(),behaviorIndividualElement,getBehaviorParentElement());
         addSpecToProvideElement(annotation.spec().getName());
