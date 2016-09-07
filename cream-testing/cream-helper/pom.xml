@@ -30,6 +30,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>fr.liglab.adele.cream</groupId>
+            <artifactId>cream.model.runtime</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.ow2.chameleon.testing</groupId>
             <artifactId>osgi-helpers</artifactId>
         </dependency>

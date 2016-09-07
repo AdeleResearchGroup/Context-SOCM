@@ -65,10 +65,8 @@
                     <instructions>
                         <Export-Package>
                             fr.liglab.adele.cream.runtime.model.*,
-                        </Export-Package>
-                        <Export-Package>
-                            fr.liglab.adele.cream.runtime.handler.*,
-                            fr.liglab.adele.cream.runtime.internal.*
+                            fr.liglab.adele.cream.runtime.internal.*,
+                            fr.liglab.adele.cream.runtime.handler.*
                         </Export-Package>
                         <IPOJO-Extension>
                             context-component:fr.liglab.adele.cream.runtime.internal.factories.ContextEntityFactory,

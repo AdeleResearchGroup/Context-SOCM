@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.event.handler.annotation;
+package fr.liglab.adele.cream.facilities.ipojo.annotation;
 
 /**
  * Created by aygalinc on 09/06/16.

@@ -100,7 +100,58 @@ public class BehaviorDepartureTest extends BehaviorBaseCommonConfig {
     }
 
     @Test
-    public void testSimpleBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public void testProxyExposedInterface() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        ComponentInstance instance = createContextEntityWithMultipleBehavior();
+
+        ContextService1 serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
+        assertThat(serviceObj1).isNotNull();
+
+        BehaviorSpec1 behavior = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)2000));
+        BehaviorSpec2 behavior2 = osgiHelper.waitForService(BehaviorSpec2.class,null,((long)2000));
+        assertThat(behavior).isNotNull();
+        assertThat(behavior2).isNotNull();
+
+        assertThat(behavior).isInstanceOf(ContextService1.class);
+        assertThat(behavior2).isInstanceOf(ContextService1.class);
+
+        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
+        assertThat(behaviorHelper.getBehavior(instance,"Behavior1")).isNotNull();
+        assertThat(behaviorHelper.getBehavior(instance,"Behavior2")).isNotNull();
+
+        behavior = null;
+        behavior2 = null;
+
+        behaviorHelper.stopBehavior(instance,"Behavior1");
+        BehaviorSpec1 behaviorSpec1Null = osgiHelper.getServiceObject(BehaviorSpec1.class);
+        BehaviorSpec2 behaviorSpec2NotNullSideEffect = osgiHelper.getServiceObject(BehaviorSpec2.class);
+        ContextService1 contextServiceProxyAfterBehavior1Departure = osgiHelper.getServiceObject(ContextService1.class);
+
+        assertThat(behaviorSpec1Null).isNull();
+        assertThat(behaviorSpec2NotNullSideEffect).isNotNull();
+
+        assertThat(contextServiceProxyAfterBehavior1Departure).isInstanceOf(BehaviorSpec2.class);
+        assertThat(contextServiceProxyAfterBehavior1Departure).isNotInstanceOf(BehaviorSpec1.class);
+
+        behaviorSpec2NotNullSideEffect = null;
+        contextServiceProxyAfterBehavior1Departure = null;
+        behaviorSpec1Null = null;
+
+        behaviorHelper.stopBehavior(instance,"Behavior2");
+        BehaviorSpec2 behaviorSpec2Null = osgiHelper.getServiceObject(BehaviorSpec2.class);
+        ContextService1 contextServiceProxyAfterBehavior2Departure = osgiHelper.getServiceObject(ContextService1.class);
+
+        assertThat(behaviorSpec2Null).isNull();
+
+        assertThat(contextServiceProxyAfterBehavior2Departure).isNotInstanceOf(BehaviorSpec2.class);
+        assertThat(contextServiceProxyAfterBehavior2Departure).isNotInstanceOf(BehaviorSpec1.class);
+
+        BehaviorSpec1 behaviorSpec1NullCheckSideEffect = osgiHelper.getServiceObject(BehaviorSpec1.class);
+        assertThat(behaviorSpec1NullCheckSideEffect).isNull();
+
+    }
+
+    @Test
+    public void testDepartureWithBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ComponentInstance instance = createContextEntityInjectedBehavior();
 
         ServiceContext serviceObj1 = osgiHelper.waitForService(ServiceContext.class,null,((long)2000));

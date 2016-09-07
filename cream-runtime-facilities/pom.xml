@@ -54,8 +54,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            fr.liglab.adele.cream.event.handler.annotation.*,
-                            fr.liglab.adele.cream.requirement.handler.annotation.*,
+                            fr.liglab.adele.cream.facilities.ipojo.annotation,
                         </Export-Package>
                         <Private-Package>
                             fr.liglab.adele.cream.event.handler.impl.*,

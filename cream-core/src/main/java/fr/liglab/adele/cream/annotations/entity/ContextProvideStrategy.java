@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,9 +34,17 @@ public class ContextProvideStrategy extends CreationStrategy {
      */
     private InstanceManager myManager;
 
+    private List<String> interfazPublished = new ArrayList<>();
+
+    private final Object lock = new Object();
+
     @Override
     public void onPublication(InstanceManager instance, String[] interfaces, Properties props) {
         this.myManager = instance;
+        synchronized (lock){
+            interfazPublished.clear();
+            interfazPublished.addAll(Arrays.asList(interfaces));
+        }
     }
 
     @Override
@@ -49,23 +58,6 @@ public class ContextProvideStrategy extends CreationStrategy {
         Object pojo = myManager.getPojoObject();
         Class clazz = myManager.getClazz();
 
-        Behavior[] behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
-        Class<?>[] clazzInterface = clazz.getInterfaces();
-
-        Class<?>[] interfaces = new Class[behaviors.length+clazzInterface.length];
-
-        int i = 0;
-        for (Behavior behavior:behaviors){
-            Class service = behavior.spec();
-            interfaces[i] = service;
-            i++;
-        }
-
-        for (Class interfaz:clazzInterface){
-            interfaces[i] = interfaz;
-            i++;
-        }
-
         List<InvocationHandler> successor = new ArrayList<>();
 
         InvocationHandler behaviorHandler = getBehaviorHandler();
@@ -77,12 +69,41 @@ public class ContextProvideStrategy extends CreationStrategy {
         InvocationHandler invocationHandler = new CustomInvocationHandler(pojo,myManager,
                 new ParentSuccessorStrategy(),successor
         );
-        try{
-            pojo = Proxy.newProxyInstance(clazz.getClassLoader(),interfaces,invocationHandler);
-        }catch (java.lang.NoClassDefFoundError e){
-            LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! ",e);
+
+        Behavior[] behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
+        Class<?>[] clazzInterface = clazz.getInterfaces();
+
+        List<Class> listOfInterfaces = new ArrayList<>();
+        listOfInterfaces.add(Pojo.class);
+
+        synchronized (lock){
+            for (Behavior behavior:behaviors){
+                Class service = behavior.spec();
+                if(interfazPublished.contains(service.getName())){
+                    listOfInterfaces.add(service);
+                }
+
+            }
+
+            for (Class interfaz:clazzInterface){
+                if(interfazPublished.contains(interfaz.getName())) {
+                    listOfInterfaces.add(interfaz);
+                }
+            }
+
+            Class[] arrayOfInterfaz = new Class[listOfInterfaces.size()];
+            arrayOfInterfaz = listOfInterfaces.toArray(arrayOfInterfaz);
+
+            try{
+                Object returnObj =  Proxy.newProxyInstance(clazz.getClassLoader(),arrayOfInterfaz,invocationHandler);
+                return returnObj;
+            }catch (java.lang.NoClassDefFoundError e){
+                LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! ",e);
+            }
         }
+
         return pojo;
+
     }
 
     @Override

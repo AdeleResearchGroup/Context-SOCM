@@ -22,4 +22,6 @@ public interface BehaviorReference {
     public static final String BEHAVIOR_MANDATORY_ATTRIBUTE_NAME = "mandatory";
 
     public static final String BEHAVIOR_ID_CONFIG = "behavior.id";
+
+    public static final String CONTEXT_SPECIFICATION_EXPOSED = "context.specifications";
 }

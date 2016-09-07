@@ -1,7 +1,7 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 
-import fr.liglab.adele.cream.event.handler.annotation.ContextUpdate;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextUpdate;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.service.command.Descriptor;

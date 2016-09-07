@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.testing.helpers;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import fr.liglab.adele.cream.runtime.internal.factories.BehaviorInstanceManager;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.architecture.Architecture;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
@@ -15,11 +16,9 @@ import org.ow2.chameleon.testing.helpers.OSGiHelper;
  */
 public class BehaviorHelper {
 
-    private final OSGiHelper osgiHelper;
     private final IPOJOHelper ipojoHelper;
 
-    public BehaviorHelper(OSGiHelper osgi, IPOJOHelper service) {
-        this.osgiHelper = osgi;
+    public BehaviorHelper(IPOJOHelper service) {
         this.ipojoHelper = service;
     }
 
@@ -29,15 +28,36 @@ public class BehaviorHelper {
     }
 
 
-    public void dispose(ComponentInstance instance,String behaviorId){
+    public void disposeBehavior(ComponentInstance instance,String behaviorId){
         ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
         behaviorInstance.dispose();
     }
 
-    public void start(ComponentInstance instance,String behaviorId){
+    /**
+     * Start a behavior will put it in an invalid state because behaviorLifecycleHandler will be put in an invalid state after a start call.
+     * A necessary call to valid behvior must be done in order to valid the behvior.
+     *
+     * @param instance
+     * @param behaviorId
+     */
+    public void startBehavior(ComponentInstance instance, String behaviorId){
         ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
         behaviorInstance.start();
+
     }
+
+    public void validBehavior(ComponentInstance instance, String behaviorId){
+        ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
+        BehaviorInstanceManager manager = (BehaviorInstanceManager) behaviorInstance;
+        manager.getBehaviorLifeCycleHandler().startBehavior();
+    }
+
+    public void invalidBehavior(ComponentInstance instance, String behaviorId){
+        ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
+        BehaviorInstanceManager manager = (BehaviorInstanceManager) behaviorInstance;
+        manager.getBehaviorLifeCycleHandler().stopBehavior();
+    }
+
 
     public ComponentInstance getBehavior(ComponentInstance instance,String behaviorId){
         InstanceDescription instanceDescription = instance.getInstanceDescription();

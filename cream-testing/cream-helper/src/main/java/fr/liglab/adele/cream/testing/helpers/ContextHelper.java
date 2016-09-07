@@ -19,7 +19,7 @@ public class ContextHelper{
     public ContextHelper(OSGiHelper osGiHelper, IPOJOHelper ipojoHelper) {
         this.osGiHelper = osGiHelper;
         this.ipojoHelper = ipojoHelper;
-        behaviorHelper = new BehaviorHelper(osGiHelper,ipojoHelper);
+        behaviorHelper = new BehaviorHelper(ipojoHelper);
         contextEntityHelper = new ContextEntityHelper(osGiHelper,ipojoHelper);
     }
 

@@ -1,7 +1,7 @@
 package fr.liglab.adele.cream.event.handler.impl;
 
-import fr.liglab.adele.cream.event.handler.annotation.ContextUpdate;
-import fr.liglab.adele.cream.event.handler.annotation.EventReference;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextUpdate;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.FacilitiesHandlerReference;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.InstanceManager;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Handler(name = EventReference.EVENT_HANDLER_NAME, namespace = EventReference.EVENT_HANDLER_NAMESPACE)
+@Handler(name = FacilitiesHandlerReference.EVENT_HANDLER_NAME, namespace = FacilitiesHandlerReference.FACILITIES_HANDLER_NAMESPACE)
 @Provides(specifications = ServiceTrackingInterceptor.class)
 public class EventHandler extends PrimitiveHandler implements ServiceTrackingInterceptor {
 
@@ -85,7 +85,7 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
         String instanceName				= instanceManager.getInstanceName();
         dependencyFilter				= "("+ Factory.INSTANCE_NAME_PROPERTY+"="+instanceName+")";
 
-        Element[] handlerMethods = metadata.getElements(EventReference.EVENT_HANDLER_NAME, EventReference.EVENT_HANDLER_NAMESPACE);
+        Element[] handlerMethods = metadata.getElements(FacilitiesHandlerReference.EVENT_HANDLER_NAME, FacilitiesHandlerReference.FACILITIES_HANDLER_NAMESPACE);
 
         /*
          * Configure the list of handled fields

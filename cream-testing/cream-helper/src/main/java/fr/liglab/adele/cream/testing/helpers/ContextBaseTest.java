@@ -47,12 +47,15 @@ public abstract class ContextBaseTest extends BaseTest {
                 .value("file:" + PathUtils.getBaseDir() + "/src/test/resources/logger.xml"));
         options = OptionUtils.combine(options,   log());
 
+        if (deployCreamRuntimeFacilities()){
+            options = OptionUtils.combine(options, creamRuntimeFacilitiesBundles());
+        }
 
         return options;
     }
 
 
-    public CompositeOption log() {
+    protected CompositeOption log() {
         return new DefaultCompositeOption(
                 mavenBundle("org.apache.felix", "org.apache.felix.log").versionAsInProject(),
                 mavenBundle("org.slf4j", "slf4j-api").versionAsInProject(),
@@ -64,9 +67,14 @@ public abstract class ContextBaseTest extends BaseTest {
     protected Option creamBundles() {
         return composite(
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.model.runtime").versionAsInProject(),
-                //mavenBundle().groupId("org.ow2.chameleon").artifactId("chameleon-core").classifier("service").versionAsInProject(),
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.core").versionAsInProject(),
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.helpers").versionAsInProject()
+        );
+    }
+
+    protected Option creamRuntimeFacilitiesBundles() {
+        return composite(
+                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.runtime.facilities").versionAsInProject()
         );
     }
 
@@ -76,7 +84,7 @@ public abstract class ContextBaseTest extends BaseTest {
         );
     }
 
-    public CompositeOption festBundles() {
+    protected CompositeOption festBundles() {
         return new DefaultCompositeOption(
                 wrappedBundle(CoreOptions.mavenBundle("org.easytesting", "fest-util").versionAsInProject()),
                 wrappedBundle(CoreOptions.mavenBundle("org.easytesting", "fest-assert").versionAsInProject())
@@ -113,6 +121,10 @@ public abstract class ContextBaseTest extends BaseTest {
     @Override
     public final boolean deployMockito() {
         return true;
+    }
+
+    public boolean deployCreamRuntimeFacilities() {
+        return false;
     }
 
     /**
