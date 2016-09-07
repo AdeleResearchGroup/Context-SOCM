@@ -32,29 +32,49 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
     @ServiceProperty(name= DependencyInterceptor.TARGET_PROPERTY)
     private String dependencyFilter;
 
-    private final Map<String,List<String>> fieldToSpecs = new HashMap<>();
 
-    private final Map<DependencyModel,List<String>> dependencyToSpecs = new ConcurrentHashMap<>();
+    private final Map<String,List<Class>> fieldToClass = new HashMap<>();
+
+
+    private final Map<DependencyModel,List<Class>> dependencyToClass = new ConcurrentHashMap<>();
 
     @Override
     public <S> TransformedServiceReference<S> accept(DependencyModel dependency, BundleContext context, TransformedServiceReference<S> ref) {
-        List<String> specsToCheck = dependencyToSpecs.get(dependency);
+        List<Class> classToCheck = dependencyToClass.get(dependency);
 
 		/*
 		 * skip dependencies not associated to a CS to check
 		 */
-        if (specsToCheck == null){
+        if (classToCheck == null){
             return ref;
         }
 
-        String[] specs = (String[])ref.get("objectClass");
-        List<String> listOfRefSpec = Arrays.asList(specs);
-        for (String specTocheck : specsToCheck){
-            if (!listOfRefSpec.contains(specTocheck)){
-                return null;
+        Object serviceObj = null;
+        try {
+
+            serviceObj = context.getService(ref.getWrappedReference());
+
+            for (Class clazz: classToCheck){
+                if (!clazz.isInstance(serviceObj)){
+                 return null;
+                }
+            }
+           /*
+            List<String> listOfRefSpec = Arrays.asList(specs);
+            for (String specTocheck : specsToCheck){
+                if (!listOfRefSpec.contains(specTocheck)){
+                    return null;
+                }
+            }
+*/
+
+
+
+        }finally {
+            if (serviceObj != null){
+                context.ungetService(ref.getWrappedReference());
             }
         }
-
         return ref;
     }
 
@@ -62,22 +82,27 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
     public void open(DependencyModel dependency) {
 
         if (dependency instanceof Dependency) {
-            List<String> specs = fieldToSpecs.get(((Dependency) dependency).getField());
-            if (specs != null) {
-                dependencyToSpecs.put(dependency,specs);
+            List<Class> listOfClass = fieldToClass.get(((Dependency) dependency).getField());
+            if (listOfClass != null){
+                dependencyToClass.put(dependency,listOfClass);
             }
+
+
         }
 
     }
 
     @Override
     public void close(DependencyModel dependency) {
-        dependencyToSpecs.remove(dependency);
+        dependencyToClass.remove(dependency);
     }
 
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
         InstanceManager instanceManager = getInstanceManager();
+        Class pojoClass = instanceManager.getClazz();
+        ClassLoader pojoClassLoader = pojoClass.getClassLoader();
+
         String componentName			= instanceManager.getClassName();
 
         String instanceName				= instanceManager.getInstanceName();
@@ -103,7 +128,22 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
                 throw new ConfigurationException("Malformed Manifest : the specified Context Requirement spec is null or empty in class "+componentName);
             }
 
-            fieldToSpecs.put(fieldName,listOfSpec);
+            List<Class> listOfClass = new ArrayList<>();
+            for (String spec:listOfSpec){
+                try {
+                    Class clazz =  pojoClassLoader.loadClass(spec);
+                    listOfClass.add(clazz);
+                } catch (ClassNotFoundException e) {
+                    throw new ConfigurationException("Cannot load class "+spec);
+                }
+            }
+
+            if (listOfClass == null || listOfClass.isEmpty()){
+                throw new ConfigurationException("Malformed Manifest : the specified Context Requirement spec is null or empty in class "+componentName);
+            }
+
+            fieldToClass.put(fieldName,listOfClass);
+
         }
 
     }
