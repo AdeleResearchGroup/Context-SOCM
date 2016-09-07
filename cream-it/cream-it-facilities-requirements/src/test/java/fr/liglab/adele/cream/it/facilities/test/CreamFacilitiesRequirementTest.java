@@ -43,7 +43,7 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
     }
 
     @Test
-    public void test()  throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException{
+    public void testRequirementWithoutHeritage()  throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException{
         ipojoHelper.createComponentInstance(ContextConsumer.class.getName());
         BindCounterService bindCounter = osgiHelper.getServiceObject(BindCounterService.class);
 
@@ -70,7 +70,39 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         assertThat(bindCounter.getBind()).isEqualTo(2);
     }
 
+    @Test
+    public void testRequirementWithHeritage()  throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException{
+        ipojoHelper.createComponentInstance(ContextConsumer.class.getName());
+        BindCounterService bindCounter = osgiHelper.getServiceObject(BindCounterService.class);
+
+        ComponentInstance instance = createContextEntityWithHeritage();
+
+        ContextProvideService serviceObj1 = osgiHelper.getServiceObject(ContextProvideService.class);
+        Assertions.assertThat(serviceObj1).isNotNull();
+
+        BehaviorServiceHeritage behavior = osgiHelper.waitForService(BehaviorServiceHeritage.class,null,((long)2000));
+
+        assertThat(bindCounter.getUnbind()).isEqualTo(0);
+        assertThat(bindCounter.getBind()).isEqualTo(1);
+
+        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
+        Assertions.assertThat(behaviorHelper.getBehavior(instance,"behaviorHeritage")).isNotNull();
+
+        behaviorHelper.invalidBehavior(instance,"behaviorHeritage");
+
+        assertThat(bindCounter.getUnbind()).isEqualTo(1);
+        assertThat(bindCounter.getBind()).isEqualTo(1);
+
+        behaviorHelper.validBehavior(instance,"behaviorHeritage");
+        assertThat(bindCounter.getUnbind()).isEqualTo(1);
+        assertThat(bindCounter.getBind()).isEqualTo(2);
+    }
+
     private ComponentInstance createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         return contextHelper.getContextEntityHelper().createContextEntity(ContextProvider.class.getName(),"ContextEntityTest",null);
+    }
+
+    private ComponentInstance createContextEntityWithHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextProviderWithBehaviorHeritage.class.getName(),"ContextEntityTest",null);
     }
 }
