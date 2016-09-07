@@ -38,12 +38,21 @@ public class ContextProvideStrategy extends CreationStrategy {
 
     private final Object lock = new Object();
 
+    Behavior[] behaviors ;
+    Class<?>[] clazzInterface ;
+
+    ClassLoader pojoClassLoader;
+
     @Override
     public void onPublication(InstanceManager instance, String[] interfaces, Properties props) {
         this.myManager = instance;
+        Class clazz = myManager.getClazz();
         synchronized (lock){
             interfazPublished.clear();
             interfazPublished.addAll(Arrays.asList(interfaces));
+            behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
+            clazzInterface = clazz.getInterfaces();
+            pojoClassLoader = clazz.getClassLoader();
         }
     }
 
@@ -56,7 +65,6 @@ public class ContextProvideStrategy extends CreationStrategy {
     public Object getService(Bundle bundle, ServiceRegistration serviceRegistration) {
 
         Object pojo = myManager.getPojoObject();
-        Class clazz = myManager.getClazz();
 
         List<InvocationHandler> successor = new ArrayList<>();
 
@@ -69,9 +77,6 @@ public class ContextProvideStrategy extends CreationStrategy {
         InvocationHandler invocationHandler = new CustomInvocationHandler(pojo,myManager,
                 new ParentSuccessorStrategy(),successor
         );
-
-        Behavior[] behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
-        Class<?>[] clazzInterface = clazz.getInterfaces();
 
         List<Class> listOfInterfaces = new ArrayList<>();
         listOfInterfaces.add(Pojo.class);
@@ -95,7 +100,7 @@ public class ContextProvideStrategy extends CreationStrategy {
             arrayOfInterfaz = listOfInterfaces.toArray(arrayOfInterfaz);
 
             try{
-                Object returnObj =  Proxy.newProxyInstance(clazz.getClassLoader(),arrayOfInterfaz,invocationHandler);
+                Object returnObj =  Proxy.newProxyInstance(pojoClassLoader,arrayOfInterfaz,invocationHandler);
                 return returnObj;
             }catch (java.lang.NoClassDefFoundError e){
                 LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! ",e);
