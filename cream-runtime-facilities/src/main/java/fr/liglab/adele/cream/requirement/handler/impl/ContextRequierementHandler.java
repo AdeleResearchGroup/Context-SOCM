@@ -59,21 +59,13 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
                  return null;
                 }
             }
-           /*
-            List<String> listOfRefSpec = Arrays.asList(specs);
-            for (String specTocheck : specsToCheck){
-                if (!listOfRefSpec.contains(specTocheck)){
-                    return null;
-                }
-            }
-*/
-
-
-
         }finally {
             if (serviceObj != null){
                 context.ungetService(ref.getWrappedReference());
+            }else {
+                return null;
             }
+
         }
         return ref;
     }
