@@ -218,7 +218,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
                 update(configuredState, getStateConfiguredValue(configuredState, configuration));
             }
             else {
-                warn("Configured state " + configuredState + " will be ignored, it is not defined in the context services of " + componentName);
+                debug("Configured state " + configuredState + " will be ignored, it is not defined in the context services of " + componentName);
             }
         }
     }
