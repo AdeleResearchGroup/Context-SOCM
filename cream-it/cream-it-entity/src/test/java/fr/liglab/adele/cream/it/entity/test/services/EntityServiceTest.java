@@ -79,6 +79,16 @@ public class EntityServiceTest extends EntityBaseCommonConfig {
 
     }
 
+    @Test
+    public void testContextExtends() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntityExtends();
+        ContextServiceHeritage serviceObj1 = osgiHelper.getServiceObject(ContextServiceHeritage.class);
+
+        assertThat(serviceObj1).isNotNull();
+        assertThat(serviceObj1.returnTrue()).isTrue();
+        assertThat(serviceObj1.returnFalse()).isFalse();
+    }
+
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
     }
@@ -90,4 +100,9 @@ public class EntityServiceTest extends EntityBaseCommonConfig {
     private void createContextEntityExplicitHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         contextHelper.getContextEntityHelper().createContextEntity(ContextEntityExplicitHeritageImpl.class.getName(),"ContextEntityExplicitHeritageTest",null);
     }
+
+    private void createContextEntityExtends() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityExtends.class.getName(),"ContextEntityExtendstest",null);
+    }
+
 }

@@ -22,9 +22,7 @@ package fr.liglab.adele.cream.it.behavior.test.synchronisation;
 
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
-import fr.liglab.adele.cream.it.behavior.synchronisation.BehaviorSpec1;
-import fr.liglab.adele.cream.it.behavior.synchronisation.ContextEntity1;
-import fr.liglab.adele.cream.it.behavior.synchronisation.ContextService1;
+import fr.liglab.adele.cream.it.behavior.synchronisation.*;
 import fr.liglab.adele.cream.it.behavior.test.BehaviorBaseCommonConfig;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
@@ -182,8 +180,27 @@ public class UniqueBehaviorTest extends BehaviorBaseCommonConfig {
 
     }
 
+    @Test
+    public void testProxyHeritageDelegation() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        createContextEntityWithBehaviorHeritage();
+        Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
+        BehaviorSpecToExtends behaviorSpecToExtends = osgiHelper.waitForService(BehaviorSpecToExtends.class,null,((long)0),true);
+
+        assertThat(serviceObj1).isNotNull();
+        assertThat(behaviorSpecToExtends).isNotNull();
+
+        assertThat(behaviorSpecToExtends.returnFalse()).isEqualTo(false);
+        assertThat(behaviorSpecToExtends.returnTrueDefaultMethod()).isEqualTo(true);
+        assertThat(behaviorSpecToExtends.returnTrueDefaultMethodErase()).isEqualTo(false);
+
+    }
+
 
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
+    }
+
+    private void createContextEntityWithBehaviorHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithBehaviorHeritage.class.getName(),"ContextEntityTest",null);
     }
 }

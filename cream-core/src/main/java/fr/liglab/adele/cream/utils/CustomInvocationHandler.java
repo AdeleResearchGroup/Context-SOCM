@@ -6,8 +6,11 @@ import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.apache.felix.ipojo.util.Callback;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -31,8 +34,8 @@ public class CustomInvocationHandler implements InvocationHandler {
 
         MethodMetadata[] methodsMetadata = pojoMetadata.getMethods();
         for (MethodMetadata metadata: methodsMetadata){
-                final String[] listOfInter = getAllInterface(pojo);
-                myMethods.put(new MethodIdentifier(listOfInter,metadata), new Callback(metadata,manager));
+            final String[] listOfInter = getAllInterface(pojo);
+            myMethods.put(new MethodIdentifier(listOfInter,metadata), new Callback(metadata,manager));
         }
     }
 
@@ -44,13 +47,17 @@ public class CustomInvocationHandler implements InvocationHandler {
             }
         }
 
+
+
         return mySuccessorStrategy.successorStrategy(myPojo,mySuccessor,proxy,method,args);
     }
+
+
 
     private String[] getAllInterface(Object pojoType){
         Set<String> listOfInterfaces = new HashSet<>();
         recursiveIntrospection(listOfInterfaces,pojoType.getClass());
-       return listOfInterfaces.toArray(new String[listOfInterfaces.size()]);
+        return listOfInterfaces.toArray(new String[listOfInterfaces.size()]);
     }
 
     private void recursiveIntrospection(Set<String> returnSet,Class pojoType) {
@@ -64,7 +71,7 @@ public class CustomInvocationHandler implements InvocationHandler {
         }
         for (Class clazz:interfaz){
             if (!clazz.equals(Pojo.class))
-            recursiveIntrospection(returnSet,clazz);
+                recursiveIntrospection(returnSet,clazz);
         }
         return;
     }

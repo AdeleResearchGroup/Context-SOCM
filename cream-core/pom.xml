@@ -49,6 +49,22 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <!--Test dependencies -->
+        <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -79,10 +95,16 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-ipojo-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <!--
+                        We need to disable the default surefire classloading to have access to the regular url
+                        classloader. This is because we look for 'jar' files for the BND plugin.
+                         -->
+                        <useManifestOnlyJar>false</useManifestOnlyJar>
+                    </configuration>
+                </plugin>
         </plugins>
     </build>
 </project>

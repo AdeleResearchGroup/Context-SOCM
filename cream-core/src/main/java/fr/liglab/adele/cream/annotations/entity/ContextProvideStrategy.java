@@ -4,6 +4,7 @@ import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.utils.CreamInvocationException;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
+import fr.liglab.adele.cream.utils.MethodInvocationUtils;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.Pojo;
@@ -155,6 +156,14 @@ public class ContextProvideStrategy extends CreationStrategy {
                 return ((Pojo) pojo).getComponentInstance();
             }
 
+            if (MethodInvocationUtils.isInvocableByReflexion(method,pojo)){
+                try {
+
+                    return MethodInvocationUtils.invokeByReflexion(method,pojo,proxy,args);
+                }catch (Throwable throwable){
+                    LOG.warn("invoke by reflexion cause an exception, delegate to behavior if exists",throwable);
+                }
+            }
             return applySuccessionStrategy(successors,proxy,method,args);
 
         }

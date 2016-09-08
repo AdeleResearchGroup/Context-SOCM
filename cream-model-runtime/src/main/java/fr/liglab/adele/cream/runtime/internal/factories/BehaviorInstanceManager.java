@@ -1,28 +1,30 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
-import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
 import fr.liglab.adele.cream.utils.CustomInvocationHandler;
+import fr.liglab.adele.cream.utils.MethodInvocationUtils;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
-import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
-import org.apache.felix.ipojo.architecture.InstanceDescription;
-import org.apache.felix.ipojo.metadata.Attribute;
-import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.ComponentFactory;
+import org.apache.felix.ipojo.ContextListener;
+import org.apache.felix.ipojo.HandlerManager;
+import org.apache.felix.ipojo.InstanceManager;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
 
 /**
  * Created by aygalinc on 31/05/16.
  */
 public class BehaviorInstanceManager extends InstanceManager {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BehaviorInstanceManager.class);
 
     private static final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
 
@@ -59,6 +61,14 @@ public class BehaviorInstanceManager extends InstanceManager {
 
         @Override
         public Object successorStrategy(Object pojo,List<InvocationHandler> successors, Object proxy, Method method, Object[] args){
+            if (MethodInvocationUtils.isInvocableByReflexion(method,pojo)){
+                try {
+
+                    return MethodInvocationUtils.invokeByReflexion(method,pojo,proxy,args);
+                }catch (Throwable throwable){
+                    LOG.warn("invoke by reflexion cause an exception,return a no found code",throwable);
+                }
+            }
             return SuccessorStrategy.NO_FOUND_CODE;
         }
     }

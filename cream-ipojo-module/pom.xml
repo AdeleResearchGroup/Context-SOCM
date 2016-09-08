@@ -62,7 +62,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
                 <configuration>
                     <!--
                     We need to disable the default surefire classloading to have access to the regular url
