@@ -1,9 +1,7 @@
 package fr.liglab.adele.cream.ipojo.module.test;
 
-import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.ipojo.module.AnnotationBuilder;
-import fr.liglab.adele.cream.ipojo.module.BehaviorProcessor;
 import fr.liglab.adele.cream.ipojo.module.ContextEntityProcessor;
 import org.apache.felix.ipojo.manipulator.spi.BindingContext;
 import org.junit.Test;
@@ -26,7 +24,7 @@ public class ContextEntityVisitorTest extends UtilityProcessorTest{
     @Test
     public void testDefaultNameIsClassname() throws Exception {
 
-        BindingContext context = this.createTestWorkbench(FakeComponentClass.class);
+        BindingContext context = this.createTestWorkbench(FakeServiceClass.class);
         ContextEntityProcessor processorFactory = new ContextEntityProcessor(classReferenceLoader);
 
         ContextEntity contextEntity = Component.class.getAnnotation(ContextEntity.class);
@@ -34,24 +32,17 @@ public class ContextEntityVisitorTest extends UtilityProcessorTest{
         processorFactory.process(context,contextEntity);
 
         assertNotNull(root);
-        assertEquals(FakeComponentClass.class.getName(), root.getAttribute("classname"));
+        assertEquals(FakeServiceClass.class.getName(), root.getAttribute("classname"));
 
 
     }
 
 
-    @ContextEntity(services={FakeComponentClass.class})
-    private class Component {}
+    @ContextEntity(services={FakeServiceClass.class})
+    private class Component implements FakeServiceClass {}
 
-    private class ContextEntityImpl extends AbstractAnnotationTest implements ContextEntity{
 
-        @Override
-        public Class<?>[] services() {
-            return new Class<?>[]{FakeComponentClass.class};
-        }
-    }
-
-    private class FakeComponentClass {
+    private interface FakeServiceClass {
 
     }
 
