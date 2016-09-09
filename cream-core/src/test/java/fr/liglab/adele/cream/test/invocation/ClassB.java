@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.test;
+package fr.liglab.adele.cream.test.invocation;
 
 /**
  * Created by aygalinc on 08/09/16.

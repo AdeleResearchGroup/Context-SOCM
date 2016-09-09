@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.test;
+package fr.liglab.adele.cream.test.invocation;
 
 import fr.liglab.adele.cream.utils.MethodInvocationUtils;
 import org.junit.Test;
