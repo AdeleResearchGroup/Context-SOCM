@@ -13,10 +13,19 @@ public abstract class EntityBaseCommonConfig extends ContextBaseTest {
 
     @Override
     protected List<String> getExtraExports() {
-        return Arrays.asList(
-                "fr.liglab.adele.cream.it.entity.synchronisation"
-                //By convention services package are exported by the base test
-        );
+        if ("Linux".equalsIgnoreCase(System.getProperty("os.name"))){
+            return Arrays.asList(
+                    "fr.liglab.adele.cream.it.entity.synchronisation"
+                    //By convention services package are exported by the base test
+            );
+        } else {
+            return Arrays.asList(
+                    "fr.liglab.adele.cream.it.entity.synchronisation",
+                    "fr.liglab.adele.cream.it.entity.services"
+                    //By convention services package are exported by the base test but FAILED on windows....
+            );
+        }
+
     }
 
 
