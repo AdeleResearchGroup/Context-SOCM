@@ -5,7 +5,9 @@ package fr.liglab.adele.cream.test.proxy;
  */
 public interface ContextService {
 
-    public int getSomething();
 
-    public void setSomething(int i);
+
+    public void setSomething();
+
+    public void getSomething();
 }

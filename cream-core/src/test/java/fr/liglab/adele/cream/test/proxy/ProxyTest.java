@@ -3,8 +3,10 @@ package fr.liglab.adele.cream.test.proxy;
 import fr.liglab.adele.cream.utils.CreamProxyGenerator;
 import fr.liglab.adele.cream.utils.GeneratedDelegatorProxy;
 import org.junit.Test;
+import org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -14,7 +16,8 @@ public class ProxyTest {
 
     @Test
     public void testProxyGetterAndSetter() throws Throwable {
-        ProxyFactory proxyFactory = new ProxyFactory(ContextService.class.getClassLoader());
+
+       ProxyFactory proxyFactory = new ProxyFactory(ContextService.class.getClassLoader());
         Object generatedProxy = proxyFactory.getProxyInstance(ContextService.class,pojo.class,"452");
 
         if (!(generatedProxy instanceof GeneratedDelegatorProxy)){
@@ -23,7 +26,10 @@ public class ProxyTest {
         pojo myPojo = new pojo();
         GeneratedDelegatorProxy proxy = (GeneratedDelegatorProxy) generatedProxy;
         proxy.setPojo(myPojo);
-        assertThat(proxy.getPojo().toString()).isEqualTo("cuicui");
+
+        for (Method method: ContextService.class.getMethods()){
+            proxy.delegate(method.hashCode(),null);
+        }
 
     }
 

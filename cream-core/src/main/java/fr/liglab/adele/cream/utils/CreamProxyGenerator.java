@@ -3,6 +3,8 @@ package fr.liglab.adele.cream.utils;
 import org.objectweb.asm.*;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by aygalinc on 09/09/16.
@@ -11,7 +13,7 @@ public class CreamProxyGenerator implements Opcodes {
 
     private static final String POJO = "myPojo";
 
-    private static final String POJO_TYPE = "L"+Type.getInternalName(Object.class)+";";
+    private static final String POJO_TYPE = Type.getDescriptor(Object.class);
 
     public static byte[] dump(Class spec,Class pojoClass,String uniqueId){
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS); // use compute max to automaticali compute the max stack size and the max of local variables of a method
@@ -87,40 +89,180 @@ public class CreamProxyGenerator implements Opcodes {
 
         mv.visitCode();
 
-        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 0); //Load this
 
-        mv.visitFieldInsn(GETFIELD, className, POJO, POJO_TYPE);
+        mv.visitFieldInsn(GETFIELD, className, POJO, POJO_TYPE); // Get the myPojo field type Object
 
         mv.visitInsn(ARETURN);// return pojo
 
         mv.visitMaxs(0, 0);
 
-        mv.visitEnd();
+        mv.visitEnd(); // visit end
     }
 
     private static void addCallerMethod(ClassWriter cw,String className,Class specToDelegate){
 
-        String[] exceptions = new String[] {"Ljava/lang/Throwable"};
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "delegate", "(Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;", null,exceptions);
+        MethodVisitor  mv = cw.visitMethod(ACC_PUBLIC, "delegate", "(I[Ljava/lang/Object;)Ljava/lang/Object;", null, new String[] { "java/lang/Throwable" });
 
-        String specOfDelegatedClassName = Type.getInternalName(specToDelegate);
-        Method[] methods = specToDelegate.getMethods();
+        Method[] methods = specToDelegate.getMethods(); // used to generate method
+        int numberOfMethod = methods.length;
 
+        Map<Integer,Method> mapPositionToMthod = new HashMap<>();
+        Map<Integer,Label> mapLabelToJump = new HashMap<>();
+        Map<Integer,Label> mapLabelToVisit = new HashMap<>();
+
+        int i = 0;
+        for (Method method:methods){
+            Label label = new Label();
+
+            mapLabelToJump.put(i,label);
+            mapLabelToVisit.put(i+1,label);
+
+            mapPositionToMthod.put(i,method);
+            i++;
+        }
 
         mv.visitCode();
 
-        mv.visitVarInsn(ALOAD, 0);
+        for (int j = 0; j< numberOfMethod;j++){
+            Method method = mapPositionToMthod.get(j);
 
-        mv.visitFieldInsn(GETFIELD, className, POJO, POJO_TYPE);
+            Label labelToJump = mapLabelToJump.get(j);
+            Label labelToVisit = mapLabelToVisit.get(j);
 
-        mv.visitInsn(ARETURN);// return pojo
+            if (labelToVisit != null){
+                mv.visitLabel(labelToVisit);
+                mv.visitFrame(F_SAME, 0, null, 0, null);
+            }
 
+
+
+            mv.visitLdcInsn(method.hashCode()); // create an int const, used in the next if
+            mv.visitVarInsn(ILOAD, 1); //Load first argument : the int hashcode methode name
+            mv.visitJumpInsn(IF_ICMPNE,labelToJump); // jump to next method label
+
+            generateDelegator(mv,className,specToDelegate,method); // generate the delegator part
+
+
+        }
+
+
+        mv.visitLabel(mapLabelToJump.get(numberOfMethod-1));
+        mv.visitFrame(F_SAME, 0, null, 0, null);
+        mv.visitInsn(ACONST_NULL);
+        mv.visitInsn(ARETURN);
         mv.visitMaxs(0, 0);
-
         mv.visitEnd();
+        return;
     }
 
+    private static void generateDelegator(MethodVisitor mv,String generatedClassName, Class specToDelegate,Method method){
+        org.objectweb.asm.commons.Method asmMethod = org.objectweb.asm.commons.Method.getMethod(method);
+        String interfaceName = Type.getInternalName(specToDelegate);
+        mv.visitVarInsn(ALOAD, 0);
+
+        mv.visitFieldInsn(GETFIELD, generatedClassName, POJO,POJO_TYPE);
+        mv.visitTypeInsn(CHECKCAST, interfaceName);
+
+        Class[] parametersClass = method.getParameterTypes();
+        int i = 0;
+
+        for (Class paramClass : parametersClass){
+            mv.visitVarInsn(ALOAD, 2);
+            pushArgsOnStack(mv,i);
+            mv.visitInsn(AALOAD);
+            checkCast(mv,paramClass);
+            i++;
+        }
+
+
+        mv.visitMethodInsn(INVOKEINTERFACE, interfaceName, asmMethod.getName(), asmMethod.getDescriptor(), true);
+
+        if (method.getReturnType().equals(Void.TYPE)){ // Void Return Case
+            mv.visitInsn(ACONST_NULL);
+        }else {
+            boxReturn(mv,method.getReturnType());
+        }
+
+        mv.visitInsn(ARETURN);
+    }
+
+    private static void pushArgsOnStack(MethodVisitor mv,int i){
+        if (i == 0){
+            mv.visitInsn(ICONST_0);
+        }else if (i == 1){
+            mv.visitInsn(ICONST_1);
+        } else if (i == 2) {
+            mv.visitInsn(ICONST_2);
+        }else if (i == 3){
+            mv.visitInsn(ICONST_3);
+        }else if (i==4){
+            mv.visitInsn(ICONST_4);
+        }else if(i == 5){
+            mv.visitInsn(ICONST_5);
+        }else {
+            mv.visitIntInsn(BIPUSH, i);
+        }
+
+    }
+
+    private static void checkCast(MethodVisitor mv,Class paramClass){
+        Type paramType = Type.getType(paramClass);
+        if (Type.INT_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Integer");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
+        }else if  (Type.BOOLEAN_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Boolean");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+        }else if  (Type.BYTE_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Byte");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Byte", "byteValue", "()B", false);
+        }else if (Type.CHAR_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Character");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Character", "charValue", "()C", false);
+        }else if  (Type.DOUBLE_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Double");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);
+        }else if (Type.FLOAT_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Float");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Float", "floatValue", "()F", false);
+        }else if (Type.LONG_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Long");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
+        }else if (Type.SHORT_TYPE.equals(paramType)){
+            mv.visitTypeInsn(CHECKCAST, "java/lang/Short");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Short", "shortValue", "()S", false);
+        }else {
+            mv.visitTypeInsn(CHECKCAST, paramType.getInternalName());
+        }
+    }
+
+    private static void boxReturn(MethodVisitor mv,Class paramClass){
+        Type paramType = Type.getType(paramClass);
+        if (Type.INT_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+        }else if  (Type.BOOLEAN_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
+        }else if  (Type.BYTE_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;", false);
+        }else if (Type.CHAR_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false);
+        }else if  (Type.DOUBLE_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false);
+        }else if (Type.FLOAT_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false);
+        }else if (Type.LONG_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
+        }else if (Type.SHORT_TYPE.equals(paramType)){
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Short", "valueOf", "(S)Ljava/lang/Short;", false);
+        }
+    }
+
+
 }
+
+
+
 
 /**
  * Ce qu'il faut savoir :
