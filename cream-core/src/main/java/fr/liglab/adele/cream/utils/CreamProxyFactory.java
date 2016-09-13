@@ -1,6 +1,8 @@
 package fr.liglab.adele.cream.utils;
 
 import org.apache.felix.ipojo.InstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 
@@ -8,6 +10,8 @@ import java.lang.reflect.Constructor;
  * Created by aygalinc on 09/09/16.
  */
 public class CreamProxyFactory extends ClassLoader {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CreamProxyFactory.class);
 
     /**
      * Handler classloader, used to load the temporal dependency class.
@@ -49,7 +53,7 @@ public class CreamProxyFactory extends ClassLoader {
             Constructor constructor = clazz.getConstructor();
             return constructor.newInstance();
         } catch (Throwable e) {
-
+            LOG.error("error during proxy generation",e);
             return null;
         }
     }
