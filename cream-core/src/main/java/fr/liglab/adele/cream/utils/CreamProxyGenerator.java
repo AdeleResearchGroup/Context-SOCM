@@ -24,7 +24,7 @@ public class CreamProxyGenerator implements Opcodes {
         String[] itfs = new String[] {specName};
         String parent = "java/lang/Object";
 
-        String className = Type.getInternalName(pojoClass) + "$$Proxy"+uniqueId.hashCode(); // Unique name.
+        String className = Type.getInternalName(spec) + "$$Proxy"+uniqueId.hashCode(); // Unique name.
         if (className.startsWith("java/")) {
             className = "$" + className;
         }

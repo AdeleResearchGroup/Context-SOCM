@@ -41,7 +41,7 @@ public class ProxyTest {
         private Class getProxyClass(Class specToDelegate,Class pojoClass,String InstanceManagerId){
             byte[] clz = CreamProxyGenerator.dump(specToDelegate,pojoClass,InstanceManagerId); // Generate the proxy.
             // Turn around the VM changes (FELIX-2716) about java.* classes.
-            String cn = pojoClass.getName();
+            String cn = specToDelegate.getName();
             if (cn.startsWith("java.")) {
                 cn = "$" + cn;
             }
