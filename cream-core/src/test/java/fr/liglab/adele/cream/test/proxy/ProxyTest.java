@@ -3,12 +3,10 @@ package fr.liglab.adele.cream.test.proxy;
 import fr.liglab.adele.cream.utils.CreamProxyGenerator;
 import fr.liglab.adele.cream.utils.GeneratedDelegatorProxy;
 import org.junit.Test;
-import org.objectweb.asm.Type;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 public class ProxyTest {
@@ -17,8 +15,8 @@ public class ProxyTest {
     @Test
     public void testProxyGetterAndSetter() throws Throwable {
 
-       ProxyFactory proxyFactory = new ProxyFactory(ContextService.class.getClassLoader());
-        Object generatedProxy = proxyFactory.getProxyInstance(ContextService.class,pojo.class,"452");
+       ProxyFactory proxyFactory = new ProxyFactory(ServiceH.class.getClassLoader());
+        Object generatedProxy = proxyFactory.getProxyInstance(ServiceH.class,pojo.class,"coincoin-52");
 
         if (!(generatedProxy instanceof GeneratedDelegatorProxy)){
             fail("Proxy is not an instance of  GeneratedDelegatorProxy");
@@ -27,7 +25,8 @@ public class ProxyTest {
         GeneratedDelegatorProxy proxy = (GeneratedDelegatorProxy) generatedProxy;
         proxy.setPojo(myPojo);
 
-        for (Method method: ContextService.class.getMethods()){
+        for (Method method: ServiceH.class.getMethods()){
+            Class clazz = method.getDeclaringClass();
             proxy.delegate(method.hashCode(),null);
         }
 

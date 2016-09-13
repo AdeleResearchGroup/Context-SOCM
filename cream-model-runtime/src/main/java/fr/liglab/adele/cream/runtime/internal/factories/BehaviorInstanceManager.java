@@ -1,11 +1,10 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
+import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
-import fr.liglab.adele.cream.utils.CustomInvocationHandler;
-import fr.liglab.adele.cream.utils.MethodInvocationUtils;
-import fr.liglab.adele.cream.utils.SuccessorStrategy;
+import fr.liglab.adele.cream.utils.*;
 import org.apache.felix.ipojo.ComponentFactory;
 import org.apache.felix.ipojo.ContextListener;
 import org.apache.felix.ipojo.HandlerManager;
@@ -17,16 +16,22 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by aygalinc on 31/05/16.
  */
-public class BehaviorInstanceManager extends InstanceManager {
+public class BehaviorInstanceManager extends InstanceManager implements CreamGenerator{
 
     private static final Logger LOG = LoggerFactory.getLogger(BehaviorInstanceManager.class);
 
     private static final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
+
+    private final CreamProxyFactory creamProxyFactory = new CreamProxyFactory(this.getClass().getClassLoader(),this);
+
+    private Map<Method,GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
 
     /**
      * Creates a new Component Manager.
@@ -61,15 +66,26 @@ public class BehaviorInstanceManager extends InstanceManager {
 
         @Override
         public Object successorStrategy(Object pojo,List<InvocationHandler> successors, Object proxy, Method method, Object[] args){
-            if (MethodInvocationUtils.isInvocableByReflexion(method,pojo)){
-                try {
-
-                    return MethodInvocationUtils.invokeByReflexion(method,pojo,proxy,args);
-                }catch (Throwable throwable){
-                    LOG.warn("invoke by reflexion cause an exception,return a no found code",throwable);
-                }
-            }
             return SuccessorStrategy.NO_FOUND_CODE;
         }
+    }
+
+    public Map<Method,GeneratedDelegatorProxy> getProxyDelegationMap(){
+        if (proxyDelegatorMap.isEmpty()){
+            Class clazz = getClazz();
+            BehaviorProvider[] behaviors = (BehaviorProvider[]) clazz.getAnnotationsByType(BehaviorProvider.class);
+            for (BehaviorProvider provider:behaviors){
+                Class behaviorService = provider.spec();
+                Method[] methods = behaviorService.getMethods();
+                if ((methods == null)||(methods.length == 0)){
+                    break;
+                }
+                GeneratedDelegatorProxy proxy = (GeneratedDelegatorProxy) creamProxyFactory.getProxy(behaviorService);
+                for (Method method : methods){
+                    proxyDelegatorMap.put(method,proxy);
+                }
+            }
+        }
+        return proxyDelegatorMap;
     }
 }

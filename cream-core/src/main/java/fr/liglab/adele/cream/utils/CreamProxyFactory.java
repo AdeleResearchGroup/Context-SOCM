@@ -36,7 +36,7 @@ public class CreamProxyFactory extends ClassLoader {
     protected Class getProxyClass(Class clazz) {
         byte[] clz = CreamProxyGenerator.dump(clazz,manager.getClazz(),manager.getInstanceName()); // Generate the proxy.
         // Turn around the VM changes (FELIX-2716) about java.* classes.
-        String cn = clazz.getName();
+        String cn = manager.getClazz().getName();
         if (cn.startsWith("java.")) {
             cn = "$" + cn;
         }

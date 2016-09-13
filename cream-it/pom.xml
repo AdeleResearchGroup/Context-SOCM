@@ -77,6 +77,12 @@
             <artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
 
+        <!--ASM-->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+        </dependency>
+
         <!--TEST-->
         <dependency>
             <groupId>junit</groupId>

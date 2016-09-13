@@ -46,7 +46,7 @@ public abstract class ContextBaseTest extends BaseTest {
         options = OptionUtils.combine(options,  systemProperty("logback.configurationFile")
                 .value("file:" + PathUtils.getBaseDir() + "/src/test/resources/logger.xml"));
         options = OptionUtils.combine(options,   log());
-
+        options = OptionUtils.combine(options,   asmBundle());
         if (deployCreamRuntimeFacilities()){
             options = OptionUtils.combine(options, creamRuntimeFacilitiesBundles());
         }
@@ -75,6 +75,12 @@ public abstract class ContextBaseTest extends BaseTest {
     protected Option creamRuntimeFacilitiesBundles() {
         return composite(
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.runtime.facilities").versionAsInProject()
+        );
+    }
+
+    protected Option asmBundle() {
+        return composite(
+                mavenBundle().groupId("org.ow2.asm").artifactId("asm-all").versionAsInProject()
         );
     }
 

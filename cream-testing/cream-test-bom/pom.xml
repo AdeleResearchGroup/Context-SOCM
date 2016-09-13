@@ -68,6 +68,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!--ASM-->
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-all</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+
             <!--TEST-->
             <dependency>
                 <groupId>junit</groupId>
