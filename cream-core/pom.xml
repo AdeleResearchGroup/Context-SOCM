@@ -43,12 +43,6 @@
             <artifactId>org.apache.felix.ipojo.manipulator</artifactId>
         </dependency>
 
-        <!--ASM-->
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-all</artifactId>
-        </dependency>
-
         <!--LOG-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -72,6 +66,17 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm-tree</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -90,6 +95,18 @@
                             fr.liglab.adele.cream.model.*,
                             fr.liglab.adele.cream.utils.*
                         </Export-Package>
+                        <Import-Package>
+                            org.osgi.framework,
+                            org.slf4j,
+                            org.apache.felix.ipojo,
+                            org.apache.felix.ipojo.handlers.providedservice.*,
+                            !org.objectweb.asm.signature,
+                            !org.objectweb.asm.tree
+                        </Import-Package>
+                        <Private-Package>
+                            org.objectweb.asm;-split-package:=merge-last,
+                            org.objectweb.asm.commons;-split-package:=merge-last
+                        </Private-Package>
                         <Bundle-SymbolicName>
                             ${project.artifactId}
                         </Bundle-SymbolicName>
