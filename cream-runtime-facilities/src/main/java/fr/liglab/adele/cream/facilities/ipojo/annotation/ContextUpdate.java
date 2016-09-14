@@ -5,11 +5,12 @@ package fr.liglab.adele.cream.facilities.ipojo.annotation;
  */
 public @interface ContextUpdate {
 
+    String STATE_ID_ATTRIBUTE = "stateId";
+
+    String SPECIFICATION_ATTRIBUTE = "specification";
+
     Class specification();
 
     String stateId();
 
-    String STATE_ID_ATTRIBUTE = "stateId";
-
-    String SPECIFICATION_ATTRIBUTE = "specification";
 }

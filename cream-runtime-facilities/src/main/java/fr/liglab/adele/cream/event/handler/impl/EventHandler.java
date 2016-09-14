@@ -2,10 +2,7 @@ package fr.liglab.adele.cream.event.handler.impl;
 
 import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextUpdate;
 import fr.liglab.adele.cream.facilities.ipojo.annotation.FacilitiesHandlerReference;
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.InstanceManager;
-import org.apache.felix.ipojo.PrimitiveHandler;
+import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -48,8 +45,10 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
             return ref;
         }
 
-        for (ContextUpdateElement element: elements){
-            element.updateIfNecessary(ref);
+        if (getInstanceManager().getState() == ComponentInstance.VALID){
+            for (ContextUpdateElement element: elements){
+                element.updateIfNecessary(ref);
+            }
         }
 
         return ref;
@@ -107,7 +106,7 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
      * Not check the first type parameter because it cannot be done without loading the pojo to deduce interface Hierarchy of the first parameter type
      */
     private boolean checkMethodStructure(MethodMetadata metadata){
-        String argument[] = metadata.getMethodArguments();
+        String[] argument = metadata.getMethodArguments();
         if (argument == null || argument.length != 3){
             return false;
         }
@@ -135,6 +134,6 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
 
     @Override
     public  void start() {
-
+//Do nothing
     }
 }

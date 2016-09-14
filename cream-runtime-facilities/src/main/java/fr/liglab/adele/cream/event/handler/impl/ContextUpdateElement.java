@@ -8,6 +8,8 @@ import org.apache.felix.ipojo.handlers.dependency.Dependency;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.util.Callback;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -18,11 +20,11 @@ import java.util.List;
  */
 public class ContextUpdateElement {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ContextUpdateElement.class);
+
     private final Callback myCallback;
 
     private final String mySpecName;
-
-    private final String myStateElementName;
 
     private final String myPropertyName;
 
@@ -36,7 +38,6 @@ public class ContextUpdateElement {
 
     public ContextUpdateElement(String specName, String stateElementName, MethodMetadata metadata, InstanceManager manager){
         mySpecName = specName;
-        myStateElementName =stateElementName;
         myManager = manager;
         String simpleClassName = specName.substring(specName.lastIndexOf('.') + 1);
         myPropertyName = ContextEntity.State.id(simpleClassName,stateElementName);
@@ -64,7 +65,12 @@ public class ContextUpdateElement {
         return super.equals(obj);
     }
 
-    private void getAllInterface(Class clazz,List<String> returnList){
+    @Override
+    public int hashCode(){
+        return mySpecName.hashCode() + myPropertyName.hashCode();
+    }
+
+    private static void getAllInterface(Class clazz,List<String> returnList){
         if (clazz.isInterface()){
             returnList.add(clazz.getName());
         }
@@ -91,11 +97,11 @@ public class ContextUpdateElement {
                 try {
                     myCallback.call(args);
                 } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
+                    LOG.error("Error occurs during method invocation , ",e);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    LOG.error("Error occurs during method invocation , ",e);
                 } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    LOG.error("Error occurs during method invocation , ",e);
                 }
             }
         }
