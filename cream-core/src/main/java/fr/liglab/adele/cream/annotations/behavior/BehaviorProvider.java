@@ -10,4 +10,11 @@ import java.lang.annotation.Target;
 public @interface BehaviorProvider {
 
     Class spec();
+
+    @Target(ElementType.METHOD)
+    @interface ChangeOn{
+        Class spec();
+
+        String id();
+    }
 }

@@ -15,6 +15,8 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
 
     protected static final String BEHAVIOR_CONTEXT_ENTITY_ELEMENT = HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER;
 
+    protected static final String BEHAVIOR_LIFECYCLE_ELEMENT = HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
+
     public static final String COMPONENT_TYPE = "behavior-extension";
 
     public BehaviorProviderProcessor(ClassLoader classReferenceLoader) {
@@ -63,10 +65,17 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
 
 
          /*
-         *  Create the Entity element that will own all definitions regarding the context
+         *  Create the Behavior Entity element that will own all definitions regarding the context
          */
-        Element context = new Element(HandlerReference.BEHAVIOR_ENTITY_HANDLER,HandlerReference.NAMESPACE);
-        addMetadataElement(BEHAVIOR_CONTEXT_ENTITY_ELEMENT,context);
+        Element behaviorEntityElement = new Element(HandlerReference.BEHAVIOR_ENTITY_HANDLER,HandlerReference.NAMESPACE);
+        addMetadataElement(BEHAVIOR_CONTEXT_ENTITY_ELEMENT,behaviorEntityElement);
+
+        /**
+         * Create lyfecycle element
+         */
+        Element behaviorLifeCycleElement = new Element(HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER,HandlerReference.NAMESPACE);
+        addMetadataElement(BEHAVIOR_LIFECYCLE_ELEMENT,behaviorLifeCycleElement);
+
 
     }
 

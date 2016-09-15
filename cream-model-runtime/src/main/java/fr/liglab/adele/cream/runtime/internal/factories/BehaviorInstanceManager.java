@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by aygalinc on 31/05/16.
@@ -54,13 +51,22 @@ public class BehaviorInstanceManager extends InstanceManager implements CreamGen
         return (BehaviorLifecyleHandler)  getHandler(LIFECYCLE_HANDLER);
     }
 
-    public void registerBehaviorListener(ContextListener listener){
+    public void registerContextListenerToBehaviorEntityHandler(ContextListener listener){
         BehaviorEntityHandler entityHandler = (BehaviorEntityHandler)  getHandler(HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER);
         if (entityHandler == null){
             return;
         }
         entityHandler.registerContextListener(listener,null);
     }
+
+    public void unregisterContextListenerToBehaviorEntityHandler(ContextListener listener){
+        BehaviorEntityHandler entityHandler = (BehaviorEntityHandler)  getHandler(HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER);
+        if (entityHandler == null){
+            return;
+        }
+        entityHandler.unregisterContextListener(listener);
+    }
+
 
     private class NotFoundStrategy implements SuccessorStrategy{
 

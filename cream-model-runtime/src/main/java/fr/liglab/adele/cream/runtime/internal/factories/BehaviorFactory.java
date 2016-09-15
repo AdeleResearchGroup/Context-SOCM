@@ -41,15 +41,6 @@ public class BehaviorFactory extends ComponentFactory {
     }
 
     @Override
-    public List<RequiredHandler> getRequiredHandlerList() {
-        List<RequiredHandler> returnList = new ArrayList<>();
-        RequiredHandler behaviorLifecycleHandler = new RequiredHandler(HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER,HandlerReference.NAMESPACE);
-        returnList.add(behaviorLifecycleHandler);
-        returnList.addAll(super.getRequiredHandlerList());
-        return returnList;
-    }
-
-    @Override
     public ComponentInstance createInstance(Dictionary config, IPojoContext context, HandlerManager[] handlers) throws ConfigurationException {
 
         InstanceManager instance = new BehaviorInstanceManager(this, context, handlers);

@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  * Created by aygalinc on 02/06/16.
@@ -38,12 +39,13 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     private final Hashtable myConfiguration = new Hashtable();
 
-    private final BehaviorStateListener parent;
+    private final BehaviorTrackerHandler parent;
 
     private final ProvidedServiceHandler myProvideServiceHandler;
 
     private final String myId ;
-    public RequiredBehavior(String id, String spec, String behaviorImpl, Dictionary config, BehaviorStateListener parent, ProvidedService providedService, ProvidedServiceHandler providedServiceHandler) {
+
+    public RequiredBehavior(String id, String spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent, ProvidedService providedService, ProvidedServiceHandler providedServiceHandler) {
         mySpecification = spec;
         myBehaviorNameImpl = behaviorImpl;
         myId = id;
@@ -101,6 +103,10 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         try {
             myManager = (BehaviorInstanceManager) myFactory.createComponentInstance(myConfiguration,null);
             myManager.getBehaviorLifeCycleHandler().registerBehaviorListener(this);
+            myManager.registerContextListenerToBehaviorEntityHandler(parent.getBehviorContextListener());
+            Set<String> properties =  myManager.getBehaviorLifeCycleHandler().getPropertiesToListen();
+            parent.registerContextEntityContextListener(myManager.getBehaviorLifeCycleHandler() ,properties.toArray(new String[properties.size()]));
+
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error(UnacceptableConfiguration.class.getName(),unacceptableConfiguration);
         } catch (MissingHandlerException e) {
@@ -134,6 +140,7 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         if (myManager != null){
             myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
             myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
+            myManager.unregisterContextListenerToBehaviorEntityHandler(parent.getBehviorContextListener());
             myManager.dispose();
         }
     }
@@ -162,10 +169,6 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         return SuccessorStrategy.NO_FOUND_CODE;
     }
 
-    public void registerBehaviorListener(ContextListener listener){
-        myManager.registerBehaviorListener(listener);
-    }
-
     public FieldInterceptor getBehaviorInterceptor(){
         return new BehaviorInjectedInterceptor();
     }
@@ -173,10 +176,10 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
     @Override
     public void behaviorStateChange(int state,String id) {
         if (state == ComponentInstance.VALID){
-               myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,true);
+            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,true);
         }
         else if (state == ComponentInstance.INVALID){
-               myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
+            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
         }
         parent.behaviorStateChange(state,id);
     }

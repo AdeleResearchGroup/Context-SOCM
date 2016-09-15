@@ -39,7 +39,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
      * This handler implements ContextSource to allow state variables to be used in
      * dependency filters.
      */
-    private final Set<ContextListener> contextSourceListeners	= new HashSet<>();
+    private final Map<ContextListener,List<String>> contextSourceListeners	= new HashMap<>();
 
     /**
      * The list of exposed context services
@@ -326,8 +326,13 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
 
     @Override
     public void registerContextListener(ContextListener listener, String[] properties) {
-        if (!contextSourceListeners.contains(listener)){
-            contextSourceListeners.add(listener);
+
+        if (!contextSourceListeners.containsKey(listener)){
+            if (properties != null){
+                contextSourceListeners.put(listener,Arrays.asList(properties));
+            }else {
+                contextSourceListeners.put(listener,null);
+            }
         }
     }
 
@@ -340,8 +345,10 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
      * Notify All the context listener
      */
     protected void notifyContextListener(String property,Object value){
-        for (ContextListener listener : contextSourceListeners){
-            listener.update(this,property,value);
+        for (Map.Entry<ContextListener,List<String>> listener : contextSourceListeners.entrySet()){
+            if (listener.getValue() == null||listener.getValue().contains(property)){
+                listener.getKey().update(this,property,value);
+            }
         }
     }
 

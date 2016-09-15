@@ -4,6 +4,7 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorStateListener;
+import fr.liglab.adele.cream.runtime.handler.entity.utils.AbstractContextHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
@@ -22,7 +23,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
-public class BehaviorManagerHandler extends PrimitiveHandler implements InvocationHandler,ContextListener,BehaviorStateListener {
+public class BehaviorTrackerHandler extends PrimitiveHandler implements InvocationHandler,BehaviorStateListener {
 
     private static final String CONTEXT_ENTITY_CONTROLLER_FIELD_NAME = " context.entity.controller.";
 
@@ -31,6 +32,26 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
     private final Set<String> stateVariable = new ConcurrentSkipListSet<>();
 
     private final Set<String> mandatoryBehavior = new HashSet<>();
+
+    private final ContextListener behaviorContextListener = new BehaviorEntityListener();
+
+    public ContextListener getBehviorContextListener(){
+        return behaviorContextListener;
+    }
+
+    public void registerContextEntityContextListener(ContextListener contextListener,String[] properties){
+        ContextSource handler = (ContextSource)getHandler(HandlerReference.NAMESPACE + ":"+HandlerReference.ENTITY_HANDLER);
+        if (handler != null){
+            handler.registerContextListener(contextListener,properties);
+        }
+    }
+
+    public void unregisterContextEntityContextListener(ContextListener contextListener,String[] properties){
+        ContextSource handler = (ContextSource)getHandler(HandlerReference.NAMESPACE + ":"+HandlerReference.ENTITY_HANDLER);
+        if (handler != null){
+            handler.unregisterContextListener(contextListener);
+        }
+    }
 
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
@@ -185,7 +206,6 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
             if (match(entry.getValue(),prop)){
                 entry.getValue().setFactory(behaviorFactory);
                 entry.getValue().addManager();
-                entry.getValue().registerBehaviorListener(this);
                 if (getInstanceManager().getState() == ComponentInstance.VALID){
                     entry.getValue().tryStartBehavior();
                 }
@@ -228,30 +248,32 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
     /**
      * Context Listener Implem
      */
-    @Override
-    public synchronized void update(ContextSource contextSource, String s, Object o) {
+    private class BehaviorEntityListener implements ContextListener{
+        @Override
+        public synchronized void update(ContextSource contextSource, String s, Object o) {
 
-        ProvidedServiceHandler providerHandler = getProvideServiceHandler();
-        if (providerHandler == null){
-            return;
+            ProvidedServiceHandler providerHandler = getProvideServiceHandler();
+            if (providerHandler == null){
+                return;
+            }
+
+
+            Hashtable<String,Object> property = new Hashtable<>();
+            property.put(s, o);
+            if (o == null){
+                stateVariable.remove(s);
+                getProvideServiceHandler().removeProperties(property);
+                return;
+            }
+
+            if (stateVariable.contains(s)){
+                providerHandler.reconfigure(property);
+            }else {
+                stateVariable.add(s);
+                providerHandler.addProperties(property);
+            }
+
         }
-
-
-        Hashtable<String,Object> property = new Hashtable<>();
-        property.put(s, o);
-        if (o == null){
-            stateVariable.remove(s);
-            getProvideServiceHandler().removeProperties(property);
-            return;
-        }
-
-        if (stateVariable.contains(s)){
-            providerHandler.reconfigure(property);
-        }else {
-            stateVariable.add(s);
-            providerHandler.addProperties(property);
-        }
-
     }
 
     @Override
@@ -280,7 +302,7 @@ public class BehaviorManagerHandler extends PrimitiveHandler implements Invocati
     public class BehaviorHandlerDescription extends HandlerDescription {
 
         public BehaviorHandlerDescription(){
-            super(BehaviorManagerHandler.this);
+            super(BehaviorTrackerHandler.this);
         }
 
         @Override

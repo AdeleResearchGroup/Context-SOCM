@@ -52,7 +52,11 @@ public class ContextBindingModule extends AbsBindingModule {
 				.to(
 						new BehaviorProviderProcessor(classReferenceLoader)
 				);
-
+		bind(BehaviorProvider.ChangeOn.class)
+				.when(and( on(ElementType.METHOD), reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists()))
+				.to(
+						new BehaviorChangeOnProcessor(classReferenceLoader)
+				);
 		bind(Behavior.class)
 				.when(and( on(ElementType.TYPE), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
 				.to(
@@ -95,7 +99,6 @@ public class ContextBindingModule extends AbsBindingModule {
 				.to(
 						new PushMethodProcessor(classReferenceLoader)
 				);
-
 		bind(Relation.Field.class)
 				.when(getFieldSuccessPredicate())
 				.to(
@@ -170,6 +173,12 @@ public class ContextBindingModule extends AbsBindingModule {
 				.to((BindingContext context) ->
 						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
 								Behavior.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
+				);
+		bind(BehaviorProvider.ChangeOn.class)
+				.when(and( on(ElementType.TYPE), not(reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists())))
+				.to((BindingContext context) ->
+						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
+								BehaviorProvider.ChangeOn.class.getSimpleName(), context.getWorkbench().getClassNode().name,BehaviorProvider.class.getSimpleName())
 				);
 		bind(InjectedBehavior.class)
 				.when(and( on(ElementType.FIELD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(AbstractBehaviorElementProcessor.BEHAVIOR_ELEMENT).exists()))))
