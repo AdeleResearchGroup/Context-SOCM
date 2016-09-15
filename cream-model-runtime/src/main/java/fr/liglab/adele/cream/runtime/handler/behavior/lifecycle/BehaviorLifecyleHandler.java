@@ -32,6 +32,9 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler implements Context
 
     private String id;
 
+    // TODO : some workaround method invocation, check if the parameter is a primitive type and not call the method if the argument is null,
+    // When get the callback , issue can be found if the pojo own two method with the same name but different attributes(nbr or type), the pojometadata.getMethod() return
+    // the first method with the good name...
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
         //Do nothing
