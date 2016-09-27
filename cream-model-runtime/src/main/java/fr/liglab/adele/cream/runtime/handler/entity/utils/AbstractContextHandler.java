@@ -345,6 +345,9 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
      * Notify All the context listener
      */
     protected void notifyContextListener(String property,Object value){
+        if (isInstanceActive() && getInstanceManager().getState() != ComponentInstance.VALID){
+            return;
+        }
         for (Map.Entry<ContextListener,List<String>> listener : contextSourceListeners.entrySet()){
             if (listener.getValue() == null||listener.getValue().contains(property)){
                 listener.getKey().update(this,property,value);

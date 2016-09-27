@@ -323,6 +323,9 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
                 return;
             }
 
+            if (getInstanceManager().getState() != ComponentInstance.VALID){
+            return;
+            }
 
             Hashtable<String,Object> property = new Hashtable<>();
             property.put(s, o);
