@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BehaviorChangeOnTest extends BehaviorBaseCommonConfig {
 
     @Test
-    public void testSimpleBehaviorDeparture() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public void testChangeOnCall() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ComponentInstance instance = createEntityWithBehaviorChangeOn();
 
         ServiceOfContext serviceObj1 = osgiHelper.getServiceObject(ServiceOfContext.class);

@@ -21,6 +21,7 @@ package fr.liglab.adele.cream.it.behavior.test.departure;
  */
 
 
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.it.behavior.injection.BehaviorToInject;
 import fr.liglab.adele.cream.it.behavior.injection.ContextServiceUsingInjectedBehavior;
 import fr.liglab.adele.cream.it.behavior.injection.ServiceContext;
@@ -34,6 +35,7 @@ import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
+import org.osgi.framework.ServiceReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -72,31 +74,58 @@ public class BehaviorDepartureTest extends BehaviorBaseCommonConfig {
 
         BehaviorSpec1 behavior = osgiHelper.waitForService(BehaviorSpec1.class,null,((long)2000));
         BehaviorSpec2 behavior2 = osgiHelper.waitForService(BehaviorSpec2.class,null,((long)2000));
+
+        ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
+
         assertThat(behavior).isNotNull();
         assertThat(behavior2).isNotNull();
 
         BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
         assertThat(behaviorHelper.getBehavior(instance,"Behavior1")).isNotNull();
         assertThat(behaviorHelper.getBehavior(instance,"Behavior2")).isNotNull();
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE);
 
         behavior = null;
         behavior2 = null;
 
-        behaviorHelper.stopBehavior(instance,"Behavior1");
+        behaviorHelper.invalidBehavior(instance,"Behavior1");
         BehaviorSpec1 behaviorSpec1Null = osgiHelper.getServiceObject(BehaviorSpec1.class);
         BehaviorSpec2 behaviorSpec2NotNullSideEffect = osgiHelper.getServiceObject(BehaviorSpec2.class);
         assertThat(behaviorSpec1Null).isNull();
         assertThat(behaviorSpec2NotNullSideEffect).isNotNull();
 
+        /**
+         * Property Check
+         */
+        serviceReference = osgiHelper.getServiceReference(ContextService1.class);
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(null);
+
+
         behaviorSpec2NotNullSideEffect = null;
 
-        behaviorHelper.stopBehavior(instance,"Behavior2");
+        behaviorHelper.invalidBehavior(instance,"Behavior2");
         BehaviorSpec2 behaviorSpec2Null = osgiHelper.getServiceObject(BehaviorSpec2.class);
         assertThat(behaviorSpec2Null).isNull();
+
+        /**
+         * Property Check
+         */
+        serviceReference = osgiHelper.getServiceReference(ContextService1.class);
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(null);
+
 
         BehaviorSpec1 behaviorSpec1NullCheckSideEffect = osgiHelper.getServiceObject(BehaviorSpec1.class);
         assertThat(behaviorSpec1NullCheckSideEffect).isNull();
 
+        /**
+         * Restart behavior 1
+         */
+        behaviorHelper.validBehavior(instance,"Behavior1");
+        serviceReference = osgiHelper.getServiceReference(ContextService1.class);
+        /**
+         * Property Check
+         */
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(BehaviorSpec1.class,BehaviorSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(BehaviorSpec1.PARAM_1_INIT_VALUE);
     }
 
     @Test

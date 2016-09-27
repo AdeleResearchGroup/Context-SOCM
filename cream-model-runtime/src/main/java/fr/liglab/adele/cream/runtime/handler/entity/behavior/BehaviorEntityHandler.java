@@ -48,8 +48,9 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         if (state == InstanceManager.VALID) {
             instanceIsActive = true;
 
-
-            propagate(new HashMap<>(stateValues));
+            for (Map.Entry<String,Object> initialEntry : this.getInitialConfiguration().entrySet()){
+                update(initialEntry.getKey(),initialEntry.getValue());
+            }
 
             /*
              * restart state handlers
@@ -62,13 +63,18 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         if (state == InstanceManager.INVALID) {
             instanceIsActive = false;
 
+            stateValues.clear();
+            Map<String,Object> stateToNull = new HashMap<>();
+            for (String stateId : stateIds){
+                stateToNull.put(stateId,null);
+            }
+            propagate(new HashMap<>(stateToNull));
             /*
              * stop state handlers
              */
             for (StateInterceptor interceptor : interceptors) {
                 interceptor.invalidate();
             }
-
         }
     }
 

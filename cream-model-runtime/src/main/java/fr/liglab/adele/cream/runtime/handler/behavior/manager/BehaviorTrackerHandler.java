@@ -288,7 +288,7 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
     public Dictionary getContext() {
         Hashtable hashtable = new Hashtable();
         for (Map.Entry<String,RequiredBehavior> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()){
-           hashtable.putAll((Map) requiredBehaviorEntry.getValue().getContext());
+            hashtable.putAll((Map) requiredBehaviorEntry.getValue().getContext());
         }
         return hashtable;
     }
@@ -324,17 +324,22 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
             }
 
             if (getInstanceManager().getState() != ComponentInstance.VALID){
-            return;
+                return;
+            }
+
+
+            if (o == null){
+                Hashtable<String,Object> propertyToRemove = new Hashtable<>();
+                propertyToRemove.put(s, "");
+                if(stateVariable.contains(s)){
+                    stateVariable.remove(s);
+                    getProvideServiceHandler().removeProperties(propertyToRemove);
+                }
+                return;
             }
 
             Hashtable<String,Object> property = new Hashtable<>();
             property.put(s, o);
-            if (o == null){
-                stateVariable.remove(s);
-                getProvideServiceHandler().removeProperties(property);
-                return;
-            }
-
             if (stateVariable.contains(s)){
                 providerHandler.reconfigure(property);
             }else {

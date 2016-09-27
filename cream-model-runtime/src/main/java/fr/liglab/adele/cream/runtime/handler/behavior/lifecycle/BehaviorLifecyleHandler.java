@@ -30,7 +30,10 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler implements Context
 
     private final Set<String> propertyToListen = new HashSet<>();
 
+    private final InstanceStateListener privateInstanceListener = new InstanceListenerImpl();
+
     private String id;
+
 
     // TODO : some workaround method invocation, check if the parameter is a primitive type and not call the method if the argument is null,
     // When get the callback , issue can be found if the pojo own two method with the same name but different attributes(nbr or type), the pojometadata.getMethod() return
@@ -66,17 +69,21 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler implements Context
                 propertyToListen.add(stateId);
             }
         }
+
     }
 
     @Override
     public synchronized void stop() {
-        //Do nothing
+        getInstanceManager().removeInstanceStateListener(privateInstanceListener);
     }
 
     @Override
     public synchronized void start() {
         setValidity(false);
+        getInstanceManager().addInstanceStateListener(privateInstanceListener);
     }
+
+
 
     public synchronized void registerBehaviorListener(BehaviorStateListener listener) {
         stateListeners.add(listener);
@@ -101,11 +108,6 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler implements Context
                 setValidity(true);
             }
         }
-    }
-
-    @Override
-    public void stateChanged(int state) {
-        notifyListener(state);
     }
 
     private void notifyListener(int state){
@@ -165,6 +167,27 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler implements Context
             Element element = super.getHandlerInfo();
             element.addAttribute(new Attribute(BehaviorReference.BEHAVIOR_ID_CONFIG,id));
             return element;
+        }
+    }
+
+    /**
+     * Ensure that all handler state method are called before notify the behavior tracker manager to expose behavior as a service if the componentbecome valid
+     */
+    private class InstanceListenerImpl implements InstanceStateListener{
+
+
+        @Override
+        public void stateChanged(ComponentInstance instance, int newState) {
+            if (newState == ComponentInstance.VALID) {
+                notifyListener(newState);
+            }
+        }
+    }
+
+    @Override
+    public void stateChanged(int state) {
+        if (state != ComponentInstance.VALID){
+            notifyListener(state);
         }
     }
 }

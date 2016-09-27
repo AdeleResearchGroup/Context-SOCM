@@ -62,6 +62,11 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     protected final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
 
     /**
+     * The configured state
+     */
+    private final Map<String,Object> stateInitialConfig		= new ConcurrentHashMap<>();
+
+    /**
      * Get The scheduler
      */
     protected abstract  ManagedScheduledExecutorService getScheduler();
@@ -215,6 +220,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
          */
         for (String configuredState : getConfiguredStates(configuration)) {
             if (stateIds.contains(configuredState)) {
+                stateInitialConfig.put(configuredState, getStateConfiguredValue(configuredState, configuration));
                 update(configuredState, getStateConfiguredValue(configuredState, configuration));
             }
             else {
@@ -264,6 +270,9 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         }
     }
 
+    protected Map<String,Object> getInitialConfiguration(){
+        return new HashMap<>(stateInitialConfig);
+    }
 
     /**
      * HandlerLifecycle
@@ -310,7 +319,8 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
 
 
     /**
-     *Context Source Implementation
+     *Context Source Implementation,
+     * Implementation must be very defensive because this method can be called even if the instance manager is not attach....
      */
 
     @Override
@@ -321,6 +331,9 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     @SuppressWarnings("rawtypes")
     @Override
     public Dictionary getContext() {
+        if (getInstanceManager() == null || getInstanceManager().getState() != ComponentInstance.VALID){
+            return new Hashtable<>(stateInitialConfig);
+        }
         return new Hashtable<>(stateValues);
     }
 
@@ -345,9 +358,6 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
      * Notify All the context listener
      */
     protected void notifyContextListener(String property,Object value){
-        if (isInstanceActive() && getInstanceManager().getState() != ComponentInstance.VALID){
-            return;
-        }
         for (Map.Entry<ContextListener,List<String>> listener : contextSourceListeners.entrySet()){
             if (listener.getValue() == null||listener.getValue().contains(property)){
                 listener.getKey().update(this,property,value);
