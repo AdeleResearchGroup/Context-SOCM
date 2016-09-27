@@ -5,10 +5,7 @@ import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorLifecyleHandler;
 import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
 import fr.liglab.adele.cream.utils.*;
-import org.apache.felix.ipojo.ComponentFactory;
-import org.apache.felix.ipojo.ContextListener;
-import org.apache.felix.ipojo.HandlerManager;
-import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.*;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +46,16 @@ public class BehaviorInstanceManager extends InstanceManager implements CreamGen
 
     public BehaviorLifecyleHandler getBehaviorLifeCycleHandler(){
         return (BehaviorLifecyleHandler)  getHandler(LIFECYCLE_HANDLER);
+    }
+
+    public ContextSource getBehaviorContextSource(){
+        Handler handler = getHandler(HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER);
+        if (handler instanceof ContextSource){
+            return  (ContextSource) handler;
+        }
+        else {
+            return null;
+        }
     }
 
     public void registerContextListenerToBehaviorEntityHandler(ContextListener listener){

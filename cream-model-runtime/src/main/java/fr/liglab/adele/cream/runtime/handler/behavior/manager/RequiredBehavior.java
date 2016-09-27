@@ -23,19 +23,15 @@ import java.util.Set;
 /**
  * Created by aygalinc on 02/06/16.
  */
-public class RequiredBehavior implements InvocationHandler,BehaviorStateListener{
+public class RequiredBehavior implements InvocationHandler,BehaviorStateListener,ContextSource{
 
     private static final String BEHAVIOR_CONTROLLER_FIELD = "behavior.controller.";
 
     private static final Logger LOG = LoggerFactory.getLogger(RequiredBehavior.class);
 
-    private BehaviorFactory myFactory;
-
     private final String mySpecification;
 
     private final String myBehaviorNameImpl;
-
-    private BehaviorInstanceManager myManager;
 
     private final Hashtable myConfiguration = new Hashtable();
 
@@ -44,6 +40,18 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
     private final ProvidedServiceHandler myProvideServiceHandler;
 
     private final String myId ;
+
+    private BehaviorInstanceManager myManager;
+
+    private BehaviorFactory myFactory;
+
+    private ContextSource behaviorContextSource;
+
+    private ContextListener contextListener;
+
+    private String[] propertiesToListen;
+
+    private final Object lock = new Object();
 
     public RequiredBehavior(String id, String spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent, ProvidedService providedService, ProvidedServiceHandler providedServiceHandler) {
         mySpecification = spec;
@@ -101,12 +109,15 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         }
 
         try {
-            myManager = (BehaviorInstanceManager) myFactory.createComponentInstance(myConfiguration,null);
-            myManager.getBehaviorLifeCycleHandler().registerBehaviorListener(this);
-            myManager.registerContextListenerToBehaviorEntityHandler(parent.getBehviorContextListener());
-            Set<String> properties =  myManager.getBehaviorLifeCycleHandler().getPropertiesToListen();
-            parent.registerContextEntityContextListener(myManager.getBehaviorLifeCycleHandler() ,properties.toArray(new String[properties.size()]));
-
+            synchronized (lock) {
+                myManager = (BehaviorInstanceManager) myFactory.createComponentInstance(myConfiguration, null);
+                myManager.getBehaviorLifeCycleHandler().registerBehaviorListener(this);
+                myManager.registerContextListenerToBehaviorEntityHandler(parent.getBehaviorContextListener());
+                behaviorContextSource = myManager.getBehaviorContextSource();
+                if (contextListener != null){
+                    behaviorContextSource.registerContextListener(contextListener,propertiesToListen);
+                }
+            }
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error(UnacceptableConfiguration.class.getName(),unacceptableConfiguration);
         } catch (MissingHandlerException e) {
@@ -119,6 +130,9 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
     public synchronized void tryStartBehavior(){
 
         if (myManager != null ){
+            Set<String> properties =  myManager.getBehaviorLifeCycleHandler().getPropertiesToListen();
+            parent.registerContextEntityContextListener(myManager.getBehaviorLifeCycleHandler() ,properties.toArray(new String[properties.size()]));
+
             if (!myManager.isStarted()) {
                 myManager.start();
                 myManager.getBehaviorLifeCycleHandler().startBehavior();
@@ -132,15 +146,16 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         if (myManager != null && myManager.isStarted() ){
             myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
             myManager.getBehaviorLifeCycleHandler().stopBehavior();
-
+            parent.unregisterContextEntityContextListener(myManager.getBehaviorLifeCycleHandler());
         }
     }
 
     public synchronized void tryDispose(){
         if (myManager != null){
             myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
+            parent.unregisterContextEntityContextListener(myManager.getBehaviorLifeCycleHandler());
             myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
-            myManager.unregisterContextListenerToBehaviorEntityHandler(parent.getBehviorContextListener());
+            myManager.unregisterContextListenerToBehaviorEntityHandler(parent.getBehaviorContextListener());
             myManager.dispose();
         }
     }
@@ -182,6 +197,47 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
             myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
         }
         parent.behaviorStateChange(state,id);
+    }
+
+    @Override
+    public Object getProperty(String property) {
+        if (myManager != null && myManager.isStarted()  && behaviorContextSource != null){
+            return behaviorContextSource.getProperty(property);
+        }
+        return null;
+    }
+
+    @Override
+    public Dictionary getContext() {
+        if (myManager != null && myManager.isStarted() && behaviorContextSource != null){
+            return behaviorContextSource.getContext();
+        }
+        return new Hashtable<>();
+    }
+
+    @Override
+    public void registerContextListener(ContextListener listener, String[] properties) {
+        //Do nothing;
+        synchronized (lock) {
+            contextListener = listener;
+            propertiesToListen = properties;
+            if (behaviorContextSource != null){
+                behaviorContextSource.registerContextListener(listener,properties);
+            }
+        }
+    }
+
+    @Override
+    public void unregisterContextListener(ContextListener listener) {
+        //Do nothing;
+        synchronized (lock) {
+            if (behaviorContextSource != null){
+                behaviorContextSource.unregisterContextListener(listener);
+                if (listener != null && listener.equals(contextListener)){
+                    contextListener = null;
+                }
+            }
+        }
     }
 
     private class BehaviorInjectedInterceptor implements FieldInterceptor{

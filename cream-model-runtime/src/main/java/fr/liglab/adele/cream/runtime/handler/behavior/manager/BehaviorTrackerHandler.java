@@ -4,7 +4,6 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.runtime.handler.behavior.lifecycle.BehaviorStateListener;
-import fr.liglab.adele.cream.runtime.handler.entity.utils.AbstractContextHandler;
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
@@ -20,10 +19,11 @@ import org.apache.felix.ipojo.parser.ParseUtils;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
-public class BehaviorTrackerHandler extends PrimitiveHandler implements InvocationHandler,BehaviorStateListener {
+public class BehaviorTrackerHandler extends PrimitiveHandler implements InvocationHandler,BehaviorStateListener,ContextSource{
 
     private static final String CONTEXT_ENTITY_CONTROLLER_FIELD_NAME = " context.entity.controller.";
 
@@ -35,23 +35,15 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
 
     private final ContextListener behaviorContextListener = new BehaviorEntityListener();
 
-    public ContextListener getBehviorContextListener(){
+    private final Map<ContextListener,String[]> listeners = new ConcurrentHashMap<>();
+
+    public ContextListener getBehaviorContextListener(){
         return behaviorContextListener;
     }
 
-    public void registerContextEntityContextListener(ContextListener contextListener,String[] properties){
-        ContextSource handler = (ContextSource)getHandler(HandlerReference.NAMESPACE + ":"+HandlerReference.ENTITY_HANDLER);
-        if (handler != null){
-            handler.registerContextListener(contextListener,properties);
-        }
-    }
-
-    public void unregisterContextEntityContextListener(ContextListener contextListener,String[] properties){
-        ContextSource handler = (ContextSource)getHandler(HandlerReference.NAMESPACE + ":"+HandlerReference.ENTITY_HANDLER);
-        if (handler != null){
-            handler.unregisterContextListener(contextListener);
-        }
-    }
+    /**
+     * Configure part
+     **/
 
     @Override
     public  void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
@@ -97,6 +89,9 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
                     mandatoryBehavior.add(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME));
                 }
                 behaviorSpecs.add( individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+                for (Map.Entry<ContextListener,String[]> listenerEntry : listeners.entrySet()){
+                    requiredBehavior.registerContextListener(listenerEntry.getKey(),listenerEntry.getValue());
+                }
             }
         }
 
@@ -162,6 +157,10 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
         return true;
     }
 
+    /**
+     * Lifecycle
+     */
+
     @Override
     public  synchronized void stop() {
         for (Map.Entry<String,RequiredBehavior> entry : myRequiredBehaviorById.entrySet()){
@@ -175,11 +174,6 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
         for (String mandatoryBehaviorId : mandatoryBehavior){
             myRequiredBehaviorById.get(mandatoryBehaviorId).tryStartBehavior();
         }
-    }
-
-
-    private ProvidedServiceHandler getProvideServiceHandler(){
-        return (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
     }
 
     /**
@@ -199,6 +193,34 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
             }
         }
     }
+
+    /**
+     * Method used in changeOn process, behavior lifecyle handler are registered as context listener of ContextEntity Handler
+     */
+
+    public void registerContextEntityContextListener(ContextListener contextListener,String[] properties){
+        ContextSource handler = (ContextSource)getHandler(HandlerReference.NAMESPACE + ":"+HandlerReference.ENTITY_HANDLER);
+        if (handler != null){
+            handler.registerContextListener(contextListener,properties);
+        }
+    }
+
+    public void unregisterContextEntityContextListener(ContextListener contextListener){
+        ContextSource handler = (ContextSource)getHandler(HandlerReference.NAMESPACE + ":"+HandlerReference.ENTITY_HANDLER);
+        if (handler != null){
+            handler.unregisterContextListener(contextListener);
+        }
+    }
+
+
+    private ProvidedServiceHandler getProvideServiceHandler(){
+        return (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+    }
+
+
+    /**
+     * Behavior factory tracking part
+     */
 
     @Bind(id = "behaviorF",specification = Factory.class,optional = true,proxy = false,aggregate = true,filter = "("+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY +"="+BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE +")")
     public synchronized void bindBehaviorFactory(Factory behaviorFactory, Map prop){
@@ -228,10 +250,10 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
         return    req.getSpecName().equalsIgnoreCase(spec)  && req.getImplName().equalsIgnoreCase(impl);
     }
 
-    @Override
-    public HandlerDescription getDescription() {
-        return new BehaviorHandlerDescription();
-    }
+    /**
+     * Method Invocation Delegation, linked to context provided strategy
+     */
+
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -243,6 +265,50 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
             return returnObj;
         }
         return SuccessorStrategy.NO_FOUND_CODE;
+    }
+
+
+
+    /**
+     * Context Source Implementation, facade for requires handler, this method can be called before configure so a listener list must be keept !
+     */
+
+    @Override
+    public Object getProperty(String property) {
+        for (Map.Entry<String,RequiredBehavior> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()){
+            Object prop = requiredBehaviorEntry.getValue().getProperty(property);
+            if (prop != null){
+                return prop;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Dictionary getContext() {
+        Hashtable hashtable = new Hashtable();
+        for (Map.Entry<String,RequiredBehavior> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()){
+           hashtable.putAll((Map) requiredBehaviorEntry.getValue().getContext());
+        }
+        return hashtable;
+    }
+
+    @Override
+    public void registerContextListener(ContextListener listener, String[] properties) {
+        listeners.put(listener,properties);
+        for (Map.Entry<String,RequiredBehavior> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()){
+            requiredBehaviorEntry.getValue().registerContextListener(listener,properties);
+        }
+
+    }
+
+    @Override
+    public void unregisterContextListener(ContextListener listener) {
+        for (Map.Entry<String,RequiredBehavior> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()){
+            requiredBehaviorEntry.getValue().unregisterContextListener(listener);
+        }
+
+        listeners.remove(listener);
     }
 
     /**
@@ -276,6 +342,10 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
         }
     }
 
+    /**
+     * Behavior State Listener Implementation
+     */
+
     @Override
     public void behaviorStateChange(int state,String id) {
         if (ComponentInstance.INVALID == state){
@@ -297,6 +367,16 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
             }
         }
         return true;
+    }
+
+
+    /**
+     * Behavior handler Description
+     */
+
+    @Override
+    public HandlerDescription getDescription() {
+        return new BehaviorHandlerDescription();
     }
 
     public class BehaviorHandlerDescription extends HandlerDescription {
