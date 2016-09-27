@@ -26,8 +26,6 @@ public class BehaviorChangeOnProcessor extends AnnotationProcessor<BehaviorProvi
 		String id = annotation.id();
 		MethodNode method = getAnnotatedMethod();
 
-		System.out.println(" method " + method);
-
 		Type[] types = Type.getArgumentTypes(method.desc);
 
 		if (types == null || types.length != 1){
