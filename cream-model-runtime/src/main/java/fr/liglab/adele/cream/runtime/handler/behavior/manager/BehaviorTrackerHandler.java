@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-@Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE)
+@Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE,level = 1)
 public class BehaviorTrackerHandler extends PrimitiveHandler implements InvocationHandler,BehaviorStateListener,ContextSource{
 
     private static final String CONTEXT_ENTITY_CONTROLLER_FIELD_NAME = " context.entity.controller.";
@@ -36,6 +36,10 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
     private final ContextListener behaviorContextListener = new BehaviorEntityListener();
 
     private final Map<ContextListener,String[]> listeners = new ConcurrentHashMap<>();
+
+    private final   List<String> behaviorSpecs = new ArrayList<>();
+
+    private Element metadata;
 
     public ContextListener getBehaviorContextListener(){
         return behaviorContextListener;
@@ -55,7 +59,7 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
         }
 
         ProvidedService providedService = getContextEntityProvidedService(metadata);
-        List<String> behaviorSpecs = new ArrayList<>();
+
         for (Element element:behaviorElements){
             Element[] behaviorIndividualElements = element.getElements(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
 
@@ -69,7 +73,6 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
                         individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME),
                         configuration,
                         this,
-                        providedService,
                         getProvideServiceHandler()
                 );
                 myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),requiredBehavior);
@@ -95,12 +98,12 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
             }
         }
 
-        /**Due to service controller issue we must create a controller Always on true for contextEntitySpec**/
-        createControllerForContextEntity(metadata,behaviorSpecs);
 
         if (!mandatoryBehavior.isEmpty()){
             setValidity(false);
         }
+
+        this.metadata = metadata;
     }
 
     private void createControllerForContextEntity(Element metadata,List<String> behaviorSpecs){
@@ -170,7 +173,18 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
     }
 
     @Override
-    public void start() {
+    public synchronized void start() {
+        /**Due to service controller issue we must create a controller Always on true for contextEntitySpec**/
+        createControllerForContextEntity(metadata,behaviorSpecs);
+
+        /**
+         * set allProvided service in order to create all the service controller link to behavior
+         */
+        ProvidedService providedService = getContextEntityProvidedService(metadata);
+        for (Map.Entry<String,RequiredBehavior> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()){
+            requiredBehaviorEntry.getValue().setProvidedService(providedService);
+        }
+
         for (String mandatoryBehaviorId : mandatoryBehavior){
             myRequiredBehaviorById.get(mandatoryBehaviorId).tryStartBehavior();
         }

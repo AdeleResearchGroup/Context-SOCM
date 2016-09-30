@@ -53,7 +53,7 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     private final Object lock = new Object();
 
-    public RequiredBehavior(String id, String spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent, ProvidedService providedService, ProvidedServiceHandler providedServiceHandler) {
+    public RequiredBehavior(String id, String spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent,ProvidedServiceHandler providedServiceHandler) {
         mySpecification = spec;
         myBehaviorNameImpl = behaviorImpl;
         myId = id;
@@ -73,6 +73,11 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         }
         myConfiguration.put(BehaviorReference.BEHAVIOR_ID_CONFIG,id);
         this.parent = parent;
+
+    }
+
+
+    public void setProvidedService(ProvidedService providedService){
         providedService.setController(BEHAVIOR_CONTROLLER_FIELD+myId,false, mySpecification);
     }
 
