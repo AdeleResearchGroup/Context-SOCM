@@ -56,16 +56,19 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 	@Override
 	public void update(String stateId, Object value) {
 
-		assert stateId != null && stateIds.contains(stateId);
+		if(stateId == null && !stateIds.contains(stateId)){
+			return;
+		}
 
 		Object oldValue 	= stateValues.get(stateId);
 		boolean bothNull 	= oldValue == null && value == null;
 		boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
-		boolean noChange = bothNull && equals;
+		boolean noChange = bothNull || equals;
 
 
-		if (noChange)
+		if (noChange) {
 			return;
+		}
 
 		if (value != null) {
 			stateValues.put(stateId, value);

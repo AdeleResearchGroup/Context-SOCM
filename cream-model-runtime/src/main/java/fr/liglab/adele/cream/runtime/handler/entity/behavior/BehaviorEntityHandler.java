@@ -39,7 +39,6 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
     }
 
     /**
-     *
      * Handler Lifecycle
      */
     @Override
@@ -63,17 +62,16 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         if (state == InstanceManager.INVALID) {
             instanceIsActive = false;
 
-            stateValues.clear();
-            Map<String,Object> stateToNull = new HashMap<>();
-            for (String stateId : stateIds){
-                stateToNull.put(stateId,null);
-            }
-            propagate(new HashMap<>(stateToNull));
             /*
              * stop state handlers
              */
             for (StateInterceptor interceptor : interceptors) {
                 interceptor.invalidate();
+            }
+
+            stateValues.clear();
+            for (String stateId : stateIds){
+                notifyContextListener(stateId,null);
             }
         }
     }
@@ -108,15 +106,19 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
     @Override
     public void update(String stateId, Object value) {
 
-        assert stateId != null && stateIds.contains(stateId);
+        if(stateId == null && !stateIds.contains(stateId)){
+            return;
+        }
 
         Object oldValue 	= stateValues.get(stateId);
         boolean bothNull 	= oldValue == null && value == null;
         boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
-        boolean noChange = bothNull && equals;
+        boolean noChange = bothNull || equals;
 
-        if (noChange)
+
+        if (noChange) {
             return;
+        }
 
         if (value != null) {
             stateValues.put(stateId, value);
@@ -131,17 +133,4 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
         notifyContextListener(stateId,value);
     }
-
-    private void propagate(Map<String,Object> properties){
-        for (Map.Entry<String,Object> prop:  properties.entrySet()){
-            notifyContextListener(prop.getKey(),prop.getValue());
-        }
-    }
-
-
-
-
-
-
-
 }
