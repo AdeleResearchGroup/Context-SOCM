@@ -27,9 +27,21 @@
     <orderEntry type="library" name="Maven: org.apache.felix:org.apache.felix.ipojo.annotations:1.12.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.felix:org.apache.felix.ipojo:1.12.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.felix:org.apache.felix.ipojo.metadata:1.6.0" level="project" />
-    <orderEntry type="library" name="Maven: org.ow2.asm:asm-all:5.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.felix:org.apache.felix.ipojo.manipulator:1.12.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.6" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-all:5.0.2" level="project" />
+    <orderEntry type="module" module-name="cream.model.runtime" />
+    <orderEntry type="library" name="Maven: org.wisdom-framework:wisdom-executors:0.9.1" level="project" />
+    <orderEntry type="library" name="Maven: org.wisdom-framework:wisdom-api:0.9.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.woodstox:stax2-api:3.1.4" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:14.0" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.7" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.chameleon.testing:osgi-helpers:0.6.2" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.0.13" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.0.13" level="project" />
@@ -46,8 +58,6 @@
     <orderEntry type="library" name="Maven: org.ops4j.pax.exam:pax-exam-junit4:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.pax.exam:pax-exam-spi:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.base:ops4j-base-spi:1.4.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:12.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.main.common:scattered-archive-api:3.1.2.2" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.pax.exam:pax-exam-container-native:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.ops4j.pax.swissbox:pax-swissbox-core:1.6.0" level="project" />
