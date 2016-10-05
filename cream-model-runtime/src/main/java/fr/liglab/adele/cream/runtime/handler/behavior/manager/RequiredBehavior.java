@@ -222,7 +222,6 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     @Override
     public void registerContextListener(ContextListener listener, String[] properties) {
-        //Do nothing;
         synchronized (lock) {
             contextListener = listener;
             propertiesToListen = properties;
@@ -234,7 +233,6 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     @Override
     public void unregisterContextListener(ContextListener listener) {
-        //Do nothing;
         synchronized (lock) {
             if (behaviorContextSource != null){
                 behaviorContextSource.unregisterContextListener(listener);

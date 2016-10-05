@@ -25,6 +25,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @Handler(name = HandlerReference.BEHAVIOR_MANAGER_HANDLER, namespace = HandlerReference.NAMESPACE,level = 1)
 public class BehaviorTrackerHandler extends PrimitiveHandler implements InvocationHandler,BehaviorStateListener,ContextSource{
 
+    private static final String[] NO_SPEC = {};
+
     private static final String CONTEXT_ENTITY_CONTROLLER_FIELD_NAME = " context.entity.controller.";
 
     private final Map<String,RequiredBehavior> myRequiredBehaviorById = new HashMap<>();
@@ -58,8 +60,6 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
             throw new ConfigurationException("Behavior Elements are null ");
         }
 
-        ProvidedService providedService = getContextEntityProvidedService(metadata);
-
         for (Element element:behaviorElements){
             Element[] behaviorIndividualElements = element.getElements(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
 
@@ -87,7 +87,7 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
 
                 }
 
-                boolean mandatoryField = Boolean.valueOf(individualBehaviorElement.getAttribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME));
+                boolean mandatoryField = Boolean.parseBoolean(individualBehaviorElement.getAttribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME));
                 if (mandatoryField){
                     mandatoryBehavior.add(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME));
                 }
@@ -141,7 +141,7 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
                 }
             }
         }
-        return null;
+        return NO_SPEC;
     }
 
     private boolean compare(String[] contextEntitySpecs,String[] providedServiceSpecs){
@@ -300,11 +300,11 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
 
     @Override
     public Dictionary getContext() {
-        Hashtable hashtable = new Hashtable();
+        Map hashMap = new HashMap<>();
         for (Map.Entry<String,RequiredBehavior> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()){
-            hashtable.putAll((Map) requiredBehaviorEntry.getValue().getContext());
+            hashMap.putAll((Map) requiredBehaviorEntry.getValue().getContext());
         }
-        return hashtable;
+        return new Hashtable<>(hashMap);
     }
 
     @Override
@@ -328,6 +328,10 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
     /**
      * Context Listener Implem
      */
+    /**
+     * TODO : maybe some value are not pushed in case of behavior is started and component not, maybe try to cache this value,
+     * or when component start perform an update of all value.
+     */
     private class BehaviorEntityListener implements ContextListener{
         @Override
         public synchronized void update(ContextSource contextSource, String s, Object o) {
@@ -343,22 +347,22 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
 
 
             if (o == null){
-                Hashtable<String,Object> propertyToRemove = new Hashtable<>();
+                Map<String,Object> propertyToRemove = new HashMap<>();
                 propertyToRemove.put(s, "");
                 if(stateVariable.contains(s)){
                     stateVariable.remove(s);
-                    getProvideServiceHandler().removeProperties(propertyToRemove);
+                    getProvideServiceHandler().removeProperties(new Hashtable<>(propertyToRemove));
                 }
                 return;
             }
 
-            Hashtable<String,Object> property = new Hashtable<>();
+            Map<String,Object> property = new HashMap<>();
             property.put(s, o);
             if (stateVariable.contains(s)){
-                providerHandler.reconfigure(property);
+                providerHandler.reconfigure(new Hashtable<>(property));
             }else {
                 stateVariable.add(s);
-                providerHandler.addProperties(property);
+                providerHandler.addProperties(new Hashtable<>(property));
             }
 
         }
