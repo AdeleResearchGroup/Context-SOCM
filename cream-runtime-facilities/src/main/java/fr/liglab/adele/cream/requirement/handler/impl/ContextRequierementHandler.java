@@ -137,7 +137,7 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
                 }
             }
 
-            if (listOfClass == null || listOfClass.isEmpty()){
+            if (listOfClass.isEmpty()){
                 throw new ConfigurationException("Malformed Manifest : the specified Context Requirement spec is null or empty in class "+componentName);
             }
 
@@ -149,11 +149,11 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
 
     @Override
     public  void stop() {
-
+//do nothing on stop
     }
 
     @Override
     public  void start() {
-
+//do nothing on start
     }
 }
