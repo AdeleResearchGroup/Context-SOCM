@@ -52,7 +52,7 @@ public class CreamProxyFactory extends ClassLoader {
             Class clazz = getProxyClass(spec);
             Constructor constructor = clazz.getConstructor();
             return constructor.newInstance();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.error("error during proxy generation",e);
             return null;
         }
@@ -68,6 +68,7 @@ public class CreamProxyFactory extends ClassLoader {
      * @throws ClassNotFoundException if the class is not found by the two classloaders.
      * @see java.lang.ClassLoader#loadClass(java.lang.String)
      */
+    @Override
     public Class loadClass(String name) throws ClassNotFoundException {
         try {
             return manager.getContext().getBundle().loadClass(name);
