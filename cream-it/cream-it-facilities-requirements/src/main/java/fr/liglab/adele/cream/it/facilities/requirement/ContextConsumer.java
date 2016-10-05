@@ -5,7 +5,11 @@ import org.apache.felix.ipojo.annotations.*;
 
 @Component(immediate = true)
 @Provides(specifications = BindCounterService.class)
-public class ContextConsumer implements BindCounterService {
+/**
+ * A is declared as the union class, the class order in union is important because ipojo check if the declared specification attribute correspond to the
+ * dependency field type. The hack is possible because ipojo compare the value of spec to the first class of the union in dep handler.
+ */
+public class ContextConsumer<A extends ContextProvideService & BehaviorService> implements BindCounterService {
 
 
     int unbind = 0;
@@ -45,5 +49,18 @@ public class ContextConsumer implements BindCounterService {
     @Override
     public synchronized int getUnbind() {
         return unbind;
+    }
+
+
+
+    @Requires(id = "ContextReq2",specification = ContextProvideService.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {BehaviorService.class})
+    A serviceGeneric;
+
+
+    @Override
+    public void callGenericBind() {
+        serviceGeneric.getFalse();
+        serviceGeneric.getTrue();
     }
 }

@@ -4,4 +4,6 @@ import fr.liglab.adele.cream.annotations.ContextService;
 
 @ContextService
 public interface ContextProvideService {
+
+    boolean getFalse();
 }

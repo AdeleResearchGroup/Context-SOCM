@@ -6,4 +6,8 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 @ContextEntity(services = ContextProvideService.class)
 @Behavior(id="behavior1",spec = BehaviorService.class,implem = BehaviorProviderComponent.class)
 public class ContextProvider implements ContextProvideService {
+    @Override
+    public boolean getFalse() {
+        return false;
+    }
 }

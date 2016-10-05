@@ -68,6 +68,8 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         behaviorHelper.validBehavior(instance,"behavior1");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
+
+        bindCounter.callGenericBind();
     }
 
     @Test
@@ -96,6 +98,8 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         behaviorHelper.validBehavior(instance,"behaviorHeritage");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
+
+        bindCounter.callGenericBind();
     }
 
     private ComponentInstance createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
