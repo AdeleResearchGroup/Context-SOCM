@@ -50,6 +50,8 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
         }
 
         Object serviceObj = null;
+        boolean nullReturn = false;
+
         try {
 
             serviceObj = context.getService(ref.getWrappedReference());
@@ -63,10 +65,15 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
             if (serviceObj != null){
                 context.ungetService(ref.getWrappedReference());
             }else {
-                return null;
+                nullReturn = true;
             }
 
         }
+
+        if (nullReturn){
+            return null;
+        }
+
         return ref;
     }
 
