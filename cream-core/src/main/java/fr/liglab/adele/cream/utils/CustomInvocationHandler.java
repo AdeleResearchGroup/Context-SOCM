@@ -1,10 +1,10 @@
 package fr.liglab.adele.cream.utils;
 
-import org.apache.felix.ipojo.Pojo;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by aygalinc on 03/06/16.

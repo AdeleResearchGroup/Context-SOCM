@@ -16,7 +16,7 @@ public class CreamProxyFactory extends ClassLoader {
     /**
      * Handler classloader, used to load the temporal dependency class.
      */
-    private final ClassLoader m_InstanceManagerClassLoader;
+    private final ClassLoader myInstanceManagerClassLoader;
 
     private final InstanceManager manager;
 
@@ -27,7 +27,7 @@ public class CreamProxyFactory extends ClassLoader {
      */
     public CreamProxyFactory(ClassLoader parent, InstanceManager manager) {
         super(manager.getFactory().getBundleClassLoader());
-        m_InstanceManagerClassLoader = parent;
+        myInstanceManagerClassLoader = parent;
         this.manager = manager;
     }
 
@@ -38,7 +38,7 @@ public class CreamProxyFactory extends ClassLoader {
      * @return the Class object of the proxy.
      */
     protected Class getProxyClass(Class clazz) {
-        byte[] clz = CreamProxyGenerator.dump(clazz,manager.getClazz(),manager.getInstanceName()); // Generate the proxy.
+        byte[] clz = CreamProxyGenerator.dump(clazz,manager.getInstanceName()); // Generate the proxy.
         // Turn around the VM changes (FELIX-2716) about java.* classes.
         String cn = clazz.getName();
         if (cn.startsWith("java.")) {
@@ -73,7 +73,8 @@ public class CreamProxyFactory extends ClassLoader {
         try {
             return manager.getContext().getBundle().loadClass(name);
         } catch (ClassNotFoundException e) {
-            return m_InstanceManagerClassLoader.loadClass(name);
+            LOG.debug("Classloading delegation ",e);
+            return myInstanceManagerClassLoader.loadClass(name);
         }
     }
 }

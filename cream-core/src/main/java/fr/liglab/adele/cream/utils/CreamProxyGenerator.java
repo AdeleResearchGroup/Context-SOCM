@@ -15,7 +15,21 @@ public class CreamProxyGenerator implements Opcodes {
 
     private static final String POJO_TYPE = Type.getDescriptor(Object.class);
 
-    public static byte[] dump(Class spec,Class pojoClass,String uniqueId){
+    private static final String INTEGER = "java/lang/Integer";
+    private static final String BOOLEAN = "java/lang/Boolean";
+    private static final String BYTE = "java/lang/Byte";
+    private static final String CHARACTER = "java/lang/Character";
+    private static final String DOUBLE = "java/lang/Double";
+    private static final String FLOAT = "java/lang/Float";
+    private static final String LONG = "java/lang/Long";
+    private static final String SHORT = "java/lang/Short";
+    private static final String VALUE_OF_METHOD = "valueOf";
+
+    private CreamProxyGenerator(){
+        //To hide the public constructor
+    }
+
+    public static byte[] dump(Class spec,String uniqueId){
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS); // use compute max to automaticali compute the max stack size and the max of local variables of a method
 
         String specName = Type.getInternalName(GeneratedDelegatorProxy.class);
@@ -206,32 +220,34 @@ public class CreamProxyGenerator implements Opcodes {
 
     }
 
+
+
     private static void checkCast(MethodVisitor mv,Class paramClass){
         Type paramType = Type.getType(paramClass);
         if (Type.INT_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Integer");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Integer", "intValue", "()I", false);
+            mv.visitTypeInsn(CHECKCAST,INTEGER);
+            mv.visitMethodInsn(INVOKEVIRTUAL, INTEGER, "intValue", "()I", false);
         }else if  (Type.BOOLEAN_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Boolean");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+            mv.visitTypeInsn(CHECKCAST, BOOLEAN);
+            mv.visitMethodInsn(INVOKEVIRTUAL, BOOLEAN, "booleanValue", "()Z", false);
         }else if  (Type.BYTE_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Byte");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Byte", "byteValue", "()B", false);
+            mv.visitTypeInsn(CHECKCAST, BYTE);
+            mv.visitMethodInsn(INVOKEVIRTUAL, BYTE, "byteValue", "()B", false);
         }else if (Type.CHAR_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Character");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Character", "charValue", "()C", false);
+            mv.visitTypeInsn(CHECKCAST, CHARACTER);
+            mv.visitMethodInsn(INVOKEVIRTUAL, CHARACTER, "charValue", "()C", false);
         }else if  (Type.DOUBLE_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Double");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Double", "doubleValue", "()D", false);
+            mv.visitTypeInsn(CHECKCAST, DOUBLE);
+            mv.visitMethodInsn(INVOKEVIRTUAL,DOUBLE, "doubleValue", "()D", false);
         }else if (Type.FLOAT_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Float");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Float", "floatValue", "()F", false);
+            mv.visitTypeInsn(CHECKCAST,FLOAT);
+            mv.visitMethodInsn(INVOKEVIRTUAL, FLOAT, "floatValue", "()F", false);
         }else if (Type.LONG_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Long");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Long", "longValue", "()J", false);
+            mv.visitTypeInsn(CHECKCAST,LONG);
+            mv.visitMethodInsn(INVOKEVIRTUAL, LONG, "longValue", "()J", false);
         }else if (Type.SHORT_TYPE.equals(paramType)){
-            mv.visitTypeInsn(CHECKCAST, "java/lang/Short");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Short", "shortValue", "()S", false);
+            mv.visitTypeInsn(CHECKCAST, SHORT);
+            mv.visitMethodInsn(INVOKEVIRTUAL, SHORT, "shortValue", "()S", false);
         }else {
             mv.visitTypeInsn(CHECKCAST, paramType.getInternalName());
         }
@@ -240,21 +256,21 @@ public class CreamProxyGenerator implements Opcodes {
     private static void boxReturn(MethodVisitor mv,Class paramClass){
         Type paramType = Type.getType(paramClass);
         if (Type.INT_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+            mv.visitMethodInsn(INVOKESTATIC, INTEGER, VALUE_OF_METHOD, "(I)Ljava/lang/Integer;", false);
         }else if  (Type.BOOLEAN_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
+            mv.visitMethodInsn(INVOKESTATIC, BOOLEAN, VALUE_OF_METHOD, "(Z)Ljava/lang/Boolean;", false);
         }else if  (Type.BYTE_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;", false);
+            mv.visitMethodInsn(INVOKESTATIC, BYTE, VALUE_OF_METHOD, "(B)Ljava/lang/Byte;", false);
         }else if (Type.CHAR_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false);
+            mv.visitMethodInsn(INVOKESTATIC, CHARACTER, VALUE_OF_METHOD, "(C)Ljava/lang/Character;", false);
         }else if  (Type.DOUBLE_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false);
+            mv.visitMethodInsn(INVOKESTATIC, DOUBLE, VALUE_OF_METHOD, "(D)Ljava/lang/Double;", false);
         }else if (Type.FLOAT_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false);
+            mv.visitMethodInsn(INVOKESTATIC, FLOAT, VALUE_OF_METHOD, "(F)Ljava/lang/Float;", false);
         }else if (Type.LONG_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false);
+            mv.visitMethodInsn(INVOKESTATIC, LONG, VALUE_OF_METHOD, "(J)Ljava/lang/Long;", false);
         }else if (Type.SHORT_TYPE.equals(paramType)){
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Short", "valueOf", "(S)Ljava/lang/Short;", false);
+            mv.visitMethodInsn(INVOKESTATIC, SHORT, VALUE_OF_METHOD, "(S)Ljava/lang/Short;", false);
         }
     }
 

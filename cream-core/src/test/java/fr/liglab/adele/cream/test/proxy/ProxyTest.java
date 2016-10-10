@@ -15,7 +15,7 @@ public class ProxyTest {
     @Test
     public void testProxyGetterAndSetter() throws Throwable {
 
-       ProxyFactory proxyFactory = new ProxyFactory(ServiceH.class.getClassLoader());
+        ProxyFactory proxyFactory = new ProxyFactory(ServiceH.class.getClassLoader());
         Object generatedProxy = proxyFactory.getProxyInstance(ServiceH.class,pojo.class,"coincoin-52");
 
         if (!(generatedProxy instanceof GeneratedDelegatorProxy)){
@@ -39,7 +39,7 @@ public class ProxyTest {
         }
 
         private Class getProxyClass(Class specToDelegate,Class pojoClass,String InstanceManagerId){
-            byte[] clz = CreamProxyGenerator.dump(specToDelegate,pojoClass,InstanceManagerId); // Generate the proxy.
+            byte[] clz = CreamProxyGenerator.dump(specToDelegate,InstanceManagerId); // Generate the proxy.
             // Turn around the VM changes (FELIX-2716) about java.* classes.
             String cn = specToDelegate.getName();
             if (cn.startsWith("java.")) {

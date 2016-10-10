@@ -101,8 +101,7 @@ public class ContextProvideStrategy extends CreationStrategy {
             arrayOfInterfaz = listOfInterfaces.toArray(arrayOfInterfaz);
 
             try{
-                Object returnObj =  Proxy.newProxyInstance(pojoClassLoader,arrayOfInterfaz,invocationHandler);
-                return returnObj;
+                return  Proxy.newProxyInstance(pojoClassLoader,arrayOfInterfaz,invocationHandler);
             }catch (java.lang.NoClassDefFoundError e){
                 LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! ",e);
             }
