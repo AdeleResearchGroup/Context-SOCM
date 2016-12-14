@@ -192,6 +192,7 @@ public class ContextProvideStrategy extends CreationStrategy {
                 }
                 return returnObj;
             }
+             LOG.warn("Cream invocation exception caused because " + method.getName() + " can not be found");
             throw  new CreamInvocationException();
         }
     }
