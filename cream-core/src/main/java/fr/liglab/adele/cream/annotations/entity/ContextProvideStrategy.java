@@ -128,7 +128,7 @@ public class ContextProvideStrategy extends CreationStrategy {
 
         private static final String EQUALS_METHOD_CALL = "equals";
 
-        private static final String HASHCODE_METHOD_CALL = "hashcode";
+        private static final String HASHCODE_METHOD_CALL = "hashCode";
 
         private static final String GETCOMPONENTINSTANCE_METHOD_CALL = "getComponentInstance";
 
