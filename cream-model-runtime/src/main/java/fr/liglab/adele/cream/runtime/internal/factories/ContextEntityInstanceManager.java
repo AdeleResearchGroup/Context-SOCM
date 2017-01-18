@@ -43,7 +43,7 @@ public class ContextEntityInstanceManager extends InstanceManager implements Cre
                 for (Class specToGenerate : classesFlatten){
                     Method[] methods = specToGenerate.getMethods();
                     if ((methods == null)||(methods.length == 0)){
-                        break;
+                        continue;
                     }
                     GeneratedDelegatorProxy proxy = (GeneratedDelegatorProxy) creamProxyFactory.getProxy(specToGenerate);
                     for (Method method : methods){
