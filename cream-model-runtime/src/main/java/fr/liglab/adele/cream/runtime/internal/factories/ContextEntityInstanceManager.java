@@ -65,7 +65,7 @@ public class ContextEntityInstanceManager extends InstanceManager implements Cre
                 if (clazz.isAssignableFrom(classOfSet)){
                     put = false;
                 }
-                if (classOfSet.isAssignableFrom(clazz)){
+                if (classOfSet.isAssignableFrom(clazz) && !(classOfSet.equals(clazz)) ){
                     classesToRemove.add(classOfSet);
                 }
             }
