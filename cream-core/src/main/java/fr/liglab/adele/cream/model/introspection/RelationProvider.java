@@ -21,4 +21,11 @@ public interface RelationProvider {
 
     public boolean deleteInstances(String relation, boolean onlyPending);
 
+    public Set<String> getPotentiallyProvidedRelationServices(String relation);
+
+    public Set<String> getPotentiallyProvidedRelationServices();
+
+    public Set<String> getPotentiallyRequiredServices(String relation);
+
+    public Set<String> getPotentiallyRequiredServices();
 }

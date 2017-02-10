@@ -13,6 +13,7 @@ import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
@@ -29,7 +30,9 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 	private final Map<String,String> fieldToContext		= new HashMap<>();
 
-	private final Map<String,ComponentCreator> creators 	= new HashMap<>();
+	private final Map<String,ComponentCreator> creators = new HashMap<>();
+
+	private final Map<String, Set<String>> requirementMap 	= new HashMap<>();
 
 	@Override
 	public void configure(Element metadata, @SuppressWarnings("rawtypes") Dictionary configuration) throws ConfigurationException {
@@ -52,6 +55,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 			String entity 				= creator.getAttribute("entity");
 			String relation				= creator.getAttribute("relation");
+			String requirements			= creator.getAttribute("requirements");
 
 			if (entity == null && relation == null) {
 				throw new ConfigurationException("Malformed Manifest : the creator entity or relation is not specified for field '"+fieldName+"' in class "+componentName);
@@ -65,6 +69,14 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			if (entity != null && relation != null) {
 				instantiateRelationCreator(relation);
 				fieldToContext.put(fieldName,relation);
+			}
+
+			if(requirements != null && !requirements.equals("[]")){
+				Set<String> requirementSet = new HashSet<>();
+				requirements = requirements.replaceAll("class ","");
+				requirements = requirements.replaceAll("\\[","").replaceAll("\\]","").replaceAll("\\s", "");
+				requirementSet.addAll(Arrays.asList(requirements.split(",")));
+				requirementMap.put(fieldName,requirementSet);
 			}
 
 			instanceManager.register(getPojoMetadata().getField(fieldName),this);
@@ -210,6 +222,92 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		}
 
 		return true;
+	}
+
+	@Override
+	public Set<String> getPotentiallyProvidedEntityServices(String entity) {
+		return getPotentiallyProvidedServicesByContextItem(entity);
+	}
+
+	@Override
+	public Set<String> getPotentiallyProvidedEntityServices() {
+		Set<String> providedServices;
+		try{
+			Set<ComponentCreator> componentCreatorSet = creators.values().stream()
+					.filter(item -> item instanceof EntityCreator)
+					.collect(Collectors.toSet());
+			providedServices = getPotentiallyProvidedServices(componentCreatorSet);
+		} catch (NullPointerException ne){
+			providedServices = new HashSet<>();
+		}
+		return providedServices;
+	}
+
+	@Override
+	public Set<String> getPotentiallyProvidedRelationServices(String relation) {
+		return getPotentiallyProvidedServicesByContextItem(relation);
+	}
+
+	@Override
+	public Set<String> getPotentiallyProvidedRelationServices() {
+		Set<String> providedServices;
+		try{
+			Set<ComponentCreator> componentCreatorSet = creators.values().stream()
+					.filter(item -> item instanceof RelationCreator)
+					.collect(Collectors.toSet());
+			providedServices = getPotentiallyProvidedServices(componentCreatorSet);
+		} catch (NullPointerException ne){
+			providedServices = new HashSet<>();
+		}
+		return providedServices;
+	}
+
+
+	/**
+	 * TODO TEMP
+	 */
+	private Set<String> getPotentiallyProvidedServicesByContextItem(String contextItem) {
+		Set<String> providedServices = new HashSet<>();
+		try{
+			ComponentTypeDescription componentTypeDescription = creators.get(contextItem).getContextItemDescription();
+			providedServices = Arrays.stream(componentTypeDescription.getprovidedServiceSpecification())
+					 .collect(Collectors.toSet());
+		} catch (NullPointerException ne){
+			return Collections.<String>emptySet();
+		}
+		return providedServices;
+	}
+
+	/**
+	 * TODO TEMP
+	 */
+	private Set<String> getPotentiallyProvidedServices(Set<ComponentCreator> creators) {
+		Set<String> providedServices = new HashSet<>();
+		for(ComponentCreator creator : creators){
+			Set<String> tempSet;
+			try{
+				ComponentTypeDescription componentTypeDescription = creator.getContextItemDescription();
+				tempSet = Arrays.stream(componentTypeDescription.getprovidedServiceSpecification()).collect(Collectors.toSet());
+				providedServices.addAll(tempSet);
+			} catch (NullPointerException ne){
+				continue;
+			}
+		}
+		return providedServices;
+	}
+
+	@Override
+	public Set<String> getPotentiallyRequiredServices(String contextItem) {
+		return requirementMap.get(contextItem);
+	}
+
+	@Override
+	public Set<String> getPotentiallyRequiredServices() {
+		Set<String> requirementSet = new HashSet<>();
+		for(Set<String> strings : requirementMap.values()){
+			requirementSet.addAll(strings);
+		}
+		return requirementSet;
 	}
 
 	private static class RelationCreator extends ComponentCreator implements Creator.Relation<Object,Object> {

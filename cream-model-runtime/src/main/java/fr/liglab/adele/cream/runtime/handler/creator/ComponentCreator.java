@@ -6,7 +6,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.felix.ipojo.Factory;
+import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class provides the basic implementation of a creator factory object for iPOJO instances.
@@ -178,6 +181,15 @@ public abstract class ComponentCreator {
 			}
 		}
 	}
-	
 
+	/**
+	 * TODO TEMP
+	 */
+	public ComponentTypeDescription getContextItemDescription(){
+		try{
+			return factory.getComponentDescription();
+		} catch (NullPointerException ne){
+			return null;
+		}
+	}
 }

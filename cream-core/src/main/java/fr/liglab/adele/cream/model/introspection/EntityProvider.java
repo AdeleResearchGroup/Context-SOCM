@@ -20,4 +20,12 @@ public interface EntityProvider {
     public Set<String> getInstances(String entity, boolean includePending);
 
     public boolean deleteInstances(String entity, boolean onlyPending);
+
+    public Set<String> getPotentiallyProvidedEntityServices(String entity);
+
+    public Set<String> getPotentiallyProvidedEntityServices();
+
+    public Set<String> getPotentiallyRequiredServices(String entity);
+
+    public Set<String> getPotentiallyRequiredServices();
 }

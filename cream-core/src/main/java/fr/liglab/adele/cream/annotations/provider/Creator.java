@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.annotations.provider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +24,13 @@ public interface Creator {
 		public static final String NO_PARAMETER = "";
 
 		String value() default NO_PARAMETER;
+
+		Class[] requirements() default {};
 	}
 
+	public interface Requirements{
+		public Set<String> getRequirements();
+	}
 
 	/**
 	 * A factory object used to create context entities of the specified type
