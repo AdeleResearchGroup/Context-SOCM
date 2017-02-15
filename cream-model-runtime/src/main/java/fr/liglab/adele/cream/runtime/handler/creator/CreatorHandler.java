@@ -76,7 +76,11 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 				requirements = requirements.replaceAll("class ","");
 				requirements = requirements.replaceAll("\\[","").replaceAll("\\]","").replaceAll("\\s", "");
 				requirementSet.addAll(Arrays.asList(requirements.split(",")));
-				requirementMap.put(fieldName,requirementSet);
+				if (relation != null){
+					requirementMap.put(relation,requirementSet);
+				} else {
+					requirementMap.put(entity,requirementSet);
+				}
 			}
 
 			instanceManager.register(getPojoMetadata().getField(fieldName),this);
@@ -298,7 +302,11 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 	@Override
 	public Set<String> getPotentiallyRequiredServices(String contextItem) {
-		return requirementMap.get(contextItem);
+		Set<String> requirementSet = new HashSet<>();
+		if(requirementMap.containsKey(contextItem)){
+			requirementSet.addAll(requirementMap.get(contextItem));
+		}
+		return requirementSet;
 	}
 
 	@Override
