@@ -5,8 +5,8 @@ import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 
 @ContextEntity(services = ServiceContextPrime.class)
-@Behavior(id="injectedBehavior", spec = BehaviorToInject.class,implem = InjectedBehaviorImpl.class)
-@Behavior(id="injectedBehavior2", spec = BehaviorToInjectPrime.class,implem = InjectedBehaviorPrimeImpl.class)
+@Behavior(id="injectedBehavior", contextServices = BehaviorToInject.class,implem = InjectedBehaviorImpl.class)
+@Behavior(id="injectedBehavior2", contextServices = BehaviorToInjectPrime.class,implem = InjectedBehaviorPrimeImpl.class)
 public class ContextServiceUsingMultipleInjectedBehavior implements ServiceContextPrime {
 
     @InjectedBehavior(id="injectedBehavior")

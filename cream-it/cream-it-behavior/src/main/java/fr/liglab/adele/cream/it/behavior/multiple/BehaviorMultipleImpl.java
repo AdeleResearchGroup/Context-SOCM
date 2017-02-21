@@ -2,7 +2,7 @@ package fr.liglab.adele.cream.it.behavior.multiple;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 
-@BehaviorProvider(spec = {BehaviorServiceBis.class,BehaviorService.class})
+@BehaviorProvider(contextServices = {BehaviorServiceBis.class,BehaviorService.class})
 public class BehaviorMultipleImpl implements BehaviorService,BehaviorServiceBis{
     @Override
     public boolean getTrue() {

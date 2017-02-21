@@ -6,7 +6,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 
 @ContextEntity(services = {})
 
-@Behavior(id="behavior1",implem = BehaviorImpl1.class, spec = BehaviorService1.class)
+@Behavior(id="behavior1",implem = BehaviorImpl1.class, contextServices = BehaviorService1.class)
 public class ContextEntityImpl {
 
     @Requires(filter = "(state=${behaviorservice1.state})",optional = true)

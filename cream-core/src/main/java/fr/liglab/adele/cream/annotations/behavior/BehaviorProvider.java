@@ -9,11 +9,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BehaviorProvider {
 
-    Class[] spec();
+    Class[] contextServices();
 
     @Target(ElementType.METHOD)
     @interface ChangeOn{
-        Class spec();
+        Class contextService();
 
         String id();
     }

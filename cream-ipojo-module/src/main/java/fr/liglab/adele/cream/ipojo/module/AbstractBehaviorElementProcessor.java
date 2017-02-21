@@ -29,13 +29,13 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
             error("Behavior id must be unique. Duplicate id : " + annotation.id());
         }
 
-        for (Class service : annotation.spec()){
+        for (Class service : annotation.contextServices()){
             checkNoSpecificationRedundancy(service.getName());
             addSpecToProvideElement(service.getName());
         }
 
         Element behaviorIndividualElement = new Element(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
-        String specifications = Arrays.asList(annotation.spec()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
+        String specifications = Arrays.asList(annotation.contextServices()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
         Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,specifications);
         Attribute implAttr = new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,annotation.implem().getName());
         Attribute id = new Attribute(BehaviorReference.ID_ATTRIBUTE_NAME,annotation.id());

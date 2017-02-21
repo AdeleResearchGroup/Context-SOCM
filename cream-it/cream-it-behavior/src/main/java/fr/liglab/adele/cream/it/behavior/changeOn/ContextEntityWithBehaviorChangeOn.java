@@ -4,7 +4,7 @@ import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 
 @ContextEntity(services = ServiceOfContext.class)
-@Behavior(spec = BehaviorService.class,implem = BehaviorImpl.class,id="changOnBehavior")
+@Behavior(contextServices = BehaviorService.class,implem = BehaviorImpl.class,id="changOnBehavior")
 public class ContextEntityWithBehaviorChangeOn implements ServiceOfContext{
 
     @fr.liglab.adele.cream.annotations.entity.ContextEntity.State.Field(service = ServiceOfContext.class,state = ServiceOfContext.STATE_1,directAccess = true)

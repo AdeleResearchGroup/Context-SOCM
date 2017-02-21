@@ -4,7 +4,7 @@ import fr.liglab.adele.cream.annotations.behavior.*;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 
 @ContextEntity(services = ServiceContext.class)
-@Behavior(id="injectedBehavior", spec = BehaviorToInject.class,implem = InjectedBehaviorImpl.class)
+@Behavior(id="injectedBehavior", contextServices = BehaviorToInject.class,implem = InjectedBehaviorImpl.class)
 public class ContextServiceUsingInjectedBehavior implements ServiceContext {
 
     @InjectedBehavior(id="injectedBehavior")

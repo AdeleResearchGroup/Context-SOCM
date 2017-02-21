@@ -7,7 +7,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 
 import java.util.function.Supplier;
 
-@BehaviorProvider(spec = BehaviorServiceBis.class)
+@BehaviorProvider(contextServices = BehaviorServiceBis.class)
 public class BehaviorImplBis implements BehaviorServiceBis {
 
     @Requires

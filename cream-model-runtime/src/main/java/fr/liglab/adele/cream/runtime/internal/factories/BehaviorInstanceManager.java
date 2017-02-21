@@ -84,7 +84,7 @@ public class BehaviorInstanceManager extends InstanceManager implements CreamGen
             Class clazz = getClazz();
             BehaviorProvider[] behaviors = (BehaviorProvider[]) clazz.getAnnotationsByType(BehaviorProvider.class);
             for (BehaviorProvider provider:behaviors) {
-                Class[] behaviorServices = provider.spec();
+                Class[] behaviorServices = provider.contextServices();
                 Set<Class> setOfBehaviorService = new HashSet<>(Arrays.asList(behaviorServices));
                 proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(setOfBehaviorService,creamProxyFactory);
             }

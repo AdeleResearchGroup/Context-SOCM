@@ -2,12 +2,12 @@ package fr.liglab.adele.cream.it.behavior.changeOn;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 
-@BehaviorProvider(spec = BehaviorService.class)
+@BehaviorProvider(contextServices = BehaviorService.class)
 public class BehaviorImpl implements BehaviorService{
 
     boolean state = true;
 
-    @BehaviorProvider.ChangeOn(spec = ServiceOfContext.class,id = ServiceOfContext.STATE_1)
+    @BehaviorProvider.ChangeOn(contextService = ServiceOfContext.class,id = ServiceOfContext.STATE_1)
     public void changeOn(boolean bool){
         state = bool;
     }

@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 @Repeatable(Behaviors.class)
 public @interface Behavior {
 
-    Class[] spec();
+    Class[] contextServices();
 
     Class implem();
 

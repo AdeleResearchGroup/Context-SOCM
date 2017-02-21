@@ -2,7 +2,7 @@ package fr.liglab.adele.cream.it.behavior.injection;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 
-@BehaviorProvider(spec = BehaviorToInject.class)
+@BehaviorProvider(contextServices = BehaviorToInject.class)
 public class InjectedBehaviorImpl implements BehaviorToInject{
 
     @Override

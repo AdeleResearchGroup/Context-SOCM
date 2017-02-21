@@ -38,7 +38,7 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
         component.addAttribute(new Attribute("classname", classname));
         component.addAttribute(new Attribute("immediate", "true"));
 
-        String specifications = Arrays.asList(annotation.spec()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
+        String specifications = Arrays.asList(annotation.contextServices()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
 
         component.addAttribute(new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,specifications));
         component.addAttribute(new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,classname));
@@ -57,7 +57,7 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
         ClassNode clazz 	= getAnnotatedClass();
         boolean implemented = true;
 
-        for (Class service : annotation.spec()) {
+        for (Class service : annotation.contextServices()) {
             if (!clazz.interfaces.contains(Type.getInternalName(service))) {
                 error("Class " + clazz.name + " is not an implementation of context service " + service);
                 implemented = false;

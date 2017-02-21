@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@BehaviorProvider(spec = BehaviorSpec1.class)
+@BehaviorProvider(contextServices = BehaviorSpec1.class)
 public class BehaviorSpec1Impl implements BehaviorSpec1 {
 
     @ContextEntity.State.Field(service = BehaviorSpec1.class,state = PARAM_1_DIRECTACCESS,directAccess = true,value = "true")

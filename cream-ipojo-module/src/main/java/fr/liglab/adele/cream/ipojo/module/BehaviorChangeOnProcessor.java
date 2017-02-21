@@ -2,12 +2,8 @@ package fr.liglab.adele.cream.ipojo.module;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
-import org.apache.felix.ipojo.manipulator.metadata.annotation.visitor.util.Names;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.parser.MethodMetadata;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -22,7 +18,7 @@ public class BehaviorChangeOnProcessor extends AnnotationProcessor<BehaviorProvi
 	@Override
 	public final void process(BehaviorProvider.ChangeOn annotation) {
 
-		Class spec = annotation.spec();
+		Class spec = annotation.contextService();
 		String id = annotation.id();
 		MethodNode method = getAnnotatedMethod();
 
