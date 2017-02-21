@@ -78,17 +78,17 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
     private void addSpecToProvideElement(String behaviorSpecification){
         Element provideElement = getProvideElement();
         String newSpecs;
-        if (provideElement.getAttribute("specifications") == null || provideElement.getAttribute("specifications").length() == 0 ){
+        if (provideElement.getAttribute(ProvideReferenceHandler.SPECIFICATIONS.toString()) == null || provideElement.getAttribute(ProvideReferenceHandler.SPECIFICATIONS.toString()).length() == 0 ){
             newSpecs = "{"+behaviorSpecification+"}";
         }else {
-            String specs = new String(provideElement.getAttribute("specifications"));
+            String specs = new String(provideElement.getAttribute(ProvideReferenceHandler.SPECIFICATIONS.toString()));
             String temp = specs.substring(0,specs.length()-1);
             newSpecs = temp + ","+behaviorSpecification+"}";
-            Attribute newSpecAttribute= new Attribute("specifications",newSpecs);
+            Attribute newSpecAttribute= new Attribute(ProvideReferenceHandler.SPECIFICATIONS.toString(),newSpecs);
             provideElement.addAttribute(newSpecAttribute);
         }
 
-        Attribute newSpecAttribute= new Attribute("specifications",newSpecs);
+        Attribute newSpecAttribute= new Attribute(ProvideReferenceHandler.SPECIFICATIONS.toString(),newSpecs);
         provideElement.addAttribute(newSpecAttribute);
 
     }
@@ -96,22 +96,22 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
     private Element getProvideElement(){
         Element providesElement = getMetadataElement(ContextEntityProcessor.CONTEXT_PROVIDE_TYPE);
         if (providesElement == null){
-            Element provides = new Element("provides","");
+            Element provides = new Element(ProvideReferenceHandler.PROVIDES.toString(),"");
 
         /*
          * Add a static property to the component specifying all the context spec implemented by the entity
          */
-            Element property  = new Element("property", "");
+            Element property  = new Element(ProvideReferenceHandler.PROPERTY.toString(), "");
 
-            property.addAttribute(new Attribute("name", ContextEntity.ENTITY_CONTEXT_SERVICES));
-            property.addAttribute(new Attribute("type", "string[]"));
-            property.addAttribute(new Attribute("mandatory", "false"));
-            property.addAttribute(new Attribute("immutable", "true"));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.NAME.toString(), ContextEntity.ENTITY_CONTEXT_SERVICES));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.TYPE.toString(), "string[]"));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.MANDATORY.toString(), "false"));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.IMMUTABLE.toString(), "true"));
 
             provides.addElement(property);
 
 
-            Attribute attributeStrategy = new Attribute("strategy", StrategyReference.STRATEGY_PATH);
+            Attribute attributeStrategy = new Attribute(ProvideReferenceHandler.STRATEGY.toString(), StrategyReference.STRATEGY_PATH);
             provides.addAttribute(attributeStrategy);
 
             addMetadataElement(ContextEntityProcessor.CONTEXT_PROVIDE_TYPE,provides,null);
