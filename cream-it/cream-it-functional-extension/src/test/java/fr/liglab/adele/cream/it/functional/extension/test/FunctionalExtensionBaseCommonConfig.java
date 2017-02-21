@@ -17,6 +17,7 @@ public abstract class FunctionalExtensionBaseCommonConfig extends ContextBaseTes
                 "fr.liglab.adele.cream.it.functional.extension.synchronisation",
                 "fr.liglab.adele.cream.it.functional.extension.changeOn",
                 "fr.liglab.adele.cream.it.functional.extension.multiple",
+                "fr.liglab.adele.cream.it.functional.extension.invalid",
                 "fr.liglab.adele.cream.it.functional.extension.contextSource"
         );
     }
