@@ -8,18 +8,18 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
 public class ApplyFieldProcessor extends StateProcessor<State.Apply> {
 
 
-	public ApplyFieldProcessor(ClassLoader classReferenceLoader) {
-		super(State.Apply.class,classReferenceLoader);
-	}
+    public ApplyFieldProcessor(ClassLoader classReferenceLoader) {
+        super(State.Apply.class, classReferenceLoader);
+    }
 
-	@Override
-	protected String getStateId() {
-		return State.id(getAnnotation().service(), getAnnotation().state());
-	}
+    @Override
+    protected String getStateId() {
+        return State.id(getAnnotation().service(), getAnnotation().state());
+    }
 
-	@Override
-	protected void processStateAttributes() {
-		addStateAttribute("apply", getAnnotatedField().name, false);
-	}
+    @Override
+    protected void processStateAttributes() {
+        addStateAttribute("apply", getAnnotatedField().name, false);
+    }
 
 }

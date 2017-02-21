@@ -27,35 +27,40 @@ public class ContextUpdateElement {
     private final String mySpecName;
 
     private final String myPropertyName;
-
+    private final Object myLock = new Object();
+    private final BundleContext myContext;
+    private final InstanceManager myManager;
     private Object myOldValue;
 
-    private final Object myLock = new Object();
-
-    private final BundleContext myContext;
-
-    private final InstanceManager myManager;
-
-    public ContextUpdateElement(String specName, String stateElementName, MethodMetadata metadata, InstanceManager manager){
+    public ContextUpdateElement(String specName, String stateElementName, MethodMetadata metadata, InstanceManager manager) {
         mySpecName = specName;
         myManager = manager;
         String simpleClassName = specName.substring(specName.lastIndexOf('.') + 1);
-        myPropertyName = ContextEntity.State.id(simpleClassName,stateElementName);
+        myPropertyName = ContextEntity.State.id(simpleClassName, stateElementName);
         myContext = manager.getContext();
-        myCallback = new Callback(metadata,manager);
+        myCallback = new Callback(metadata, manager);
+    }
+
+    private static void getAllInterface(Class clazz, List<String> returnList) {
+        if (clazz.isInterface()) {
+            returnList.add(clazz.getName());
+        }
+        for (Class interfaz : clazz.getInterfaces()) {
+            getAllInterface(interfaz, returnList);
+        }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Dependency){
+        if (obj instanceof Dependency) {
             Dependency dependency = (Dependency) obj;
 
             List<String> specToCompare = new ArrayList<>();
 
-            getAllInterface(dependency.getSpecification(),specToCompare);
+            getAllInterface(dependency.getSpecification(), specToCompare);
 
-            for (String spec : specToCompare){
-                if (mySpecName.equals(spec)){
+            for (String spec : specToCompare) {
+                if (mySpecName.equals(spec)) {
                     return true;
                 }
             }
@@ -66,21 +71,12 @@ public class ContextUpdateElement {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return mySpecName.hashCode() + myPropertyName.hashCode();
     }
 
-    private static void getAllInterface(Class clazz,List<String> returnList){
-        if (clazz.isInterface()){
-            returnList.add(clazz.getName());
-        }
-        for (Class interfaz : clazz.getInterfaces()){
-            getAllInterface(interfaz,returnList);
-        }
-    }
-
-    public void updateIfNecessary(TransformedServiceReference ref){
-        if (myManager.getState() != ComponentInstance.VALID){
+    public void updateIfNecessary(TransformedServiceReference ref) {
+        if (myManager.getState() != ComponentInstance.VALID) {
             return;
         }
         synchronized (myLock) {
@@ -97,18 +93,18 @@ public class ContextUpdateElement {
                 try {
                     myCallback.call(args);
                 } catch (NoSuchMethodException e) {
-                    LOG.error("Error occurs during method invocation , ",e);
+                    LOG.error("Error occurs during method invocation , ", e);
                 } catch (IllegalAccessException e) {
-                    LOG.error("Error occurs during method invocation , ",e);
+                    LOG.error("Error occurs during method invocation , ", e);
                 } catch (InvocationTargetException e) {
-                    LOG.error("Error occurs during method invocation , ",e);
+                    LOG.error("Error occurs during method invocation , ", e);
                 }
             }
         }
     }
 
-    public void clearValue(){
-        synchronized (myLock){
+    public void clearValue() {
+        synchronized (myLock) {
             myOldValue = null;
         }
     }

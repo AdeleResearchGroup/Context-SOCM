@@ -5,7 +5,9 @@ import fr.liglab.adele.cream.annotations.ContextService;
 /**
  * Created by aygalinc on 24/08/16.
  */
-public @ContextService interface ExtensionToInjectPrime {
+public
+@ContextService
+interface ExtensionToInjectPrime {
 
     boolean getFalse();
 }

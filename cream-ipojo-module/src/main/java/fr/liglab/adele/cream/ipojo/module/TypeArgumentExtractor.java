@@ -10,53 +10,50 @@ import java.util.List;
 
 /**
  * Utility class to extract the type argument of a generic type field declaration.
- *
+ * <p>
  * This extractor can handle generic classes with several type parameter, but the
  * actual type arguments must be classes.
- *
  */
 class TypeArgumentExtractor extends SignatureVisitor {
 
-	private boolean 		visitingParameterizedClass 	= false;
-	private boolean 		visitingTypeArgument		= false;
-	private List<String> 	typeArguments 				= new ArrayList<>();
+    private boolean visitingParameterizedClass = false;
+    private boolean visitingTypeArgument = false;
+    private List<String> typeArguments = new ArrayList<>();
 
 
-	public TypeArgumentExtractor(String signature) {
-		super(Opcodes.ASM5);
-		new SignatureReader(signature).acceptType(this);
-	}
+    public TypeArgumentExtractor(String signature) {
+        super(Opcodes.ASM5);
+        new SignatureReader(signature).acceptType(this);
+    }
 
-	public List<String> getTypeArguments() {
-		return typeArguments;
-	}
+    public List<String> getTypeArguments() {
+        return typeArguments;
+    }
 
-	@Override
-	public SignatureVisitor visitTypeArgument(char wildcard) {
-		visitingTypeArgument = true;
-		return super.visitTypeArgument(wildcard);
-	}
+    @Override
+    public SignatureVisitor visitTypeArgument(char wildcard) {
+        visitingTypeArgument = true;
+        return super.visitTypeArgument(wildcard);
+    }
 
-	@Override
-	public void visitClassType(String name) {
-		if (visitingTypeArgument) {
-			typeArguments.add(Type.getObjectType(name).getClassName());
-		}
-		else {
-			visitingParameterizedClass 	= true;
-			visitingTypeArgument		= false;
-		}
-	}
+    @Override
+    public void visitClassType(String name) {
+        if (visitingTypeArgument) {
+            typeArguments.add(Type.getObjectType(name).getClassName());
+        } else {
+            visitingParameterizedClass = true;
+            visitingTypeArgument = false;
+        }
+    }
 
-	@Override
-	public void visitEnd() {
-		if (visitingTypeArgument) {
-			visitingTypeArgument 		= false;
-		}
-		else if (visitingParameterizedClass) {
-			visitingParameterizedClass	= false;
-		}
-	}
+    @Override
+    public void visitEnd() {
+        if (visitingTypeArgument) {
+            visitingTypeArgument = false;
+        } else if (visitingParameterizedClass) {
+            visitingParameterizedClass = false;
+        }
+    }
 
 
 }

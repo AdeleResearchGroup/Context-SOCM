@@ -10,13 +10,13 @@ import java.lang.annotation.*;
 @Inherited
 public @interface ContextService {
 
-	public static final String DEFAULT_VALUE = "{ClassName.toLowerCase()}";
+    public static final String DEFAULT_VALUE = "{ClassName.toLowerCase()}";
 
-	/**
-	 * The name of the service.
-	 *
-	 * If not specified it will be extracted from the annotated interface
-	 */
-	String value() default DEFAULT_VALUE;
+    /**
+     * The name of the service.
+     * <p>
+     * If not specified it will be extracted from the annotated interface
+     */
+    String value() default DEFAULT_VALUE;
 
 }

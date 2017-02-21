@@ -19,7 +19,7 @@ public abstract class UtilityProcessorTest {
     protected Element root;
     protected Element instance;
 
-    public BindingContext createTestWorkbench(Class ComponentClassToTest){
+    public BindingContext createTestWorkbench(Class ComponentClassToTest) {
         Reporter reporter = mock(Reporter.class);
         BindingContext context = mock(BindingContext.class);
         ComponentWorkbench workbench = mock(ComponentWorkbench.class);

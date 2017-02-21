@@ -9,5 +9,5 @@ import java.util.Map;
 @FunctionalInterface
 public interface CreamGenerator {
 
-    public Map<Method,GeneratedDelegatorProxy> getProxyDelegationMap();
+    public Map<Method, GeneratedDelegatorProxy> getProxyDelegationMap();
 }

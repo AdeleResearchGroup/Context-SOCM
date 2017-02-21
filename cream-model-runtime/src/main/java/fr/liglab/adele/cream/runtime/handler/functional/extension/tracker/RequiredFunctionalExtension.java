@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Created by aygalinc on 02/06/16.
  */
-public class RequiredFunctionalExtension implements InvocationHandler,FunctionalExtensionStateListener,ContextSource{
+public class RequiredFunctionalExtension implements InvocationHandler, FunctionalExtensionStateListener, ContextSource {
 
     private static final String EXTENSION_CONTROLLER_FIELD = "extension.controller.";
 
@@ -39,19 +39,13 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
 
     private final ProvidedServiceHandler myProvideServiceHandler;
 
-    private final String myId ;
-
-    private FunctionalExtensionInstanceManager myManager;
-
-    private FunctionalExtensionFactory myFactory;
-
-    private ContextSource extensionContextSource;
-
-    private ContextListener contextListener;
-
-    private String[] propertiesToListen;
-
+    private final String myId;
     private final Object lock = new Object();
+    private FunctionalExtensionInstanceManager myManager;
+    private FunctionalExtensionFactory myFactory;
+    private ContextSource extensionContextSource;
+    private ContextListener contextListener;
+    private String[] propertiesToListen;
 
     public RequiredFunctionalExtension(String id, String[] spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent, ProvidedServiceHandler providedServiceHandler) {
         mySpecifications = spec;
@@ -64,22 +58,22 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
          */
         Enumeration enumeration = config.keys();
         config.size();
-        while (enumeration.hasMoreElements()){
+        while (enumeration.hasMoreElements()) {
             Object key = enumeration.nextElement();
             Object value = config.get(key);
-            if (!("instance.name".equals(key))){
-                myConfiguration.put(key,value);
+            if (!("instance.name".equals(key))) {
+                myConfiguration.put(key, value);
             }
         }
-        myConfiguration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(),id);
+        myConfiguration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(), id);
         this.parent = parent;
 
     }
 
 
-    public void setProvidedService(ProvidedService providedService){
+    public void setProvidedService(ProvidedService providedService) {
         for (String spec : mySpecifications) {
-            providedService.setController(EXTENSION_CONTROLLER_FIELD + myId+spec, false, spec);
+            providedService.setController(EXTENSION_CONTROLLER_FIELD + myId + spec, false, spec);
         }
     }
 
@@ -88,7 +82,7 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
     }
 
     public void setFactory(Factory factory) {
-        if (factory instanceof FunctionalExtensionFactory){
+        if (factory instanceof FunctionalExtensionFactory) {
             myFactory = (FunctionalExtensionFactory) factory;
         }
     }
@@ -111,7 +105,7 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
     }
 
     public synchronized void addManager() {
-        if (myManager != null || myFactory == null){
+        if (myManager != null || myFactory == null) {
             return;
         }
 
@@ -121,48 +115,48 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
                 myManager.getBehaviorLifeCycleHandler().registerBehaviorListener(this);
                 myManager.registerContextListenerToExtensionEntityHandler(parent.getBehaviorContextListener());
                 extensionContextSource = myManager.getExtensionContextSource();
-                if (contextListener != null){
-                    extensionContextSource.registerContextListener(contextListener,propertiesToListen);
+                if (contextListener != null) {
+                    extensionContextSource.registerContextListener(contextListener, propertiesToListen);
                 }
             }
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
-            LOG.error(UnacceptableConfiguration.class.getName(),unacceptableConfiguration);
+            LOG.error(UnacceptableConfiguration.class.getName(), unacceptableConfiguration);
         } catch (MissingHandlerException e) {
-            LOG.error(MissingHandlerException.class.getName(),e);
+            LOG.error(MissingHandlerException.class.getName(), e);
         } catch (ConfigurationException e) {
-            LOG.error(ConfigurationException.class.getName(),e);
+            LOG.error(ConfigurationException.class.getName(), e);
         }
     }
 
-    public synchronized void tryStartExtension(){
+    public synchronized void tryStartExtension() {
 
-        if (myManager != null ){
-            Set<String> properties =  myManager.getBehaviorLifeCycleHandler().getPropertiesToListen();
-            parent.registerContextEntityContextListener(myManager.getBehaviorLifeCycleHandler() ,properties.toArray(new String[properties.size()]));
+        if (myManager != null) {
+            Set<String> properties = myManager.getBehaviorLifeCycleHandler().getPropertiesToListen();
+            parent.registerContextEntityContextListener(myManager.getBehaviorLifeCycleHandler(), properties.toArray(new String[properties.size()]));
 
             if (!myManager.isStarted()) {
                 myManager.start();
                 myManager.getBehaviorLifeCycleHandler().startBehavior();
-            }else {
+            } else {
                 myManager.getBehaviorLifeCycleHandler().startBehavior();
             }
         }
     }
 
-    public synchronized void tryInvalid(){
-        if (myManager != null && myManager.isStarted() ){
-            for (String spec : mySpecifications){
-                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD +myId+spec,false);
+    public synchronized void tryInvalid() {
+        if (myManager != null && myManager.isStarted()) {
+            for (String spec : mySpecifications) {
+                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD + myId + spec, false);
             }
             myManager.getBehaviorLifeCycleHandler().stopBehavior();
             parent.unregisterContextEntityContextListener(myManager.getBehaviorLifeCycleHandler());
         }
     }
 
-    public synchronized void tryDispose(){
-        if (myManager != null){
-            for (String spec : mySpecifications){
-                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD +myId+spec,false);
+    public synchronized void tryDispose() {
+        if (myManager != null) {
+            for (String spec : mySpecifications) {
+                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD + myId + spec, false);
             }
             parent.unregisterContextEntityContextListener(myManager.getBehaviorLifeCycleHandler());
             myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
@@ -171,8 +165,8 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
         }
     }
 
-    public synchronized void getExtensionDescription(Element elmentToAttach){
-        if(myManager != null){
+    public synchronized void getExtensionDescription(Element elmentToAttach) {
+        if (myManager != null) {
             InstanceDescription description = myManager.getInstanceDescription();
 
             Element behaviorDescription = description.getDescription();
@@ -180,8 +174,8 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
         }
     }
 
-    public synchronized boolean isValid(){
-        if (myManager != null){
+    public synchronized boolean isValid() {
+        if (myManager != null) {
             return (myManager.getState() == ComponentInstance.VALID);
         }
         return false;
@@ -189,34 +183,33 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
 
     @Override
     public synchronized Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (myManager != null && myManager.isStarted()){
-            return myManager.getInvocationHandler().invoke(proxy,method,args);
+        if (myManager != null && myManager.isStarted()) {
+            return myManager.getInvocationHandler().invoke(proxy, method, args);
         }
         return SuccessorStrategy.NO_FOUND_CODE;
     }
 
-    public FieldInterceptor getExtensionInterceptor(){
+    public FieldInterceptor getExtensionInterceptor() {
         return new InjectedExtensionInterceptor();
     }
 
     @Override
     public void functionalExtensionStateChange(int state, String id) {
-        if (state == ComponentInstance.VALID){
-            for (String spec : mySpecifications){
-                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD +myId+spec,true);
+        if (state == ComponentInstance.VALID) {
+            for (String spec : mySpecifications) {
+                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD + myId + spec, true);
+            }
+        } else if (state == ComponentInstance.INVALID) {
+            for (String spec : mySpecifications) {
+                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD + myId + spec, false);
             }
         }
-        else if (state == ComponentInstance.INVALID){
-            for (String spec : mySpecifications){
-                myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD +myId+spec,false);
-            }
-        }
-        parent.functionalExtensionStateChange(state,id);
+        parent.functionalExtensionStateChange(state, id);
     }
 
     @Override
     public Object getProperty(String property) {
-        if (myManager != null && myManager.isStarted()  && extensionContextSource != null){
+        if (myManager != null && myManager.isStarted() && extensionContextSource != null) {
             return extensionContextSource.getProperty(property);
         }
         return null;
@@ -224,7 +217,7 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
 
     @Override
     public Dictionary getContext() {
-        if (myManager != null && myManager.isStarted() && extensionContextSource != null){
+        if (myManager != null && myManager.isStarted() && extensionContextSource != null) {
             return extensionContextSource.getContext();
         }
         return new Hashtable<>();
@@ -235,8 +228,8 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
         synchronized (lock) {
             contextListener = listener;
             propertiesToListen = properties;
-            if (extensionContextSource != null){
-                extensionContextSource.registerContextListener(listener,properties);
+            if (extensionContextSource != null) {
+                extensionContextSource.registerContextListener(listener, properties);
             }
         }
     }
@@ -244,16 +237,16 @@ public class RequiredFunctionalExtension implements InvocationHandler,Functional
     @Override
     public void unregisterContextListener(ContextListener listener) {
         synchronized (lock) {
-            if (extensionContextSource != null){
+            if (extensionContextSource != null) {
                 extensionContextSource.unregisterContextListener(listener);
-                if (listener != null && listener.equals(contextListener)){
+                if (listener != null && listener.equals(contextListener)) {
                     contextListener = null;
                 }
             }
         }
     }
 
-    private class InjectedExtensionInterceptor implements FieldInterceptor{
+    private class InjectedExtensionInterceptor implements FieldInterceptor {
 
         @Override
         public void onSet(Object pojo, String fieldName, Object value) {

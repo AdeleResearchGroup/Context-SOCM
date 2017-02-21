@@ -7,8 +7,8 @@ public class ExtenderImpl implements ExtensionSpec {
 
     boolean state = true;
 
-    @FunctionalExtender.ChangeOn(contextService = ServiceOfContext.class,id = ServiceOfContext.STATE_1)
-    public void changeOn(boolean bool){
+    @FunctionalExtender.ChangeOn(contextService = ServiceOfContext.class, id = ServiceOfContext.STATE_1)
+    public void changeOn(boolean bool) {
         state = bool;
     }
 

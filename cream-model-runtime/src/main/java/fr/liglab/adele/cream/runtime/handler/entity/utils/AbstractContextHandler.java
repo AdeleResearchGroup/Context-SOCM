@@ -24,83 +24,178 @@ import java.util.function.Consumer;
 /**
  * Created by aygalinc on 19/07/16.
  */
-public abstract class AbstractContextHandler extends PrimitiveHandler implements ContextEntity,ContextSource {
+public abstract class AbstractContextHandler extends PrimitiveHandler implements ContextEntity, ContextSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractContextHandler.class);
 
     /**
      * Utility function to handle optional configuration
      */
-    private static final  Element[] EMPTY_OPTIONAL = new Element[0];
-
-    /**
-     * The list of iPOJO context listeners to notify on state updates.
-     *
-     * This handler implements ContextSource to allow state variables to be used in
-     * dependency filters.
-     */
-    private final Map<ContextListener,List<String>> contextSourceListeners	= new HashMap<>();
-
+    private static final Element[] EMPTY_OPTIONAL = new Element[0];
     /**
      * The list of exposed context spec
      */
-    protected final Set<String> services 					= new HashSet<>();
-
+    protected final Set<String> services = new HashSet<>();
     /**
      * The list of states defined in the implemented context spec
      */
-    protected final Set<String> stateIds 					= new HashSet<>();
-
+    protected final Set<String> stateIds = new HashSet<>();
     /**
      * The list of interceptors in charge of handling each state field
      */
-    protected final Set<StateInterceptor>	interceptors	= new HashSet<>();
-
+    protected final Set<StateInterceptor> interceptors = new HashSet<>();
     /**
      * The current values of the state properties
      */
-    protected final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
-
+    protected final Map<String, Object> stateValues = new ConcurrentHashMap<>();
+    /**
+     * The list of iPOJO context listeners to notify on state updates.
+     * <p>
+     * This handler implements ContextSource to allow state variables to be used in
+     * dependency filters.
+     */
+    private final Map<ContextListener, List<String>> contextSourceListeners = new HashMap<>();
     /**
      * The configured state
      */
-    private final Map<String,Object> stateInitialConfig		= new ConcurrentHashMap<>();
+    private final Map<String, Object> stateInitialConfig = new ConcurrentHashMap<>();
+
+    protected static final Element[] optional(Element[] elements) {
+        return elements != null ? elements : EMPTY_OPTIONAL;
+    }
+
+    /**
+     * Cast a string value to the type of the specified field
+     */
+    protected static final Object cast(InstanceManager component, FieldMetadata field, String value) {
+        try {
+            Class<?> type = Property.computeType(field.getFieldType(), component.getGlobalContext());
+            return Property.create(type, value);
+        } catch (ConfigurationException ignored) {
+            LOG.info("Ignored exception ", ignored);
+            return null;
+        }
+    }
+
+    /**
+     * Verify the type of the specified value matches the type of field
+     */
+    protected static final boolean hasValidType(InstanceManager component, FieldMetadata field, Object value) {
+        try {
+            Class<?> type = boxed(Property.computeType(field.getFieldType(), component.getGlobalContext()));
+            return type.isInstance(value);
+        } catch (ConfigurationException ignored) {
+            LOG.info("Ignored exception ", ignored);
+            return false;
+        }
+    }
+
+    /**
+     * Get a boxed class that can be used to determine if an object reference is instance of the given class,
+     * even in the case of primitive types.
+     * <p>
+     * NOTE notice that Class.isInstance always returns false for primitive types. So we need to use the appropiate
+     * wrapper when testing for asignment comptibility.
+     */
+    protected static final Class<?> boxed(@SuppressWarnings("rawtypes") Class type) {
+        if (!type.isPrimitive())
+            return type;
+
+        if (type == Boolean.TYPE)
+            return Boolean.class;
+        if (type == Character.TYPE)
+            return Character.class;
+        if (type == Byte.TYPE)
+            return Byte.class;
+        if (type == Short.TYPE)
+            return Short.class;
+        if (type == Integer.TYPE)
+            return Integer.class;
+        if (type == Long.TYPE)
+            return Long.class;
+        if (type == Float.TYPE)
+            return Float.class;
+        if (type == Double.TYPE)
+            return Double.class;
+        // void.class remains
+        throw new IllegalArgumentException(type + " is not permitted");
+    }
+
+    /**
+     * Get the list of configured states of the instance
+     */
+    protected static final Set<String> getConfiguredStates(Dictionary<String, ?> configuration) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> stateConfiguration = (Map<String, Object>) configuration.get("context.entity.init");
+
+        if (stateConfiguration == null)
+            return Collections.emptySet();
+
+        return stateConfiguration.keySet();
+    }
+
+    /**
+     * Get the value of a state defined in the instance configuration
+     */
+    protected static final Object getStateConfiguredValue(String stateId, Dictionary<String, ?> configuration) {
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> stateConfiguration = (Map<String, Object>) configuration.get("context.entity.init");
+
+        if (stateConfiguration == null)
+            return null;
+
+        return stateConfiguration.get(stateId);
+    }
+
+    /**
+     * Set the value of a state  in the instance configuration
+     */
+    protected static final void setStateConfiguredValue(String stateId, Object value, Dictionary<String, Object> configuration) {
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> stateConfiguration = (Map<String, Object>) configuration.get("context.entity.init");
+
+        if (stateConfiguration == null) {
+            stateConfiguration = new HashMap<>();
+            configuration.put("context.entity.init", stateConfiguration);
+        }
+
+        stateConfiguration.put(stateId, value);
+    }
 
     /**
      * Get The scheduler
      */
-    protected abstract  ManagedScheduledExecutorService getScheduler();
+    protected abstract ManagedScheduledExecutorService getScheduler();
 
     /**
      * Is the instance active
      */
-    protected abstract  boolean isInstanceActive();
+    protected abstract boolean isInstanceActive();
 
     /**
      * Updates the value of a state property, propagating the change to the published service properties
      */
-    public abstract  void update(String stateId, Object value);
-
-
+    public abstract void update(String stateId, Object value);
 
     /**
      * Handler Configuration
-     *
      **/
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void configure(Element element, Dictionary rawConfiguration,String handlerNameSpace,String handlerName) throws ConfigurationException {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void configure(Element element, Dictionary rawConfiguration, String handlerNameSpace, String handlerName) throws ConfigurationException {
 
 
-        InstanceManager instanceManager 		= getInstanceManager();
-        String componentName					= instanceManager.getInstanceName();
+        InstanceManager instanceManager = getInstanceManager();
+        String componentName = instanceManager.getInstanceName();
 
-        Dictionary<String,Object> configuration	= (Dictionary<String,Object>) rawConfiguration;
+        Dictionary<String, Object> configuration = (Dictionary<String, Object>) rawConfiguration;
 
         /*
          * Introspect interfaces implemented by the component POJO and construct the
          * state specification of the entity ( basically a set of state variable)
          */
-        for(Class<?> service : getInstanceManager().getClazz().getInterfaces()) {
+        for (Class<?> service : getInstanceManager().getClazz().getInterfaces()) {
             extractDefinedStatesForService(service);
 
             /**
@@ -112,10 +207,10 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         }
 
 		/*
-		 * Initialize interceptors for the different field management policies
+         * Initialize interceptors for the different field management policies
 		 */
-        SynchronisationInterceptor synchronisationInterceptor 	= new SynchronisationInterceptor(this);
-        DirectAccessInterceptor directAccessInterceptor 		= new DirectAccessInterceptor(this);
+        SynchronisationInterceptor synchronisationInterceptor = new SynchronisationInterceptor(this);
+        DirectAccessInterceptor directAccessInterceptor = new DirectAccessInterceptor(this);
 
         interceptors.add(synchronisationInterceptor);
         interceptors.add(directAccessInterceptor);
@@ -126,21 +221,21 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
          */
 
         List<String> implementedStates = new ArrayList<>();
-        for (Element entity : optional(element.getElements(handlerName,handlerNameSpace))) {
+        for (Element entity : optional(element.getElements(handlerName, handlerNameSpace))) {
             for (Element state : optional(entity.getElements("state"))) {
 
-                String stateId 			= state.getAttribute("id");
+                String stateId = state.getAttribute("id");
 
                 if (stateId == null) {
                     throw new ConfigurationException("Malformed Manifest : a state variable is declared with no 'id' attribute");
                 }
 
-                if (! stateIds.contains(stateId)) {
-                    throw new ConfigurationException("Malformed Manifest : the state "+stateId+" is not defined in the implemented context spec");
+                if (!stateIds.contains(stateId)) {
+                    throw new ConfigurationException("Malformed Manifest : the state " + stateId + " is not defined in the implemented context spec");
                 }
 
                 if (implementedStates.contains(stateId)) {
-                    throw new ConfigurationException("Malformed Manifest : several state variable are declared for the same state "+stateId);
+                    throw new ConfigurationException("Malformed Manifest : several state variable are declared for the same state " + stateId);
                 }
 
                 implementedStates.add(stateId);
@@ -148,50 +243,48 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
 				/*
 				 * Add field and method interceptors according to the specified policy
 				 */
-                boolean directAccess	= Boolean.parseBoolean(state.getAttribute("directAccess"));
+                boolean directAccess = Boolean.parseBoolean(state.getAttribute("directAccess"));
                 if (!directAccess) {
-                    synchronisationInterceptor.handleState(instanceManager,getPojoMetadata(),state);
-                }
-
-                else {
-                    directAccessInterceptor.handleState(instanceManager,getPojoMetadata(),state);
+                    synchronisationInterceptor.handleState(instanceManager, getPojoMetadata(), state);
+                } else {
+                    directAccessInterceptor.handleState(instanceManager, getPojoMetadata(), state);
                 }
 
     			/*
     			 * If there is no specified value, but a default was specified for the field, use it
     			 */
-                Object configuredValue 	= getStateConfiguredValue(stateId,configuration);
+                Object configuredValue = getStateConfiguredValue(stateId, configuration);
                 if (configuredValue == null) {
 
-                    String defaultValue 	= state.getAttribute("value");
-                    boolean hasDefaultValue	=  !fr.liglab.adele.cream.annotations.entity.ContextEntity.State.Field.NO_VALUE.equals(defaultValue);
+                    String defaultValue = state.getAttribute("value");
+                    boolean hasDefaultValue = !fr.liglab.adele.cream.annotations.entity.ContextEntity.State.Field.NO_VALUE.equals(defaultValue);
                     if (hasDefaultValue) {
                         configuredValue = defaultValue;
-                        setStateConfiguredValue(stateId,defaultValue,configuration);
+                        setStateConfiguredValue(stateId, defaultValue, configuration);
                     }
                 }
 
                 /*
                  * validate configured values are correctly typed for the field
                  */
-                String stateField			= state.getAttribute("field");
+                String stateField = state.getAttribute("field");
                 FieldMetadata fieldMetadata = getPojoMetadata().getField(stateField);
-                boolean isValid 			= configuredValue == null || hasValidType(instanceManager,fieldMetadata,configuredValue);
+                boolean isValid = configuredValue == null || hasValidType(instanceManager, fieldMetadata, configuredValue);
 
 				/*
 				 * If the configured value doesn't have the right type, but it is an String, try to cast it
 				 */
-                if ( (!isValid) && configuredValue != null && (configuredValue instanceof String)) {
-                    Object cast = cast(instanceManager,fieldMetadata,(String)configuredValue);
+                if ((!isValid) && configuredValue != null && (configuredValue instanceof String)) {
+                    Object cast = cast(instanceManager, fieldMetadata, (String) configuredValue);
                     if (cast != null) {
                         configuredValue = cast;
-                        isValid			= true;
+                        isValid = true;
                         setStateConfiguredValue(stateId, configuredValue, configuration);
                     }
                 }
 
-                if (! isValid) {
-                    throw new ConfigurationException("The configured value for state "+stateId+" doesn't match the type of the field :"+ configuredValue);
+                if (!isValid) {
+                    throw new ConfigurationException("The configured value for state " + stateId + " doesn't match the type of the field :" + configuredValue);
                 }
             }
         }
@@ -202,7 +295,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         Set<String> unimplemented = new HashSet<>(stateIds);
         unimplemented.removeAll(implementedStates);
 
-        if (! unimplemented.isEmpty()) {
+        if (!unimplemented.isEmpty()) {
             throw new ConfigurationException("States " + unimplemented + " are defined in the context service, but never implemented in " + componentName);
         }
 
@@ -213,7 +306,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
             throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
         }
         stateIds.add(CONTEXT_ENTITY_ID);
-        update(CONTEXT_ENTITY_ID,configuration.get(CONTEXT_ENTITY_ID));
+        update(CONTEXT_ENTITY_ID, configuration.get(CONTEXT_ENTITY_ID));
 
         /*
          * Initialize the state map with the configured values
@@ -222,13 +315,11 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
             if (stateIds.contains(configuredState)) {
                 stateInitialConfig.put(configuredState, getStateConfiguredValue(configuredState, configuration));
                 update(configuredState, getStateConfiguredValue(configuredState, configuration));
-            }
-            else {
+            } else {
                 debug("Configured state " + configuredState + " will be ignored, it is not defined in the context spec of " + componentName);
             }
         }
     }
-
 
     /**
      * Get the definition of the states associated to a given context service
@@ -258,19 +349,19 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
             if (Modifier.isStatic(field.getModifiers()) && field.getType().equals(String.class) && field.isAnnotationPresent(State.class)) {
                 try {
                     String stateName = String.class.cast(field.get(null));
-                    stateIds.add(contextServiceName+"."+stateName);
+                    stateIds.add(contextServiceName + "." + stateName);
                 } catch (IllegalArgumentException | IllegalAccessException ignored) {
-                    LOG.info("Ignored exception",ignored);
+                    LOG.info("Ignored exception", ignored);
                 }
 
             }
         }
-        for (Class<?> inheritedService : service.getInterfaces()){
+        for (Class<?> inheritedService : service.getInterfaces()) {
             extractDefinedStatesForService(inheritedService);
         }
     }
 
-    protected Map<String,Object> getInitialConfiguration(){
+    protected Map<String, Object> getInitialConfiguration() {
         return new HashMap<>(stateInitialConfig);
     }
 
@@ -283,9 +374,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     }
 
     /**
-     *
      * Context Entity Implementation
-     *
      */
 
     @Override
@@ -316,10 +405,8 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         return new HashMap<>(stateValues);
     }
 
-
-
     /**
-     *Context Source Implementation,
+     * Context Source Implementation,
      * Implementation must be very defensive because this method can be called even if the instance manager is not attach....
      */
 
@@ -331,7 +418,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     @SuppressWarnings("rawtypes")
     @Override
     public Dictionary getContext() {
-        if (getInstanceManager() == null || getInstanceManager().getState() != ComponentInstance.VALID){
+        if (getInstanceManager() == null || getInstanceManager().getState() != ComponentInstance.VALID) {
             return new Hashtable<>(stateInitialConfig);
         }
         return new Hashtable<>(stateValues);
@@ -340,11 +427,11 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     @Override
     public void registerContextListener(ContextListener listener, String[] properties) {
 
-        if (!contextSourceListeners.containsKey(listener)){
-            if (properties != null){
-                contextSourceListeners.put(listener,Arrays.asList(properties));
-            }else {
-                contextSourceListeners.put(listener,null);
+        if (!contextSourceListeners.containsKey(listener)) {
+            if (properties != null) {
+                contextSourceListeners.put(listener, Arrays.asList(properties));
+            } else {
+                contextSourceListeners.put(listener, null);
             }
         }
     }
@@ -357,10 +444,10 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     /**
      * Notify All the context listener
      */
-    protected void notifyContextListener(String property,Object value){
-        for (Map.Entry<ContextListener,List<String>> listener : contextSourceListeners.entrySet()){
-            if (listener.getValue() == null||listener.getValue().contains(property)){
-                listener.getKey().update(this,property,value);
+    protected void notifyContextListener(String property, Object value) {
+        for (Map.Entry<ContextListener, List<String>> listener : contextSourceListeners.entrySet()) {
+            if (listener.getValue() == null || listener.getValue().contains(property)) {
+                listener.getKey().update(this, property, value);
             }
         }
     }
@@ -371,11 +458,21 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     }
 
     /**
+     * Add a new periodic task that will be executed on behalf of registered interceptors.
+     * <p>
+     * The action to be performed is specified as a consumer that will be given access to the component
+     * instance
+     */
+    public PeriodicTask schedule(Consumer<InstanceManager> action, long period, TimeUnit unit) {
+        PeriodicTask task = new PeriodicTask(action, period, unit);
+        return task;
+    }
+
+    /**
      * The description of the handler.
-     *
+     * <p>
      * This class exposes the generic interface ContextEntity to allow external code to introspect the
      * component instance and obtain the current state values.
-     *
      */
     public class EntityHandlerDescription extends HandlerDescription implements ContextEntity {
 
@@ -412,9 +509,9 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         public Element getHandlerInfo() {
             Element handlerInfo = super.getHandlerInfo();
 
-            for (Map.Entry<String,Object> entry:dumpState().entrySet()){
-                Element stateElement = new Element("state",null);
-                stateElement.addAttribute(new Attribute(entry.getKey(),entry.getValue().toString()));
+            for (Map.Entry<String, Object> entry : dumpState().entrySet()) {
+                Element stateElement = new Element("state", null);
+                stateElement.addAttribute(new Attribute(entry.getKey(), entry.getValue().toString()));
                 handlerInfo.addElement(stateElement);
             }
 
@@ -437,8 +534,8 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
 
         private PeriodicTask(Consumer<InstanceManager> action, long period, TimeUnit unit) {
             this.action = action;
-            this.period	= period;
-            this.unit	= unit;
+            this.period = period;
+            this.unit = unit;
 
     		/*
     		 * If the instance is active schedule the task immediately
@@ -458,13 +555,12 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
 			 */
             if (period < 0 && isInstanceActive()) {
                 action.accept(getInstanceManager());
-            }
-            else if (period > 0) {
-                taskHandle =	getScheduler().scheduleAtFixedRate(	() -> {
+            } else if (period > 0) {
+                taskHandle = getScheduler().scheduleAtFixedRate(() -> {
                     if (isInstanceActive()) {
                         action.accept(getInstanceManager());
                     }
-                },period,period,unit);
+                }, period, period, unit);
             }
         }
 
@@ -477,122 +573,5 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
                 taskHandle = null;
             }
         }
-    }
-
-    /**
-     * Add a new periodic task that will be executed on behalf of registered interceptors.
-     *
-     * The action to be performed is specified as a consumer that will be given access to the component
-     * instance
-     */
-    public PeriodicTask schedule(Consumer<InstanceManager> action, long period, TimeUnit unit) {
-        PeriodicTask task = new PeriodicTask(action,period,unit);
-        return task;
-    }
-
-    protected static final  Element[] optional(Element[] elements) {
-        return elements != null ? elements : EMPTY_OPTIONAL;
-    }
-
-    /**
-     * Cast a string value to the type of the specified field
-     */
-    protected static final  Object cast(InstanceManager component, FieldMetadata field, String value) {
-        try {
-            Class<?> type = Property.computeType(field.getFieldType(),component.getGlobalContext());
-            return Property.create(type,value);
-        }
-        catch (ConfigurationException ignored) {
-            LOG.info("Ignored exception ",ignored);
-            return null;
-        }
-    }
-
-    /**
-     * Verify the type of the specified value matches the type of field
-     */
-    protected static final  boolean hasValidType(InstanceManager component, FieldMetadata field, Object value) {
-        try {
-            Class<?> type = boxed(Property.computeType(field.getFieldType(),component.getGlobalContext()));
-            return type.isInstance(value);
-        }
-        catch (ConfigurationException ignored) {
-            LOG.info("Ignored exception ",ignored);
-            return false;
-        }
-    }
-
-    /**
-     * Get a boxed class that can be used to determine if an object reference is instance of the given class,
-     * even in the case of primitive types.
-     *
-     * NOTE notice that Class.isInstance always returns false for primitive types. So we need to use the appropiate
-     * wrapper when testing for asignment comptibility.
-     */
-    protected static final   Class<?> boxed(@SuppressWarnings("rawtypes") Class type) {
-        if (!type.isPrimitive())
-            return type;
-
-        if (type == Boolean.TYPE)
-            return Boolean.class;
-        if (type == Character.TYPE)
-            return Character.class;
-        if (type == Byte.TYPE)
-            return Byte.class;
-        if (type == Short.TYPE)
-            return Short.class;
-        if (type == Integer.TYPE)
-            return Integer.class;
-        if (type == Long.TYPE)
-            return Long.class;
-        if (type == Float.TYPE)
-            return Float.class;
-        if (type == Double.TYPE)
-            return Double.class;
-        // void.class remains
-        throw new IllegalArgumentException(type + " is not permitted");
-    }
-
-    /**
-     * Get the list of configured states of the instance
-     */
-    protected static final  Set<String> getConfiguredStates(Dictionary<String,?> configuration) {
-        @SuppressWarnings("unchecked")
-        Map<String,Object> stateConfiguration = (Map<String,Object>) configuration.get("context.entity.init");
-
-        if (stateConfiguration == null)
-            return Collections.emptySet();
-
-        return stateConfiguration.keySet();
-    }
-
-    /**
-     * Get the value of a state defined in the instance configuration
-     */
-    protected static final  Object getStateConfiguredValue(String stateId, Dictionary<String,?> configuration) {
-
-        @SuppressWarnings("unchecked")
-        Map<String,Object> stateConfiguration = (Map<String,Object>) configuration.get("context.entity.init");
-
-        if (stateConfiguration == null)
-            return null;
-
-        return stateConfiguration.get(stateId);
-    }
-
-    /**
-     * Set the value of a state  in the instance configuration
-     */
-    protected static final  void setStateConfiguredValue(String stateId, Object value, Dictionary<String,Object> configuration) {
-
-        @SuppressWarnings("unchecked")
-        Map<String,Object> stateConfiguration = (Map<String, Object>) configuration.get("context.entity.init");
-
-        if (stateConfiguration == null) {
-            stateConfiguration = new HashMap<>();
-            configuration.put("context.entity.init",stateConfiguration);
-        }
-
-        stateConfiguration.put(stateId,value);
     }
 }

@@ -5,6 +5,7 @@ import fr.liglab.adele.cream.annotations.ContextService;
 /**
  * Created by aygalinc on 21/02/17.
  */
-public @ContextService
+public
+@ContextService
 interface ExtensionInvalidSpec {
 }

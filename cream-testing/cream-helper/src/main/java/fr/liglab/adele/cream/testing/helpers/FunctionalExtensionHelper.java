@@ -21,14 +21,14 @@ public class FunctionalExtensionHelper {
         this.ipojoHelper = service;
     }
 
-    public void stopBehavior(ComponentInstance instance,String behaviorId){
-        ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
+    public void stopBehavior(ComponentInstance instance, String behaviorId) {
+        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
         behaviorInstance.stop();
     }
 
 
-    public void disposeBehavior(ComponentInstance instance,String behaviorId){
-        ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
+    public void disposeBehavior(ComponentInstance instance, String behaviorId) {
+        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
         behaviorInstance.dispose();
     }
 
@@ -39,38 +39,38 @@ public class FunctionalExtensionHelper {
      * @param instance
      * @param behaviorId
      */
-    public void startBehavior(ComponentInstance instance, String behaviorId){
-        ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
+    public void startBehavior(ComponentInstance instance, String behaviorId) {
+        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
         behaviorInstance.start();
 
     }
 
-    public void validBehavior(ComponentInstance instance, String behaviorId){
-        ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
+    public void validBehavior(ComponentInstance instance, String behaviorId) {
+        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
         FunctionalExtensionInstanceManager manager = (FunctionalExtensionInstanceManager) behaviorInstance;
         manager.getBehaviorLifeCycleHandler().startBehavior();
     }
 
-    public void invalidBehavior(ComponentInstance instance, String behaviorId){
-        ComponentInstance behaviorInstance = getBehavior(instance,behaviorId);
+    public void invalidBehavior(ComponentInstance instance, String behaviorId) {
+        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
         FunctionalExtensionInstanceManager manager = (FunctionalExtensionInstanceManager) behaviorInstance;
         manager.getBehaviorLifeCycleHandler().stopBehavior();
     }
 
 
-    public ComponentInstance getBehavior(ComponentInstance instance,String behaviorId){
+    public ComponentInstance getBehavior(ComponentInstance instance, String behaviorId) {
         InstanceDescription instanceDescription = instance.getInstanceDescription();
-        HandlerDescription managerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
+        HandlerDescription managerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
         Element element = managerDescription.getHandlerInfo();
 
         Element[] behaviorInstanceElement = element.getElements("instance");
         String instanceName = null;
-        for (Element element1 : behaviorInstanceElement){
+        for (Element element1 : behaviorInstanceElement) {
             Element[] handlerElement = element1.getElements("handler");
-            for (Element element2:handlerElement){
-                if ((HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER).equals(element2.getAttribute("name"))){
+            for (Element element2 : handlerElement) {
+                if ((HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER).equals(element2.getAttribute("name"))) {
                     String id = element2.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString());
-                    if (id.equals(behaviorId)){
+                    if (id.equals(behaviorId)) {
                         instanceName = element1.getAttribute("name");
                         Architecture behaviorArchitecture = ipojoHelper.getArchitectureByName(instanceName);
                         InstanceDescription behaviorInstanceDescription = behaviorArchitecture.getInstanceDescription();

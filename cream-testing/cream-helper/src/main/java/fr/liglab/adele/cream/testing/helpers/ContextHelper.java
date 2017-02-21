@@ -6,7 +6,7 @@ import org.ow2.chameleon.testing.helpers.OSGiHelper;
 /**
  * Created by aygalinc on 25/07/16.
  */
-public class ContextHelper{
+public class ContextHelper {
 
     private final OSGiHelper osGiHelper;
     private final IPOJOHelper ipojoHelper;
@@ -19,17 +19,16 @@ public class ContextHelper{
         this.osGiHelper = osGiHelper;
         this.ipojoHelper = ipojoHelper;
         functionalExtensionHelper = new FunctionalExtensionHelper(ipojoHelper);
-        contextEntityHelper = new ContextEntityHelper(osGiHelper,ipojoHelper);
+        contextEntityHelper = new ContextEntityHelper(osGiHelper, ipojoHelper);
     }
 
-    public ContextEntityHelper getContextEntityHelper(){
+    public ContextEntityHelper getContextEntityHelper() {
         return contextEntityHelper;
     }
 
-    public FunctionalExtensionHelper getFunctionalExtensionHelper(){
+    public FunctionalExtensionHelper getFunctionalExtensionHelper() {
         return functionalExtensionHelper;
     }
-
 
 
 }

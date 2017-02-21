@@ -15,11 +15,12 @@ import java.util.*;
 /**
  * Created by aygalinc on 31/05/16.
  */
-public class ContextEntityInstanceManager extends InstanceManager implements CreamGenerator{
+public class ContextEntityInstanceManager extends InstanceManager implements CreamGenerator {
 
-    private final CreamProxyFactory creamProxyFactory = new CreamProxyFactory(this.getClass().getClassLoader(),this);
+    private final CreamProxyFactory creamProxyFactory = new CreamProxyFactory(this.getClass().getClassLoader(), this);
 
-    private Map<Method,GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
+    private Map<Method, GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
+
     /**
      * Creates a new Component Manager.
      * The instance is not initialized.
@@ -33,38 +34,38 @@ public class ContextEntityInstanceManager extends InstanceManager implements Cre
 
     }
 
-    public Map<Method,GeneratedDelegatorProxy> getProxyDelegationMap(){
-        if (proxyDelegatorMap.isEmpty()){
+    public Map<Method, GeneratedDelegatorProxy> getProxyDelegationMap() {
+        if (proxyDelegatorMap.isEmpty()) {
             Class clazz = getClazz();
             ContextEntity[] contextEntities = (ContextEntity[]) clazz.getAnnotationsByType(ContextEntity.class);
-            for (ContextEntity entity:contextEntities){
+            for (ContextEntity entity : contextEntities) {
                 Class[] entityClass = entity.services();
                 Set<Class> classesFlatten = flattenClass(entityClass);
-                proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(classesFlatten,creamProxyFactory);
+                proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(classesFlatten, creamProxyFactory);
             }
         }
         return proxyDelegatorMap;
     }
 
-    private Set<Class> flattenClass(Class[] classes){
+    private Set<Class> flattenClass(Class[] classes) {
         Set<Class> classSet = new HashSet<>();
 
-        for (Class clazz : classes){
+        for (Class clazz : classes) {
             boolean put = true;
             List<Class> classesToRemove = new ArrayList<>();
-            for (Class classOfSet : classSet){
-                if (clazz.isAssignableFrom(classOfSet)){
+            for (Class classOfSet : classSet) {
+                if (clazz.isAssignableFrom(classOfSet)) {
                     put = false;
                 }
-                if (classOfSet.isAssignableFrom(clazz) && !(classOfSet.equals(clazz)) ){
+                if (classOfSet.isAssignableFrom(clazz) && !(classOfSet.equals(clazz))) {
                     classesToRemove.add(classOfSet);
                 }
             }
 
-            if (put){
+            if (put) {
                 classSet.add(clazz);
             }
-            for (Class classToRemove : classesToRemove){
+            for (Class classToRemove : classesToRemove) {
                 classSet.remove(classToRemove);
             }
         }

@@ -72,20 +72,20 @@ public class FunctionalExtensionFactory extends ComponentFactory {
         return new BehaviorTypeDescription(this);
     }
 
-    private class BehaviorTypeDescription extends ComponentTypeDescription{
+    private class BehaviorTypeDescription extends ComponentTypeDescription {
         public BehaviorTypeDescription(IPojoFactory factory) {
             super(factory);
         }
 
         @Override
-        public Dictionary getPropertiesToPublish(){
+        public Dictionary getPropertiesToPublish() {
             Dictionary dict = super.getPropertiesToPublish();
             if (this.getFactory().getClassName() != null) {
                 dict.put("component.class", this.getFactory().getClassName());
             }
             dict.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY, FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE);
-            dict.put(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),myImplem);
-            dict.put(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString(),mySpec);
+            dict.put(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(), myImplem);
+            dict.put(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString(), mySpec);
             return dict;
         }
     }

@@ -27,20 +27,20 @@ public class MultipleFunctionalExtensionImplementationTest extends FunctionalExt
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1 instanceof ExtensionSpecBis).isTrue();
         assertThat(serviceObj1.getFalse()).isFalse();
-        assertThat(((ExtensionSpecBis)serviceObj1).getTrue()).isTrue();
+        assertThat(((ExtensionSpecBis) serviceObj1).getTrue()).isTrue();
 
         ExtensionSpecBis serviceObjBis = osgiHelper.getServiceObject(ExtensionSpecBis.class);
 
         assertThat(serviceObjBis).isNotNull();
         assertThat(serviceObjBis instanceof ExtensionSpec).isTrue();
-        assertThat(((ExtensionSpec)serviceObjBis).getFalse()).isFalse();
+        assertThat(((ExtensionSpec) serviceObjBis).getFalse()).isFalse();
         assertThat(serviceObjBis.getTrue()).isTrue();
 
 
     }
 
     private void createContextEntityToInit() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityImpl.class.getName(),"context.entity",new HashMap());
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityImpl.class.getName(), "context.entity", new HashMap());
     }
 
 }

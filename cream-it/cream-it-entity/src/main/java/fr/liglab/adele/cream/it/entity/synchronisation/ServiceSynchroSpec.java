@@ -11,15 +11,25 @@ public interface ServiceSynchroSpec {
 
     public static boolean PARAM_2_VALUE = true;
 
-    public @State static String PARAM_1_DIRECTACCESS = "directAccessParam";
+    public
+    @State
+    static String PARAM_1_DIRECTACCESS = "directAccessParam";
 
-    public @State static String PARAM_2_PULL = "pullParam";
+    public
+    @State
+    static String PARAM_2_PULL = "pullParam";
 
-    public @State static String PARAM_3_APPLY = "ApplyParam";
+    public
+    @State
+    static String PARAM_3_APPLY = "ApplyParam";
 
-    public @State static String PARAM_4_PERIODICPULL = "PeriodicPullParam";
+    public
+    @State
+    static String PARAM_4_PERIODICPULL = "PeriodicPullParam";
 
-    public @State static String PARAM_5_PULLAPPLY = "ApplyPullParam";
+    public
+    @State
+    static String PARAM_5_PULLAPPLY = "ApplyPullParam";
 
     boolean getterMethodParam1();
 

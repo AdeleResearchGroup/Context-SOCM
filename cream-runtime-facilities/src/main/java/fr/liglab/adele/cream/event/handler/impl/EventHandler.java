@@ -26,27 +26,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @Provides(specifications = ServiceTrackingInterceptor.class)
 public class EventHandler extends PrimitiveHandler implements ServiceTrackingInterceptor {
 
+    private final Map<DependencyModel, List<ContextUpdateElement>> myDependencyModelToContextElement = new ConcurrentHashMap<>();
+    private final List<ContextUpdateElement> myContextUpdateElement = new ArrayList<>();
     /**
      * Filter used to match the dependencies we are interested in
      */
-    @ServiceProperty(name= DependencyInterceptor.TARGET_PROPERTY)
+    @ServiceProperty(name = DependencyInterceptor.TARGET_PROPERTY)
     private String dependencyFilter;
-
-    private final Map<DependencyModel,List<ContextUpdateElement>> myDependencyModelToContextElement = new ConcurrentHashMap<>();
-
-    private final List<ContextUpdateElement> myContextUpdateElement = new ArrayList<>();
 
     @Override
     public <S> TransformedServiceReference<S> accept(DependencyModel dependency, BundleContext context, TransformedServiceReference<S> ref) {
 
         List<ContextUpdateElement> elements = myDependencyModelToContextElement.get(dependency);
 
-        if (elements == null){
+        if (elements == null) {
             return ref;
         }
 
-        if (getInstanceManager().getState() == ComponentInstance.VALID){
-            for (ContextUpdateElement element: elements){
+        if (getInstanceManager().getState() == ComponentInstance.VALID) {
+            for (ContextUpdateElement element : elements) {
                 element.updateIfNecessary(ref);
             }
         }
@@ -58,16 +56,16 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     public void open(DependencyModel dependency) {
         if (dependency instanceof Dependency) {
             List<ContextUpdateElement> contextUpdateElements = new ArrayList<>();
-            for (ContextUpdateElement element : myContextUpdateElement){
+            for (ContextUpdateElement element : myContextUpdateElement) {
 
-                if (element.equals(dependency)){
+                if (element.equals(dependency)) {
                     contextUpdateElements.add(element);
 
                 }
 
             }
-            if (!contextUpdateElements.isEmpty()){
-                myDependencyModelToContextElement.put(dependency,contextUpdateElements);
+            if (!contextUpdateElements.isEmpty()) {
+                myDependencyModelToContextElement.put(dependency, contextUpdateElements);
             }
         }
     }
@@ -81,23 +79,23 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
         InstanceManager instanceManager = getInstanceManager();
 
-        String instanceName				= instanceManager.getInstanceName();
-        dependencyFilter				= "("+ Factory.INSTANCE_NAME_PROPERTY+"="+instanceName+")";
+        String instanceName = instanceManager.getInstanceName();
+        dependencyFilter = "(" + Factory.INSTANCE_NAME_PROPERTY + "=" + instanceName + ")";
 
         Element[] handlerMethods = metadata.getElements(FacilitiesHandlerReference.EVENT_HANDLER_NAME, FacilitiesHandlerReference.FACILITIES_HANDLER_NAMESPACE);
 
         /*
          * Configure the list of handled fields
          */
-        for (Element event: handlerMethods) {
+        for (Element event : handlerMethods) {
             String methodEvent = event.getAttribute("method");
             String spec = event.getAttribute(ContextUpdate.SPECIFICATION_ATTRIBUTE);
             String state = event.getAttribute(ContextUpdate.STATE_ID_ATTRIBUTE);
             MethodMetadata methodMetadata = getPojoMetadata().getMethod(methodEvent);
-            if (checkMethodStructure(methodMetadata)){
-                myContextUpdateElement.add(new ContextUpdateElement(spec,state,methodMetadata,instanceManager));
-            }else {
-                getLogger().log(Log.WARNING," Method " + methodEvent + " is malformed");
+            if (checkMethodStructure(methodMetadata)) {
+                myContextUpdateElement.add(new ContextUpdateElement(spec, state, methodMetadata, instanceManager));
+            } else {
+                getLogger().log(Log.WARNING, " Method " + methodEvent + " is malformed");
             }
         }
     }
@@ -105,17 +103,17 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     /**
      * Not check the first type parameter because it cannot be done without loading the pojo to deduce interface Hierarchy of the first parameter type
      */
-    private boolean checkMethodStructure(MethodMetadata metadata){
+    private boolean checkMethodStructure(MethodMetadata metadata) {
         String[] argument = metadata.getMethodArguments();
-        if (argument == null || argument.length != 3){
+        if (argument == null || argument.length != 3) {
             return false;
         }
 
-        if (! argument[1].equals(Object.class.getName())){
+        if (!argument[1].equals(Object.class.getName())) {
             return false;
         }
 
-        if (! argument[2].equals(Object.class.getName())){
+        if (!argument[2].equals(Object.class.getName())) {
             return false;
         }
         return true;
@@ -123,9 +121,9 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     }
 
     @Override
-    public  void stop() {
-        for (Map.Entry<DependencyModel,List<ContextUpdateElement>> entry : myDependencyModelToContextElement.entrySet()){
-            for (ContextUpdateElement updateElement : entry.getValue()){
+    public void stop() {
+        for (Map.Entry<DependencyModel, List<ContextUpdateElement>> entry : myDependencyModelToContextElement.entrySet()) {
+            for (ContextUpdateElement updateElement : entry.getValue()) {
                 updateElement.clearValue();
             }
         }
@@ -133,7 +131,7 @@ public class EventHandler extends PrimitiveHandler implements ServiceTrackingInt
     }
 
     @Override
-    public  void start() {
+    public void start() {
 //Do nothing
     }
 }

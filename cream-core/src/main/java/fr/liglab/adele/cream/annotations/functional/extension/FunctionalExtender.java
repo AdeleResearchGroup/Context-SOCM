@@ -12,7 +12,7 @@ public @interface FunctionalExtender {
     Class[] contextServices();
 
     @Target(ElementType.METHOD)
-    @interface ChangeOn{
+    @interface ChangeOn {
         Class contextService();
 
         String id();

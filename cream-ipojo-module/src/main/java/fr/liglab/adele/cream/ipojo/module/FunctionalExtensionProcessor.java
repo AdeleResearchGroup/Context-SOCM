@@ -8,13 +8,13 @@ import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtensio
 public class FunctionalExtensionProcessor extends AbstractFunctionalExtensionProcessor<FunctionalExtension> {
 
 
-	public FunctionalExtensionProcessor(ClassLoader classReferenceLoader) {
-		super(FunctionalExtension.class,classReferenceLoader);
-	}
+    public FunctionalExtensionProcessor(ClassLoader classReferenceLoader) {
+        super(FunctionalExtension.class, classReferenceLoader);
+    }
 
-	@Override
-	public void process(FunctionalExtension annotation) {
-		buildSubBehaviorElement(annotation);
-	}
+    @Override
+    public void process(FunctionalExtension annotation) {
+        buildSubBehaviorElement(annotation);
+    }
 
 }

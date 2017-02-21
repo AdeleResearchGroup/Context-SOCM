@@ -43,7 +43,7 @@ public class FunctionalExtensionContextSourceTest extends FunctionalExtensionBas
     public void testBehaviorAsIPOJOsource() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ComponentInstance instance = createEntityWithBehaviorChangeOn();
         ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 2000));
-        assertThat(extractStateFilter(instance)).isEqualTo("${"+ ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE)+"}");
+        assertThat(extractStateFilter(instance)).isEqualTo("${" + ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE) + "}");
 
         serviceObj1.setValue("value1");
         assertThat(extractStateFilter(instance)).isEqualTo("value1");
@@ -53,27 +53,26 @@ public class FunctionalExtensionContextSourceTest extends FunctionalExtensionBas
 
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance,"behavior1")).isNotNull();
-        functionalExtensionHelper.stopBehavior(instance,"behavior1");
+        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance, "behavior1")).isNotNull();
+        functionalExtensionHelper.stopBehavior(instance, "behavior1");
 
-        assertThat(extractStateFilter(instance)).isEqualTo("${"+ ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE)+"}");
+        assertThat(extractStateFilter(instance)).isEqualTo("${" + ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE) + "}");
     }
-
 
 
     private ComponentInstance createEntityWithBehaviorChangeOn() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(ContextEntityImpl.class.getName(),"ContextEntityTest",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextEntityImpl.class.getName(), "ContextEntityTest", null);
     }
 
 
-    private String extractStateFilter(ComponentInstance instance){
-        HandlerDescription description = instance.getInstanceDescription().getHandlerDescription(HandlerFactory.IPOJO_NAMESPACE+":requires");
+    private String extractStateFilter(ComponentInstance instance) {
+        HandlerDescription description = instance.getInstanceDescription().getHandlerDescription(HandlerFactory.IPOJO_NAMESPACE + ":requires");
         Element element = description.getHandlerInfo();
 
-        for (Element requiresElement : element.getElements()){
+        for (Element requiresElement : element.getElements()) {
             String filter = requiresElement.getAttribute("filter");
-            if (filter != null){
-                return filter.substring(7,filter.length()-1);
+            if (filter != null) {
+                return filter.substring(7, filter.length() - 1);
             }
         }
         return null;

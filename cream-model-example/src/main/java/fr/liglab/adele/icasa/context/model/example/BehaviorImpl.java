@@ -1,8 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 
-import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
 
 import java.util.function.Supplier;
 
@@ -13,7 +13,7 @@ public class BehaviorImpl implements BehaviorService {
     private String hello;
 
     @ContextEntity.State.Pull(service = BehaviorService.class, state = BehaviorService.BEHAVIOR_STATE)
-    private Supplier<String> pull =  () -> {
+    private Supplier<String> pull = () -> {
 
         return "Coucou from the behavior";
     };

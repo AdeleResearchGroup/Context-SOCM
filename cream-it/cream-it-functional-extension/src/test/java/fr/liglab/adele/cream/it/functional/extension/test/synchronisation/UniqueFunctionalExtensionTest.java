@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommonConfig {
 
     @Test
-    public void testContextEntityFactoIsPresent()  {
+    public void testContextEntityFactoIsPresent() {
         Factory contextFacto = contextHelper.getContextEntityHelper().getContextEntityFactory(ContextEntity1.class.getName());
 
         assertThat(contextFacto).isNotNull();
@@ -50,7 +50,7 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
     public void testServiceExposedByContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        Object serviceObj2 = osgiHelper.waitForService(ExtensionSpec1.class,null,((long)0),true);
+        Object serviceObj2 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 0), true);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj2).isNotNull();
@@ -72,7 +72,7 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
     public void testDirectAccessSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class,null,((long)0),true);
+        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 0), true);
 
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
@@ -91,7 +91,7 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
     public void testPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class,null,((long)0),true);
+        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 0), true);
 
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
@@ -109,10 +109,10 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
     public void testApplySVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class,null,((long)0),true);
+        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 0), true);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
-        assertThat( serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
+        assertThat(serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
         assertThat(serviceObj1.getterMethodParam3WithChange()).isEqualTo(true);
         assertThat(serviceReference.getProperty(ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.PARAM_3_APPLY))).isEqualTo(null);
 
@@ -128,10 +128,10 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
     public void testPullApplySVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class,null,((long)0),true);
+        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 0), true);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 
-        assertThat( serviceObj1.getterMethodParam5()).isEqualTo(true);
+        assertThat(serviceObj1.getterMethodParam5()).isEqualTo(true);
         assertThat(serviceObj1.getterMethodParam5WithChange()).isEqualTo(true);
 
         serviceObj1.setterMethodParam5(false);
@@ -151,7 +151,7 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
     public void testPeriodicPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class,null,((long)0),true);
+        ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 0), true);
         ServiceReference serviceReference = osgiHelper.getServiceReference(ContextService1.class);
 /**
  * TODO : Test fail, check init phase of behavior
@@ -184,7 +184,7 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
     public void testProxyHeritageDelegation() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntityWithBehaviorHeritage();
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        ExtensionSpecToExtends extensionSpecToExtends = osgiHelper.waitForService(ExtensionSpecToExtends.class,null,((long)0),true);
+        ExtensionSpecToExtends extensionSpecToExtends = osgiHelper.waitForService(ExtensionSpecToExtends.class, null, ((long) 0), true);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(extensionSpecToExtends).isNotNull();
@@ -197,10 +197,10 @@ public class UniqueFunctionalExtensionTest extends FunctionalExtensionBaseCommon
 
 
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(), "ContextEntityTest", null);
     }
 
     private void createContextEntityWithBehaviorHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithFunctionalExtensionHeritage.class.getName(),"ContextEntityTest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithFunctionalExtensionHeritage.class.getName(), "ContextEntityTest", null);
     }
 }

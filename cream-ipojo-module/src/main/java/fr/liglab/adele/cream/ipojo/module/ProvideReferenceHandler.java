@@ -24,7 +24,7 @@ public enum ProvideReferenceHandler {
     IMMUTABLE("immutable");
     private final String myProperty;
 
-    private ProvideReferenceHandler(String propertyName){
+    private ProvideReferenceHandler(String propertyName) {
         myProperty = propertyName;
     }
 
@@ -33,4 +33,4 @@ public enum ProvideReferenceHandler {
     public String toString() {
         return myProperty;
     }
-    }
+}

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Provides
 @Instantiate
-public class FakeWisdomApplicationConfigurationProvider implements ApplicationConfiguration{
+public class FakeWisdomApplicationConfigurationProvider implements ApplicationConfiguration {
     @Override
     public File getBaseDir() {
         return null;

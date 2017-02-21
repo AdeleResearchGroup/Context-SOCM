@@ -22,10 +22,10 @@ public class InitialisationFunctionalExtensionTest extends FunctionalExtensionBa
 
     @Test
     public void testInitBehaviorWithTrue() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        createContextEntityToInit("InitWithTrue",true);
+        createContextEntityToInit("InitWithTrue", true);
 
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        ExtensionInitValue extensionInitValue1 = osgiHelper.waitForService(ExtensionInitValue.class,null,((long)0),true);
+        ExtensionInitValue extensionInitValue1 = osgiHelper.waitForService(ExtensionInitValue.class, null, ((long) 0), true);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(extensionInitValue1).isNotNull();
@@ -34,10 +34,10 @@ public class InitialisationFunctionalExtensionTest extends FunctionalExtensionBa
 
     @Test
     public void testInitBehaviorWithFalse() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        createContextEntityToInit("InitWithFalse",false);
+        createContextEntityToInit("InitWithFalse", false);
 
         Object serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-        ExtensionInitValue extensionInitValue1 = osgiHelper.waitForService(ExtensionInitValue.class,null,((long)0),true);
+        ExtensionInitValue extensionInitValue1 = osgiHelper.waitForService(ExtensionInitValue.class, null, ((long) 0), true);
 
         assertThat(serviceObj1).isNotNull();
         assertThat(extensionInitValue1).isNotNull();
@@ -46,9 +46,9 @@ public class InitialisationFunctionalExtensionTest extends FunctionalExtensionBa
 
     }
 
-    private void createContextEntityToInit(String name,boolean initValue) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        Map<String,Object> properties = new HashMap<>();
-        properties.put(ContextEntity.State.id(ExtensionInitValue.class, ExtensionInitValue.PARAM_TO_INIT),initValue);
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithBehaviorToInit.class.getName(),name,properties);
+    private void createContextEntityToInit(String name, boolean initValue) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ContextEntity.State.id(ExtensionInitValue.class, ExtensionInitValue.PARAM_TO_INIT), initValue);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithBehaviorToInit.class.getName(), name, properties);
     }
 }

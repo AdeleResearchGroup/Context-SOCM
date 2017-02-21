@@ -26,26 +26,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ContextRequierementHandler extends PrimitiveHandler implements ServiceTrackingInterceptor {
 
 
+    private final Map<String, List<Class>> fieldToClass = new HashMap<>();
+    private final Map<DependencyModel, List<Class>> dependencyToClass = new ConcurrentHashMap<>();
     /**
      * Filter used to match the dependencies we are interested in
      */
-    @ServiceProperty(name= DependencyInterceptor.TARGET_PROPERTY)
+    @ServiceProperty(name = DependencyInterceptor.TARGET_PROPERTY)
     private String dependencyFilter;
-
-
-    private final Map<String,List<Class>> fieldToClass = new HashMap<>();
-
-
-    private final Map<DependencyModel,List<Class>> dependencyToClass = new ConcurrentHashMap<>();
 
     @Override
     public <S> TransformedServiceReference<S> accept(DependencyModel dependency, BundleContext context, TransformedServiceReference<S> ref) {
         List<Class> classToCheck = dependencyToClass.get(dependency);
 
 		/*
-		 * skip dependencies not associated to a CS to check
+         * skip dependencies not associated to a CS to check
 		 */
-        if (classToCheck == null){
+        if (classToCheck == null) {
             return ref;
         }
 
@@ -56,21 +52,21 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
 
             serviceObj = context.getService(ref.getWrappedReference());
 
-            for (Class clazz: classToCheck){
-                if (!clazz.isInstance(serviceObj)){
-                 return null;
+            for (Class clazz : classToCheck) {
+                if (!clazz.isInstance(serviceObj)) {
+                    return null;
                 }
             }
-        }finally {
-            if (serviceObj != null){
+        } finally {
+            if (serviceObj != null) {
                 context.ungetService(ref.getWrappedReference());
-            }else {
+            } else {
                 nullReturn = true;
             }
 
         }
 
-        if (nullReturn){
+        if (nullReturn) {
             return null;
         }
 
@@ -82,8 +78,8 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
 
         if (dependency instanceof Dependency) {
             List<Class> listOfClass = fieldToClass.get(((Dependency) dependency).getField());
-            if (listOfClass != null){
-                dependencyToClass.put(dependency,listOfClass);
+            if (listOfClass != null) {
+                dependencyToClass.put(dependency, listOfClass);
             }
 
 
@@ -102,58 +98,58 @@ public class ContextRequierementHandler extends PrimitiveHandler implements Serv
         Class pojoClass = instanceManager.getClazz();
         ClassLoader pojoClassLoader = pojoClass.getClassLoader();
 
-        String componentName			= instanceManager.getClassName();
+        String componentName = instanceManager.getClassName();
 
-        String instanceName				= instanceManager.getInstanceName();
-        dependencyFilter				= "("+ Factory.INSTANCE_NAME_PROPERTY+"="+instanceName+")";
+        String instanceName = instanceManager.getInstanceName();
+        dependencyFilter = "(" + Factory.INSTANCE_NAME_PROPERTY + "=" + instanceName + ")";
 
         Element[] handlerElements = metadata.getElements(FacilitiesHandlerReference.CONTEXT_REQUIREMENT_HANDLER_NAME, FacilitiesHandlerReference.FACILITIES_HANDLER_NAMESPACE);
 
-        for (Element handlerElement : handlerElements){
+        for (Element handlerElement : handlerElements) {
 
-            String handlerSpec= handlerElement.getAttribute(FacilitiesHandlerReference.CONTEXT_REQUIREMENT_SPEC_ATTRIBUTE_NAME);
+            String handlerSpec = handlerElement.getAttribute(FacilitiesHandlerReference.CONTEXT_REQUIREMENT_SPEC_ATTRIBUTE_NAME);
 
-            String fieldName	= handlerElement.getAttribute("field");
-            FieldMetadata field	= getPojoMetadata().getField(fieldName);
+            String fieldName = handlerElement.getAttribute("field");
+            FieldMetadata field = getPojoMetadata().getField(fieldName);
 
             if (field == null) {
-                throw new ConfigurationException("Malformed Manifest : the specified Context Requirement field '"+fieldName+"' is not defined in class "+componentName);
+                throw new ConfigurationException("Malformed Manifest : the specified Context Requirement field '" + fieldName + "' is not defined in class " + componentName);
             }
 
 
             List<String> listOfSpec = ParseUtils.parseArraysAsList(handlerSpec);
 
-            if (listOfSpec == null || listOfSpec.isEmpty()){
-                throw new ConfigurationException("Malformed Manifest : the specified Context Requirement spec is null or empty in class "+componentName);
+            if (listOfSpec == null || listOfSpec.isEmpty()) {
+                throw new ConfigurationException("Malformed Manifest : the specified Context Requirement spec is null or empty in class " + componentName);
             }
 
             List<Class> listOfClass = new ArrayList<>();
-            for (String spec:listOfSpec){
+            for (String spec : listOfSpec) {
                 try {
-                    Class clazz =  pojoClassLoader.loadClass(spec);
+                    Class clazz = pojoClassLoader.loadClass(spec);
                     listOfClass.add(clazz);
                 } catch (ClassNotFoundException e) {
-                    throw new ConfigurationException("Cannot load class "+spec);
+                    throw new ConfigurationException("Cannot load class " + spec);
                 }
             }
 
-            if (listOfClass.isEmpty()){
-                throw new ConfigurationException("Malformed Manifest : the specified Context Requirement spec is null or empty in class "+componentName);
+            if (listOfClass.isEmpty()) {
+                throw new ConfigurationException("Malformed Manifest : the specified Context Requirement spec is null or empty in class " + componentName);
             }
 
-            fieldToClass.put(fieldName,listOfClass);
+            fieldToClass.put(fieldName, listOfClass);
 
         }
 
     }
 
     @Override
-    public  void stop() {
+    public void stop() {
 //do nothing on stop
     }
 
     @Override
-    public  void start() {
+    public void start() {
 //do nothing on start
     }
 }

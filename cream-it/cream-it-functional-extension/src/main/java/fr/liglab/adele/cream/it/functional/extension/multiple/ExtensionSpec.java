@@ -5,7 +5,9 @@ import fr.liglab.adele.cream.annotations.ContextService;
 /**
  * Created by aygalinc on 21/02/17.
  */
-public @ContextService interface ExtensionSpec {
+public
+@ContextService
+interface ExtensionSpec {
 
     boolean getFalse();
 }

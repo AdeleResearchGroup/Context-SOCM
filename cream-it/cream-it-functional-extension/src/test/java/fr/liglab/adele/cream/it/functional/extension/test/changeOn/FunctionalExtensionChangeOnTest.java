@@ -45,7 +45,7 @@ public class FunctionalExtensionChangeOnTest extends FunctionalExtensionBaseComm
         ServiceOfContext serviceObj1 = osgiHelper.getServiceObject(ServiceOfContext.class);
         assertThat(serviceObj1).isNotNull();
 
-        ExtensionSpec behavior = osgiHelper.waitForService(ExtensionSpec.class,null,((long)2000));
+        ExtensionSpec behavior = osgiHelper.waitForService(ExtensionSpec.class, null, ((long) 2000));
         assertThat(behavior).isNotNull();
 
         serviceObj1.setState1(false);
@@ -60,9 +60,8 @@ public class FunctionalExtensionChangeOnTest extends FunctionalExtensionBaseComm
     }
 
 
-
     private ComponentInstance createEntityWithBehaviorChangeOn() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithBehaviorChangeOn.class.getName(),"ContextEntityTest",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextEntityWithBehaviorChangeOn.class.getName(), "ContextEntityTest", null);
     }
 
 }

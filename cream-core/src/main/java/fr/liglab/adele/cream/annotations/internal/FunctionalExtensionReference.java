@@ -11,24 +11,22 @@ public enum FunctionalExtensionReference {
 
     IMPLEMEMENTATION_ATTRIBUTE_NAME("implementation"),
 
-    FIELD_ATTRIBUTE_NAME ("field"),
+    FIELD_ATTRIBUTE_NAME("field"),
 
-    ID_ATTRIBUTE_NAME ("id"),
+    ID_ATTRIBUTE_NAME("id"),
 
     FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME("mandatory"),
 
     FUNCTIONAL_EXTENSION_ID_CONFIG("functional.extension.id");
 
-    private final String property;
-
     /**
      * Constante used in filter
      */
-    public final static String FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY ="functional.extension.factory.property";
+    public final static String FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY = "functional.extension.factory.property";
+    public final static String FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE = "functional.extension.factory";
+    private final String property;
 
-    public final static String FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE ="functional.extension.factory";
-
-    FunctionalExtensionReference(String property){
+    FunctionalExtensionReference(String property) {
         this.property = property;
     }
 

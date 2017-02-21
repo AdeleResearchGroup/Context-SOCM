@@ -5,14 +5,14 @@ import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtensio
 import fr.liglab.adele.cream.annotations.functional.extension.InjectedFunctionalExtension;
 
 @ContextEntity(services = ServiceContextPrime.class)
-@FunctionalExtension(id="injectedBehavior", contextServices = ExtensionToInject.class,implementation = InjectedExtensionImpl.class)
-@FunctionalExtension(id="injectedBehavior2", contextServices = ExtensionToInjectPrime.class,implementation = InjectedExtensionPrimeImpl.class)
+@FunctionalExtension(id = "injectedBehavior", contextServices = ExtensionToInject.class, implementation = InjectedExtensionImpl.class)
+@FunctionalExtension(id = "injectedBehavior2", contextServices = ExtensionToInjectPrime.class, implementation = InjectedExtensionPrimeImpl.class)
 public class ContextServiceUsingMultipleInjectedBehavior implements ServiceContextPrime {
 
-    @InjectedFunctionalExtension(id="injectedBehavior")
+    @InjectedFunctionalExtension(id = "injectedBehavior")
     ExtensionToInject extensionToInjected;
 
-    @InjectedFunctionalExtension(id="injectedBehavior2")
+    @InjectedFunctionalExtension(id = "injectedBehavior2")
     ExtensionToInjectPrime behaviorToInjectedPrime;
 
     @Override

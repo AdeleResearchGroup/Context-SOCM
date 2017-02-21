@@ -13,11 +13,11 @@ import java.util.Set;
  */
 public class ProxyGeneratorUtils {
 
-    public static Map<Method,GeneratedDelegatorProxy> getGeneratedProxyByMethodMap(Set<Class> services, CreamProxyFactory creamProxyFactory){
+    public static Map<Method, GeneratedDelegatorProxy> getGeneratedProxyByMethodMap(Set<Class> services, CreamProxyFactory creamProxyFactory) {
 
-        Map<Method,GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
+        Map<Method, GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
 
-        if (services == null){
+        if (services == null) {
             return proxyDelegatorMap;
         }
 

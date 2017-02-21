@@ -5,10 +5,10 @@ import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtensio
 import fr.liglab.adele.cream.annotations.functional.extension.InjectedFunctionalExtension;
 
 @ContextEntity(services = ServiceContext.class)
-@FunctionalExtension(id="injectedBehavior", contextServices = ExtensionToInject.class,implementation = InjectedExtensionImpl.class)
+@FunctionalExtension(id = "injectedBehavior", contextServices = ExtensionToInject.class, implementation = InjectedExtensionImpl.class)
 public class ContextServiceUsingInjectedBehavior implements ServiceContext {
 
-    @InjectedFunctionalExtension(id="injectedBehavior")
+    @InjectedFunctionalExtension(id = "injectedBehavior")
     ExtensionToInject extensionToInjected;
 
     @Override

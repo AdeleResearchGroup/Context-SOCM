@@ -5,11 +5,11 @@ package fr.liglab.adele.cream.it.functional.extension.synchronisation;
  */
 public interface ExtensionSpecToExtends {
 
-    default boolean returnTrueDefaultMethod(){
+    default boolean returnTrueDefaultMethod() {
         return true;
     }
 
-    default boolean returnTrueDefaultMethodErase(){
+    default boolean returnTrueDefaultMethodErase() {
         return true;
     }
 

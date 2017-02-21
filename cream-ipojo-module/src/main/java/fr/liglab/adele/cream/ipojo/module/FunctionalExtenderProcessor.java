@@ -16,37 +16,35 @@ import java.util.stream.Collectors;
  */
 public class FunctionalExtenderProcessor extends AnnotationProcessor<FunctionalExtender> {
 
-    protected static final String FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT = HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER;
-
-    protected static final String FUNCTIONAL_EXTENSION_LIFECYCLE_ELEMENT = HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER;
-
     public static final String FUNCTIONAL_EXTENSION_COMPONENT_TYPE = "functional-extension";
+    protected static final String FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT = HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER;
+    protected static final String FUNCTIONAL_EXTENSION_LIFECYCLE_ELEMENT = HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER;
 
     public FunctionalExtenderProcessor(ClassLoader classReferenceLoader) {
-        super(FunctionalExtender.class,classReferenceLoader);
+        super(FunctionalExtender.class, classReferenceLoader);
     }
 
     @Override
     public void process(FunctionalExtender annotation) {
-    	
+
     	/*
     	 * Create the corresponding root iPOJO component
     	 */
-        Element component			= new Element(FUNCTIONAL_EXTENSION_COMPONENT_TYPE, "");
-        String classname 			= getAnnotatedClassType().getClassName();
+        Element component = new Element(FUNCTIONAL_EXTENSION_COMPONENT_TYPE, "");
+        String classname = getAnnotatedClassType().getClassName();
 
         component.addAttribute(new Attribute("classname", classname));
         component.addAttribute(new Attribute("immediate", "true"));
 
-        String specifications = Arrays.asList(annotation.contextServices()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
+        String specifications = Arrays.asList(annotation.contextServices()).stream().map(service -> service.getName()).collect(Collectors.joining(",", "{", "}"));
 
-        component.addAttribute(new Attribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString(),specifications));
-        component.addAttribute(new Attribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),classname));
+        component.addAttribute(new Attribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString(), specifications));
+        component.addAttribute(new Attribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(), classname));
 
         if (getRootMetadata() != null) {
             error("Multiple 'component type' annotations on the class '{%s}'.", classname);
             warn("@Entity is ignored.");
-            component =getRootMetadata();
+            component = getRootMetadata();
         }
 
         setRootMetadata(component);
@@ -54,7 +52,7 @@ public class FunctionalExtenderProcessor extends AnnotationProcessor<FunctionalE
         /*
          * Verify the annotated class implements all the context spec specified in the annotation
          */
-        ClassNode clazz 	= getAnnotatedClass();
+        ClassNode clazz = getAnnotatedClass();
         boolean implemented = true;
 
         for (Class service : annotation.contextServices()) {
@@ -64,7 +62,7 @@ public class FunctionalExtenderProcessor extends AnnotationProcessor<FunctionalE
             }
         }
 
-        if (! implemented) {
+        if (!implemented) {
             error("Cannot ensure that the class " + classname + " is the implementation of the specified context spec");
         }
 
@@ -72,14 +70,14 @@ public class FunctionalExtenderProcessor extends AnnotationProcessor<FunctionalE
          /*
          *  Create the FunctionalExtension Entity element that will own all definitions regarding the context
          */
-        Element behaviorEntityElement = new Element(HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER,HandlerReference.NAMESPACE);
-        addMetadataElement(FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT,behaviorEntityElement);
+        Element behaviorEntityElement = new Element(HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER, HandlerReference.NAMESPACE);
+        addMetadataElement(FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT, behaviorEntityElement);
 
         /**
          * Create lyfecycle element
          */
-        Element behaviorLifeCycleElement = new Element(HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER,HandlerReference.NAMESPACE);
-        addMetadataElement(FUNCTIONAL_EXTENSION_LIFECYCLE_ELEMENT,behaviorLifeCycleElement);
+        Element behaviorLifeCycleElement = new Element(HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, HandlerReference.NAMESPACE);
+        addMetadataElement(FUNCTIONAL_EXTENSION_LIFECYCLE_ELEMENT, behaviorLifeCycleElement);
 
 
     }

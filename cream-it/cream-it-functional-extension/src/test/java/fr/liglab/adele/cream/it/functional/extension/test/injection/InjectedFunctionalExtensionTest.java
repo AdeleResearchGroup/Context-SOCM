@@ -43,12 +43,11 @@ public class InjectedFunctionalExtensionTest extends FunctionalExtensionBaseComm
     public void testSimpleBehaviorInjection() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
 
-        ServiceContext serviceObj1 = osgiHelper.waitForService(ServiceContext.class,null,((long)2000));
+        ServiceContext serviceObj1 = osgiHelper.waitForService(ServiceContext.class, null, ((long) 2000));
 
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1.returnTrueFromTheInjectedBehavior()).isTrue();
     }
-
 
 
     @Test
@@ -65,10 +64,10 @@ public class InjectedFunctionalExtensionTest extends FunctionalExtensionBaseComm
 
 
     private ComponentInstance createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingInjectedBehavior.class.getName(),"ContextServiceUsingInjectedBehavior",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingInjectedBehavior.class.getName(), "ContextServiceUsingInjectedBehavior", null);
     }
 
     private void createMultipleContextEntityInjectedBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingMultipleInjectedBehavior.class.getName(),"ContextServiceUsingMultipleInjectedBehavior",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextServiceUsingMultipleInjectedBehavior.class.getName(), "ContextServiceUsingMultipleInjectedBehavior", null);
     }
 }

@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 //Same level as provided handler, maybe to change ...
-@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, namespace = HandlerReference.NAMESPACE,level = 3)
+@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, namespace = HandlerReference.NAMESPACE, level = 3)
 public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler implements ContextListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionalExtensionLifecyleHandler.class);
@@ -26,7 +26,7 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
 
     private final List<FunctionalExtensionStateListener> stateListeners = new ArrayList<>();
 
-    private final Map<Callback,String> listenerCallBack = new HashMap<>();
+    private final Map<Callback, String> listenerCallBack = new HashMap<>();
 
     private final Set<String> propertyToListen = new HashSet<>();
 
@@ -41,18 +41,18 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
         //Do nothing
-        if (configuration.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString()) == null){
+        if (configuration.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString()) == null) {
             throw new ConfigurationException(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG + "config parameter must be provided");
         }
         id = (String) configuration.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString());
 
-        Element[] elements = metadata.getElements(HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER,HandlerReference.NAMESPACE);
-        if (elements == null || elements.length == 0){
+        Element[] elements = metadata.getElements(HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, HandlerReference.NAMESPACE);
+        if (elements == null || elements.length == 0) {
             return;
         }
 
         PojoMetadata pojoMetadata = getPojoMetadata();
-        for (Element element : elements){
+        for (Element element : elements) {
             Element[] propertyElement = element.getElements();
 
             for (Element property : propertyElement) {
@@ -84,7 +84,6 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
     }
 
 
-
     public synchronized void registerBehaviorListener(FunctionalExtensionStateListener listener) {
         stateListeners.add(listener);
     }
@@ -102,7 +101,7 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
         }
     }
 
-    public void startBehavior(){
+    public void startBehavior() {
         synchronized (myLock) {
             if (!this.getValidity()) {
                 setValidity(true);
@@ -110,9 +109,9 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
         }
     }
 
-    private void notifyListener(int state){
-        for (FunctionalExtensionStateListener functionalExtensionStateListener : stateListeners){
-            functionalExtensionStateListener.functionalExtensionStateChange(state,id);
+    private void notifyListener(int state) {
+        for (FunctionalExtensionStateListener functionalExtensionStateListener : stateListeners) {
+            functionalExtensionStateListener.functionalExtensionStateChange(state, id);
         }
     }
 
@@ -123,15 +122,15 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
 
     @Override
     public void update(ContextSource source, String property, Object value) {
-        if (getInstanceManager().getState() != ComponentInstance.VALID){
+        if (getInstanceManager().getState() != ComponentInstance.VALID) {
             return;
         }
-        if (!listenerCallBack.containsValue(property)){
+        if (!listenerCallBack.containsValue(property)) {
             return;
         }
         Object[] args = new Object[]{value};
 
-        for (Map.Entry<Callback,String> callback : listenerCallBack.entrySet()) {
+        for (Map.Entry<Callback, String> callback : listenerCallBack.entrySet()) {
             try {
                 if (callback.getValue().equals(property)) {
                     callback.getKey().call(args);
@@ -147,11 +146,18 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
     }
 
 
-    public Set<String> getPropertiesToListen(){
+    public Set<String> getPropertiesToListen() {
         return propertyToListen;
     }
 
-    private class BehaviorLifecycleHandlerDescription extends HandlerDescription{
+    @Override
+    public void stateChanged(int state) {
+        if (state != ComponentInstance.VALID) {
+            notifyListener(state);
+        }
+    }
+
+    private class BehaviorLifecycleHandlerDescription extends HandlerDescription {
 
         /**
          * Creates a handler description.
@@ -165,7 +171,7 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
         @Override
         public Element getHandlerInfo() {
             Element element = super.getHandlerInfo();
-            element.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(),id));
+            element.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(), id));
             return element;
         }
     }
@@ -173,7 +179,7 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
     /**
      * Ensure that all handler state method are called before notify the behavior tracker manager to expose behavior as a service if the componentbecome valid
      */
-    private class InstanceListenerImpl implements InstanceStateListener{
+    private class InstanceListenerImpl implements InstanceStateListener {
 
 
         @Override
@@ -181,13 +187,6 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
             if (newState == ComponentInstance.VALID) {
                 notifyListener(newState);
             }
-        }
-    }
-
-    @Override
-    public void stateChanged(int state) {
-        if (state != ComponentInstance.VALID){
-            notifyListener(state);
         }
     }
 }

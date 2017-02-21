@@ -14,7 +14,7 @@ public interface EntityProvider {
     public boolean isEnabled(String entity);
 
     public boolean enable(String entity);
-    
+
     public boolean disable(String entity);
 
     public Set<String> getInstances(String entity, boolean includePending);

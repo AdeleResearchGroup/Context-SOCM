@@ -28,27 +28,22 @@ import java.util.Properties;
 public class ContextProvideStrategy extends CreationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextProvideStrategy.class);
-
+    private final Object lock = new Object();
+    FunctionalExtension[] functionalExtensions;
+    Class<?>[] clazzInterface;
+    ClassLoader pojoClassLoader;
     /**
      * The instance manager passed to the iPOJO ServiceFactory to manage
      * instances.
      */
     private InstanceManager myManager;
-
     private List<String> interfazPublished = new ArrayList<>();
-
-    private final Object lock = new Object();
-
-    FunctionalExtension[] functionalExtensions;
-    Class<?>[] clazzInterface ;
-
-    ClassLoader pojoClassLoader;
 
     @Override
     public void onPublication(InstanceManager instance, String[] interfaces, Properties props) {
         this.myManager = instance;
         Class clazz = myManager.getClazz();
-        synchronized (lock){
+        synchronized (lock) {
             interfazPublished.clear();
             interfazPublished.addAll(Arrays.asList(interfaces));
             functionalExtensions = (FunctionalExtension[]) clazz.getAnnotationsByType(FunctionalExtension.class);
@@ -71,19 +66,19 @@ public class ContextProvideStrategy extends CreationStrategy {
 
         InvocationHandler behaviorHandler = getBehaviorHandler();
 
-        if (behaviorHandler != null){
+        if (behaviorHandler != null) {
             successor.add(behaviorHandler);
         }
 
-        InvocationHandler invocationHandler = new CustomInvocationHandler(pojo,(CreamGenerator) myManager,
-                new ParentSuccessorStrategy(),successor
+        InvocationHandler invocationHandler = new CustomInvocationHandler(pojo, (CreamGenerator) myManager,
+                new ParentSuccessorStrategy(), successor
         );
 
         List<Class> listOfInterfaces = new ArrayList<>();
         listOfInterfaces.add(Pojo.class);
 
-        synchronized (lock){
-            for (FunctionalExtension functionalExtension : functionalExtensions){
+        synchronized (lock) {
+            for (FunctionalExtension functionalExtension : functionalExtensions) {
                 Class[] services = functionalExtension.contextServices();
                 for (Class service : services) {
                     if (interfazPublished.contains(service.getName())) {
@@ -92,8 +87,8 @@ public class ContextProvideStrategy extends CreationStrategy {
                 }
             }
 
-            for (Class interfaz:clazzInterface){
-                if(interfazPublished.contains(interfaz.getName())) {
+            for (Class interfaz : clazzInterface) {
+                if (interfazPublished.contains(interfaz.getName())) {
                     listOfInterfaces.add(interfaz);
                 }
             }
@@ -101,10 +96,10 @@ public class ContextProvideStrategy extends CreationStrategy {
             Class[] arrayOfInterfaz = new Class[listOfInterfaces.size()];
             arrayOfInterfaz = listOfInterfaces.toArray(arrayOfInterfaz);
 
-            try{
-                return  Proxy.newProxyInstance(pojoClassLoader,arrayOfInterfaz,invocationHandler);
-            }catch (java.lang.NoClassDefFoundError e){
-                LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! ",e);
+            try {
+                return Proxy.newProxyInstance(pojoClassLoader, arrayOfInterfaz, invocationHandler);
+            } catch (java.lang.NoClassDefFoundError e) {
+                LOG.warn("Import-package declaration in bundle that contains instance " + myManager.getInstanceName() + " isn't enought explicit to load class defined in error. Context Provide strategy cannot be used, singleton strategy used instead ! ", e);
             }
         }
 
@@ -117,12 +112,12 @@ public class ContextProvideStrategy extends CreationStrategy {
         //Do nothing on unget service
     }
 
-    private InvocationHandler getBehaviorHandler(){
-        Object  handler = myManager.getHandler(HandlerReference.NAMESPACE+":"+ HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
-        if (handler == null){
+    private InvocationHandler getBehaviorHandler() {
+        Object handler = myManager.getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
+        if (handler == null) {
             return null;
         }
-        return (InvocationHandler)  handler;
+        return (InvocationHandler) handler;
     }
 
     private class ParentSuccessorStrategy implements SuccessorStrategy {
@@ -140,61 +135,59 @@ public class ContextProvideStrategy extends CreationStrategy {
         @Override
         public Object successorStrategy(Object pojo, List<InvocationHandler> successors, Object proxy, Method method, Object[] args) {
             String nativeMethodCode = belongToObjectMethod(method, args);
-            if (!NONE_OBJECT_METHOD_CALL.equals(nativeMethodCode)){
-                if (EQUALS_METHOD_CALL.equals(nativeMethodCode)){
+            if (!NONE_OBJECT_METHOD_CALL.equals(nativeMethodCode)) {
+                if (EQUALS_METHOD_CALL.equals(nativeMethodCode)) {
                     return pojo.equals(args[0]);
-                }
-                else if (HASHCODE_METHOD_CALL.equals(nativeMethodCode)){
+                } else if (HASHCODE_METHOD_CALL.equals(nativeMethodCode)) {
                     return pojo.hashCode();
-                }
-                else if (TOSTRING_METHOD_CALL.equals(nativeMethodCode)){
+                } else if (TOSTRING_METHOD_CALL.equals(nativeMethodCode)) {
                     return pojo.toString();
                 }
             }
 
-            if (belongToPojoInterfaceMethod(method,args)){
+            if (belongToPojoInterfaceMethod(method, args)) {
                 return ((Pojo) pojo).getComponentInstance();
             }
 
-            return applySuccessionStrategy(successors,proxy,method,args);
+            return applySuccessionStrategy(successors, proxy, method, args);
 
         }
 
-        private String belongToObjectMethod(Method method, Object[] args){
-            if (TOSTRING_METHOD_CALL.equals(method.getName()) && args == null ){
+        private String belongToObjectMethod(Method method, Object[] args) {
+            if (TOSTRING_METHOD_CALL.equals(method.getName()) && args == null) {
                 return TOSTRING_METHOD_CALL;
             }
-            if (HASHCODE_METHOD_CALL.equals(method.getName()) && args == null ){
+            if (HASHCODE_METHOD_CALL.equals(method.getName()) && args == null) {
                 return HASHCODE_METHOD_CALL;
             }
-            if (EQUALS_METHOD_CALL.equals(method.getName()) && args.length == 1 ){
+            if (EQUALS_METHOD_CALL.equals(method.getName()) && args.length == 1) {
                 return EQUALS_METHOD_CALL;
             }
             return NONE_OBJECT_METHOD_CALL;
         }
 
-        private boolean belongToPojoInterfaceMethod(Method method, Object[] args){
-            if (GETCOMPONENTINSTANCE_METHOD_CALL.equals(method.getName()) && args == null && Pojo.class.equals(method.getDeclaringClass())){
+        private boolean belongToPojoInterfaceMethod(Method method, Object[] args) {
+            if (GETCOMPONENTINSTANCE_METHOD_CALL.equals(method.getName()) && args == null && Pojo.class.equals(method.getDeclaringClass())) {
                 return true;
             }
             return false;
         }
 
-        private Object applySuccessionStrategy(List<InvocationHandler> successors, Object proxy, Method method, Object[] args)  {
-            for (InvocationHandler successor : successors){
+        private Object applySuccessionStrategy(List<InvocationHandler> successors, Object proxy, Method method, Object[] args) {
+            for (InvocationHandler successor : successors) {
                 Object returnObj = null;
                 try {
-                    returnObj = successor.invoke(proxy,method,args);
+                    returnObj = successor.invoke(proxy, method, args);
                 } catch (Throwable throwable) {
-                    throw new CreamInvocationException("cause by",throwable);
+                    throw new CreamInvocationException("cause by", throwable);
                 }
-                if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)){
+                if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)) {
                     continue;
                 }
                 return returnObj;
             }
-             LOG.warn("Cream invocation exception caused because " + method.getName() + " can not be found");
-            throw  new CreamInvocationException();
+            LOG.warn("Cream invocation exception caused because " + method.getName() + " can not be found");
+            throw new CreamInvocationException();
         }
     }
 }

@@ -25,13 +25,12 @@ public class FunctionalExtensionInvalidTest extends FunctionalExtensionBaseCommo
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
         /** Check if extension is invalid because requires not satisfy and context entity is valid */
-        assertThat(functionalExtensionHelper.getBehavior(instance,"extension")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance,"extension").getState()).isEqualTo(ComponentInstance.INVALID);
+        assertThat(functionalExtensionHelper.getBehavior(instance, "extension")).isNotNull();
+        assertThat(functionalExtensionHelper.getBehavior(instance, "extension").getState()).isEqualTo(ComponentInstance.INVALID);
         assertThat(instance.getState()).isEqualTo(ComponentInstance.VALID);
 
-        ExtensionInvalidSpec extensionInvalidSpec = osgiHelper.waitForService(ExtensionInvalidSpec.class,null,((long)2000),false);
+        ExtensionInvalidSpec extensionInvalidSpec = osgiHelper.waitForService(ExtensionInvalidSpec.class, null, ((long) 2000), false);
         assertThat(extensionInvalidSpec).isNull();
-
 
 
     }
@@ -42,27 +41,27 @@ public class FunctionalExtensionInvalidTest extends FunctionalExtensionBaseCommo
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
         /** Check if extension is invalid because requires not satisfy and context entity is valid */
-        assertThat(functionalExtensionHelper.getBehavior(instance,"invalidExtension")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance,"invalidExtension").getState()).isEqualTo(ComponentInstance.INVALID);
-        assertThat(functionalExtensionHelper.getBehavior(instance,"validExtension")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance,"validExtension").getState()).isEqualTo(ComponentInstance.VALID);
+        assertThat(functionalExtensionHelper.getBehavior(instance, "invalidExtension")).isNotNull();
+        assertThat(functionalExtensionHelper.getBehavior(instance, "invalidExtension").getState()).isEqualTo(ComponentInstance.INVALID);
+        assertThat(functionalExtensionHelper.getBehavior(instance, "validExtension")).isNotNull();
+        assertThat(functionalExtensionHelper.getBehavior(instance, "validExtension").getState()).isEqualTo(ComponentInstance.VALID);
 
         assertThat(instance.getState()).isEqualTo(ComponentInstance.VALID);
 
 
-        ExtensionInvalidSpec extensionInvalidSpec = osgiHelper.waitForService(ExtensionInvalidSpec.class,null,((long)2000),false);
+        ExtensionInvalidSpec extensionInvalidSpec = osgiHelper.waitForService(ExtensionInvalidSpec.class, null, ((long) 2000), false);
         assertThat(extensionInvalidSpec).isNull();
 
-        ExtensionValidSpec extensionValidSpec = osgiHelper.waitForService(ExtensionValidSpec.class,null,((long)2000),true);
+        ExtensionValidSpec extensionValidSpec = osgiHelper.waitForService(ExtensionValidSpec.class, null, ((long) 2000), true);
         assertThat(extensionValidSpec).isNotNull();
 
     }
 
     private ComponentInstance createEmptyContextEntityImpl() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(EmptyContextEntityWithInvalidSpecImpl.class.getName(),"ContextEntityTest",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(EmptyContextEntityWithInvalidSpecImpl.class.getName(), "ContextEntityTest", null);
     }
 
     private ComponentInstance createEmptyContextEntityImplWithInvalidAndValid() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(EmptyContextEntityWithValidAndInvalidSpecImpl.class.getName(),"ContextEntityTest",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(EmptyContextEntityWithValidAndInvalidSpecImpl.class.getName(), "ContextEntityTest", null);
     }
 }

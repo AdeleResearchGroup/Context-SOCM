@@ -1,8 +1,8 @@
 package fr.liglab.adele.cream.it.facilities.test;
 
 import fr.liglab.adele.cream.it.facilities.requirement.*;
-import fr.liglab.adele.cream.testing.helpers.FunctionalExtensionHelper;
 import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
+import fr.liglab.adele.cream.testing.helpers.FunctionalExtensionHelper;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -22,7 +22,6 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
 
     /**
      * Configuration of test environment
-     *
      */
 
     @Override
@@ -43,7 +42,7 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
     }
 
     @Test
-    public void testRequirementWithoutHeritage()  throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException{
+    public void testRequirementWithoutHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ipojoHelper.createComponentInstance(ContextConsumer.class.getName());
         BindCounterService bindCounter = osgiHelper.getServiceObject(BindCounterService.class);
 
@@ -52,20 +51,20 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         ContextProvideService serviceObj1 = osgiHelper.getServiceObject(ContextProvideService.class);
         Assertions.assertThat(serviceObj1).isNotNull();
 
-        BehaviorService behavior = osgiHelper.waitForService(BehaviorService.class,null,((long)2000));
+        BehaviorService behavior = osgiHelper.waitForService(BehaviorService.class, null, ((long) 2000));
 
         assertThat(bindCounter.getUnbind()).isEqualTo(0);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance,"behavior1")).isNotNull();
+        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance, "behavior1")).isNotNull();
 
-        functionalExtensionHelper.invalidBehavior(instance,"behavior1");
+        functionalExtensionHelper.invalidBehavior(instance, "behavior1");
 
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        functionalExtensionHelper.validBehavior(instance,"behavior1");
+        functionalExtensionHelper.validBehavior(instance, "behavior1");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
 
@@ -73,7 +72,7 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
     }
 
     @Test
-    public void testRequirementWithHeritage()  throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException{
+    public void testRequirementWithHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ipojoHelper.createComponentInstance(ContextConsumer.class.getName());
         BindCounterService bindCounter = osgiHelper.getServiceObject(BindCounterService.class);
 
@@ -82,20 +81,20 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         ContextProvideService serviceObj1 = osgiHelper.getServiceObject(ContextProvideService.class);
         Assertions.assertThat(serviceObj1).isNotNull();
 
-        BehaviorServiceHeritage behavior = osgiHelper.waitForService(BehaviorServiceHeritage.class,null,((long)2000));
+        BehaviorServiceHeritage behavior = osgiHelper.waitForService(BehaviorServiceHeritage.class, null, ((long) 2000));
 
         assertThat(bindCounter.getUnbind()).isEqualTo(0);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance,"behaviorHeritage")).isNotNull();
+        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance, "behaviorHeritage")).isNotNull();
 
-        functionalExtensionHelper.invalidBehavior(instance,"behaviorHeritage");
+        functionalExtensionHelper.invalidBehavior(instance, "behaviorHeritage");
 
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        functionalExtensionHelper.validBehavior(instance,"behaviorHeritage");
+        functionalExtensionHelper.validBehavior(instance, "behaviorHeritage");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
 
@@ -103,10 +102,10 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
     }
 
     private ComponentInstance createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(ContextProvider.class.getName(),"ContextEntityTest",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextProvider.class.getName(), "ContextEntityTest", null);
     }
 
     private ComponentInstance createContextEntityWithHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return contextHelper.getContextEntityHelper().createContextEntity(ContextProviderWithBehaviorHeritage.class.getName(),"ContextEntityTest",null);
+        return contextHelper.getContextEntityHelper().createContextEntity(ContextProviderWithBehaviorHeritage.class.getName(), "ContextEntityTest", null);
     }
 }

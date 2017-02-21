@@ -38,13 +38,13 @@ public class CreamProxyFactory extends ClassLoader {
      * @return the Class object of the proxy.
      */
     protected Class getProxyClass(Class clazz) {
-        byte[] clz = CreamProxyGenerator.dump(clazz,manager.getInstanceName()); // Generate the proxy.
+        byte[] clz = CreamProxyGenerator.dump(clazz, manager.getInstanceName()); // Generate the proxy.
         // Turn around the VM changes (FELIX-2716) about java.* classes.
         String cn = clazz.getName();
         if (cn.startsWith("java.")) {
             cn = "$" + cn;
         }
-        return defineClass(cn + "$$Proxy"+manager.getInstanceName().hashCode(), clz, 0, clz.length);
+        return defineClass(cn + "$$Proxy" + manager.getInstanceName().hashCode(), clz, 0, clz.length);
     }
 
     public Object getProxy(Class spec) {
@@ -53,7 +53,7 @@ public class CreamProxyFactory extends ClassLoader {
             Constructor constructor = clazz.getConstructor();
             return constructor.newInstance();
         } catch (Exception e) {
-            LOG.error("error during proxy generation",e);
+            LOG.error("error during proxy generation", e);
             return null;
         }
     }
@@ -73,7 +73,7 @@ public class CreamProxyFactory extends ClassLoader {
         try {
             return manager.getContext().getBundle().loadClass(name);
         } catch (ClassNotFoundException e) {
-            LOG.debug("Classloading delegation ",e);
+            LOG.debug("Classloading delegation ", e);
             return myInstanceManagerClassLoader.loadClass(name);
         }
     }

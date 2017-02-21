@@ -46,9 +46,8 @@ public class MultipleFunctionalExtensionTest extends FunctionalExtensionBaseComm
 
         assertThat(serviceObj1).isNotNull();
 
-        Object serviceObj2 = osgiHelper.waitForService(ExtensionSpec1.class,null,((long)0),true);
-        Object serviceObj3 = osgiHelper.waitForService(FunctionalExtension2.class,null,((long)0),true);
-
+        Object serviceObj2 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 0), true);
+        Object serviceObj3 = osgiHelper.waitForService(FunctionalExtension2.class, null, ((long) 0), true);
 
 
         assertThat(serviceObj1 instanceof ContextService1).isTrue();
@@ -67,6 +66,6 @@ public class MultipleFunctionalExtensionTest extends FunctionalExtensionBaseComm
     }
 
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntity2.class.getName(),"ContextEntityTest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntity2.class.getName(), "ContextEntityTest", null);
     }
 }

@@ -10,56 +10,47 @@ import java.util.function.Supplier;
 @ContextEntity(services = ServiceSynchroSpec.class)
 public class ContextEntitySynchro implements ServiceSynchroSpec {
 
-    @ContextEntity.State.Field(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_1_DIRECTACCESS,directAccess = true,value = "true")
+    @ContextEntity.State.Field(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_1_DIRECTACCESS, directAccess = true, value = "true")
     public Boolean param1;
 
     /**
      * PARAM 2 : Pull only
      */
-    @ContextEntity.State.Field(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_2_PULL)
+    @ContextEntity.State.Field(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_2_PULL)
     public Boolean param2;
-
-    @ContextEntity.State.Pull(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_2_PULL)
-    Supplier<Boolean> param2Supplier = ()-> true;
-
     /**
      * PARAM 3 : APPLY only
      */
-    @ContextEntity.State.Field(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_3_APPLY)
+    @ContextEntity.State.Field(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_3_APPLY)
     public Boolean param3;
-
-    Boolean param3Apply = true;
-
-    @ContextEntity.State.Apply(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_3_APPLY)
-    Consumer<Boolean> param3Consumer = (Boolean x)-> param3Apply = x;
-
     /**
      * PARAM 4 : PERIODIC PULL only
      */
-    @ContextEntity.State.Field(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_4_PERIODICPULL)
+    @ContextEntity.State.Field(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_4_PERIODICPULL)
     public Long param4;
-
-    @ContextEntity.State.Pull(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_4_PERIODICPULL,period = 2,unit = TimeUnit.SECONDS)
-    Supplier<Long> param4PeriodicSupplier = ()-> System.currentTimeMillis();
-
     /**
      * PARAM 5 : PULL + APPLY
      */
-    @ContextEntity.State.Field(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_5_PULLAPPLY)
+    @ContextEntity.State.Field(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_5_PULLAPPLY)
     public Boolean param5;
-
+    @ContextEntity.State.Pull(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_2_PULL)
+    Supplier<Boolean> param2Supplier = () -> true;
+    Boolean param3Apply = true;
+    @ContextEntity.State.Apply(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_3_APPLY)
+    Consumer<Boolean> param3Consumer = (Boolean x) -> param3Apply = x;
+    @ContextEntity.State.Pull(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_4_PERIODICPULL, period = 2, unit = TimeUnit.SECONDS)
+    Supplier<Long> param4PeriodicSupplier = () -> System.currentTimeMillis();
     Boolean param5Apply = true;
 
-    @ContextEntity.State.Pull(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_5_PULLAPPLY)
-    Supplier<Boolean> param5Supplier = ()-> true;
+    @ContextEntity.State.Pull(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_5_PULLAPPLY)
+    Supplier<Boolean> param5Supplier = () -> true;
 
-    @ContextEntity.State.Apply(service = ServiceSynchroSpec.class,state = ServiceSynchroSpec.PARAM_5_PULLAPPLY)
-    Consumer<Boolean> param5Consumer = (Boolean x)-> param5Apply = x;
+    @ContextEntity.State.Apply(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_5_PULLAPPLY)
+    Consumer<Boolean> param5Consumer = (Boolean x) -> param5Apply = x;
 
 
     /**
      * SERVICE METHOD
-     *
      */
     @Override
     public boolean getterMethodParam1() {

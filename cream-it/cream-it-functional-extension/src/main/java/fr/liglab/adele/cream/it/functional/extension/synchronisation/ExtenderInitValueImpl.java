@@ -6,7 +6,7 @@ import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender
 @FunctionalExtender(contextServices = ExtensionInitValue.class)
 public class ExtenderInitValueImpl implements ExtensionInitValue {
 
-    @ContextEntity.State.Field(service = ExtensionInitValue.class,state = ExtensionInitValue.PARAM_TO_INIT)
+    @ContextEntity.State.Field(service = ExtensionInitValue.class, state = ExtensionInitValue.PARAM_TO_INIT)
     public boolean paramToInit;
 
     @Override
