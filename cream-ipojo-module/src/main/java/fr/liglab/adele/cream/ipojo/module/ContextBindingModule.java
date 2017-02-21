@@ -1,9 +1,9 @@
 package fr.liglab.adele.cream.ipojo.module;
 
-import fr.liglab.adele.cream.annotations.behavior.Behavior;
-import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
-import fr.liglab.adele.cream.annotations.behavior.Behaviors;
-import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtensions;
+import fr.liglab.adele.cream.annotations.functional.extension.InjectedFunctionalExtension;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.Relation;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
@@ -48,29 +48,29 @@ public class ContextBindingModule extends AbsBindingModule {
 						new ContextEntityProcessor(classReferenceLoader)
 				);
 
-		bind(BehaviorProvider.class)
+		bind(FunctionalExtender.class)
 				.to(
-						new BehaviorProviderProcessor(classReferenceLoader)
+						new FunctionalExtenderProcessor(classReferenceLoader)
 				);
-		bind(BehaviorProvider.ChangeOn.class)
-				.when(and( on(ElementType.METHOD), reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists()))
+		bind(FunctionalExtender.ChangeOn.class)
+				.when(and( on(ElementType.METHOD), reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists()))
 				.to(
-						new BehaviorChangeOnProcessor(classReferenceLoader)
+						new FunctionalExtenderChangeOnProcessor(classReferenceLoader)
 				);
-		bind(Behavior.class)
+		bind(FunctionalExtension.class)
 				.when(and( on(ElementType.TYPE), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
 				.to(
-						new BehaviorProcessor(classReferenceLoader)
+						new FunctionalExtensionProcessor(classReferenceLoader)
 				);
 
-		bind(Behaviors.class)
+		bind(FunctionalExtensions.class)
 				.when(and( on(ElementType.TYPE), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()))
 				.to(
-						new BehaviorsProcessor(classReferenceLoader)
+						new FunctionalExtensionsProcessor(classReferenceLoader)
 				);
 
-		bind(InjectedBehavior.class)
-				.when(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(AbstractBehaviorElementProcessor.BEHAVIOR_ELEMENT).exists()))
+		bind(InjectedFunctionalExtension.class)
+				.when(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(AbstractFunctionalExtensionProcessor.BEHAVIOR_ELEMENT).exists()))
 				.to(
 						new InjectedBehaviorProcessor(classReferenceLoader)
 				);
@@ -95,7 +95,7 @@ public class ContextBindingModule extends AbsBindingModule {
 
 		bind(State.Push.class)
 				.when(or(and( on(ElementType.METHOD), not(method().returns(Void.TYPE)), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()),
-						and(on(ElementType.METHOD), not(method().returns(Void.TYPE)), reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists())))
+						and(on(ElementType.METHOD), not(method().returns(Void.TYPE)), reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists())))
 				.to(
 						new PushMethodProcessor(classReferenceLoader)
 				);
@@ -129,14 +129,14 @@ public class ContextBindingModule extends AbsBindingModule {
 				.when(getFieldFailPredicate())
 				.to((BindingContext context) ->
 						error(context,"Class %s must be annotated with %s or %s to use State injection annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),FunctionalExtender.class.getSimpleName())
 				);
 
 		bind(State.Pull.class)
 				.when(getFieldFailPredicate())
 				.to((BindingContext context) ->
 						error(context,"Class %s must be annotated with %s or %s to use pull annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),FunctionalExtender.class.getSimpleName())
 				);
 
 
@@ -144,14 +144,14 @@ public class ContextBindingModule extends AbsBindingModule {
 				.when(getFieldFailPredicate())
 				.to((BindingContext context) ->
 						error(context,"Class %s must be annotated with %s or %s to use aply annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),FunctionalExtender.class.getSimpleName())
 				);
 
 		bind(State.Push.class)
-				.when(and( on(ElementType.METHOD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists()))))
+				.when(and( on(ElementType.METHOD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists()))))
 				.to((BindingContext context) ->
 						error(context,"Class %s must be annotated with %s or %s to use push injection annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),BehaviorProvider.class.getSimpleName())
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),FunctionalExtender.class.getSimpleName())
 				);
 
 		bind(State.Push.class)
@@ -161,30 +161,30 @@ public class ContextBindingModule extends AbsBindingModule {
 								context.getMethodNode().name, context.getWorkbench().getClassNode().name)
 				);
 
-		bind(Behavior.class)
+		bind(FunctionalExtension.class)
 				.when(and( on(ElementType.TYPE), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
 				.to((BindingContext context) ->
 						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
-								Behavior.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
+								FunctionalExtension.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
 				);
 
-		bind(Behaviors.class)
+		bind(FunctionalExtensions.class)
 				.when(and( on(ElementType.TYPE), not(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists())))
 				.to((BindingContext context) ->
 						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
-								Behavior.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
+								FunctionalExtension.class.getSimpleName(), context.getWorkbench().getClassNode().name,ContextEntity.class.getSimpleName())
 				);
-		bind(BehaviorProvider.ChangeOn.class)
-				.when(and( on(ElementType.TYPE), not(reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists())))
+		bind(FunctionalExtender.ChangeOn.class)
+				.when(and( on(ElementType.TYPE), not(reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists())))
 				.to((BindingContext context) ->
 						error(context,"Annotation '%s' in class %s must be used only on class annotated with %s",
-								BehaviorProvider.ChangeOn.class.getSimpleName(), context.getWorkbench().getClassNode().name,BehaviorProvider.class.getSimpleName())
+								FunctionalExtender.ChangeOn.class.getSimpleName(), context.getWorkbench().getClassNode().name,FunctionalExtender.class.getSimpleName())
 				);
-		bind(InjectedBehavior.class)
-				.when(and( on(ElementType.FIELD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(AbstractBehaviorElementProcessor.BEHAVIOR_ELEMENT).exists()))))
+		bind(InjectedFunctionalExtension.class)
+				.when(and( on(ElementType.FIELD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(AbstractFunctionalExtensionProcessor.BEHAVIOR_ELEMENT).exists()))))
 				.to((BindingContext context) ->
 						error(context,"Class %s must be annotated with %s and %s to use injected behavior annotation",
-								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),Behavior.class.getSimpleName())
+								context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(),FunctionalExtension.class.getSimpleName())
 				);
 
         /*
@@ -292,11 +292,11 @@ public class ContextBindingModule extends AbsBindingModule {
 	}
 
 	public Predicate getFieldSuccessPredicate(){
-		return or(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()),and(on(ElementType.FIELD), reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists()));
+		return or(and( on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()),and(on(ElementType.FIELD), reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists()));
 	}
 
 	public Predicate getFieldFailPredicate(){
-		return and(on(ElementType.FIELD),not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(BehaviorProviderProcessor.BEHAVIOR_CONTEXT_ENTITY_ELEMENT).exists())));
+		return and(on(ElementType.FIELD),not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(),reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists())));
 	}
 }
 

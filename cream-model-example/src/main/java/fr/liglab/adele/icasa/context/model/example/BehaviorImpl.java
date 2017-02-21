@@ -1,12 +1,12 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 
-import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 
 import java.util.function.Supplier;
 
-@BehaviorProvider(contextServices = BehaviorService.class)
+@FunctionalExtender(contextServices = BehaviorService.class)
 public class BehaviorImpl implements BehaviorService {
 
     @ContextEntity.State.Field(service = BehaviorService.class, state = BehaviorService.BEHAVIOR_STATE, directAccess = false)

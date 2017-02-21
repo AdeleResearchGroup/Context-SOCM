@@ -1,6 +1,6 @@
 package fr.liglab.adele.cream.annotations.entity;
 
-import fr.liglab.adele.cream.annotations.behavior.Behavior;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.utils.CreamGenerator;
 import fr.liglab.adele.cream.utils.CreamInvocationException;
@@ -39,7 +39,7 @@ public class ContextProvideStrategy extends CreationStrategy {
 
     private final Object lock = new Object();
 
-    Behavior[] behaviors ;
+    FunctionalExtension[] functionalExtensions;
     Class<?>[] clazzInterface ;
 
     ClassLoader pojoClassLoader;
@@ -51,7 +51,7 @@ public class ContextProvideStrategy extends CreationStrategy {
         synchronized (lock){
             interfazPublished.clear();
             interfazPublished.addAll(Arrays.asList(interfaces));
-            behaviors = (Behavior[]) clazz.getAnnotationsByType(Behavior.class);
+            functionalExtensions = (FunctionalExtension[]) clazz.getAnnotationsByType(FunctionalExtension.class);
             clazzInterface = clazz.getInterfaces();
             pojoClassLoader = clazz.getClassLoader();
         }
@@ -83,8 +83,8 @@ public class ContextProvideStrategy extends CreationStrategy {
         listOfInterfaces.add(Pojo.class);
 
         synchronized (lock){
-            for (Behavior behavior:behaviors){
-                Class[] services = behavior.contextServices();
+            for (FunctionalExtension functionalExtension : functionalExtensions){
+                Class[] services = functionalExtension.contextServices();
                 for (Class service : services) {
                     if (interfazPublished.contains(service.getName())) {
                         listOfInterfaces.add(service);
@@ -118,7 +118,7 @@ public class ContextProvideStrategy extends CreationStrategy {
     }
 
     private InvocationHandler getBehaviorHandler(){
-        Object  handler = myManager.getHandler(HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_MANAGER_HANDLER);
+        Object  handler = myManager.getHandler(HandlerReference.NAMESPACE+":"+ HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
         if (handler == null){
             return null;
         }

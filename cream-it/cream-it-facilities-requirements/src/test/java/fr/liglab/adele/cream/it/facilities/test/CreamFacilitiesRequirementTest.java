@@ -1,7 +1,7 @@
 package fr.liglab.adele.cream.it.facilities.test;
 
 import fr.liglab.adele.cream.it.facilities.requirement.*;
-import fr.liglab.adele.cream.testing.helpers.BehaviorHelper;
+import fr.liglab.adele.cream.testing.helpers.FunctionalExtensionHelper;
 import fr.liglab.adele.cream.testing.helpers.ContextBaseTest;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.ConfigurationException;
@@ -57,15 +57,15 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         assertThat(bindCounter.getUnbind()).isEqualTo(0);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
-        Assertions.assertThat(behaviorHelper.getBehavior(instance,"behavior1")).isNotNull();
+        FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
+        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance,"behavior1")).isNotNull();
 
-        behaviorHelper.invalidBehavior(instance,"behavior1");
+        functionalExtensionHelper.invalidBehavior(instance,"behavior1");
 
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        behaviorHelper.validBehavior(instance,"behavior1");
+        functionalExtensionHelper.validBehavior(instance,"behavior1");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
 
@@ -87,15 +87,15 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         assertThat(bindCounter.getUnbind()).isEqualTo(0);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        BehaviorHelper behaviorHelper = contextHelper.getBehaviorHelper();
-        Assertions.assertThat(behaviorHelper.getBehavior(instance,"behaviorHeritage")).isNotNull();
+        FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
+        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance,"behaviorHeritage")).isNotNull();
 
-        behaviorHelper.invalidBehavior(instance,"behaviorHeritage");
+        functionalExtensionHelper.invalidBehavior(instance,"behaviorHeritage");
 
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        behaviorHelper.validBehavior(instance,"behaviorHeritage");
+        functionalExtensionHelper.validBehavior(instance,"behaviorHeritage");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
 

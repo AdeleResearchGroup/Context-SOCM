@@ -13,10 +13,9 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Map;
 
-@Handler(name = HandlerReference.BEHAVIOR_ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
+@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER,namespace = HandlerReference.NAMESPACE)
 public class BehaviorEntityHandler extends AbstractContextHandler implements ContextEntity,ContextSource{
 
     private boolean instanceIsActive=false;
@@ -84,7 +83,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
     @Override
     public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
-        super.configure(element,dictionary,HandlerReference.NAMESPACE,HandlerReference.BEHAVIOR_ENTITY_HANDLER);
+        super.configure(element,dictionary,HandlerReference.NAMESPACE,HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
     }
 
     @Override

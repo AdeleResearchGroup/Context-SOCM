@@ -22,7 +22,7 @@ public interface HandlerReference {
 	/**
 	 * The handler in charge of managing entities
 	 */
-	public static final String BEHAVIOR_ENTITY_HANDLER = "behavior-entity";
+	public static final String FUNCTIONAL_EXTENSION_ENTITY_HANDLER = "functional-extension-entity";
 
 	/**
 	 * The handler in charge of managing relations
@@ -37,11 +37,11 @@ public interface HandlerReference {
 	/**
 	 * The handler in charge of the external control of behavior component
 	 */
-	String BEHAVIOR_LIFECYCLE_HANDLER = "behavior-lifecycle";
+	String FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER = "functional-extension-lifecycle";
 
 	/**
 	 * The handler in charge of behavior tracking, instantiation and property propagation
 	 */
-	String BEHAVIOR_MANAGER_HANDLER = "behavior-manager";
+	String FUNCTIONAL_EXTENSION_TRACKER_HANDLER = "functional-extension-tracker";
 
 }

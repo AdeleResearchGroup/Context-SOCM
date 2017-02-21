@@ -89,7 +89,7 @@
         <module>cream-testing</module>
         <module>cream-it/cream-it-entity</module>
         <module>cream-it/cream-it-creator</module>
-        <module>cream-it/cream-it-behavior</module>
+        <module>cream-it/cream-it-functional-extension</module>
         <module>cream-it/cream-it-facilities-requirements</module>
         <module>cream-distribution</module>
         <module>cream-model-example</module>

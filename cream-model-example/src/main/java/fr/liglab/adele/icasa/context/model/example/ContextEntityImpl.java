@@ -1,10 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.cream.annotations.behavior.Behavior;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
-import fr.liglab.adele.cream.annotations.entity.StrategyReference;
-import org.apache.felix.ipojo.annotations.Provides;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -12,8 +10,8 @@ import java.util.function.Supplier;
 
 
 @ContextEntity(services = ContextEntityDescription.class)
-@Behavior(id="localisableBehavior", contextServices = BehaviorService.class,implem = BehaviorImpl.class)
-@Behavior(id="behaviorBis", contextServices = BehaviorServiceBis.class,implem = BehaviorImplBis.class)
+@FunctionalExtension(id="localisableBehavior", contextServices = BehaviorService.class, implementation = BehaviorImpl.class)
+@FunctionalExtension(id="behaviorBis", contextServices = BehaviorServiceBis.class, implementation = BehaviorImplBis.class)
 public class ContextEntityImpl implements ContextEntityDescription {
 
 	private String externalValue = "external value";

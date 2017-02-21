@@ -115,8 +115,8 @@ public abstract class StateProcessor<A extends Annotation> extends AnnotationPro
 	}
 
 	private String getParentElement(){
-		if ( (getRootMetadata().getNameSpace() == null ) && BehaviorProviderProcessor.COMPONENT_TYPE.equals(getRootMetadata().getName())){
-			return HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_ENTITY_HANDLER;
+		if ( (getRootMetadata().getNameSpace() == null ) && FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_COMPONENT_TYPE.equals(getRootMetadata().getName())){
+			return HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER;
 		}
 		else {
 			return ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT;

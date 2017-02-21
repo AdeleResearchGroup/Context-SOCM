@@ -1,6 +1,5 @@
 package fr.liglab.adele.cream.testing.helpers;
 
-import fr.liglab.adele.cream.testing.helpers.ContextEntityHelper;
 import org.ow2.chameleon.testing.helpers.IPOJOHelper;
 import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
@@ -14,12 +13,12 @@ public class ContextHelper{
 
     private final ContextEntityHelper contextEntityHelper;
 
-    private final BehaviorHelper behaviorHelper;
+    private final FunctionalExtensionHelper functionalExtensionHelper;
 
     public ContextHelper(OSGiHelper osGiHelper, IPOJOHelper ipojoHelper) {
         this.osGiHelper = osGiHelper;
         this.ipojoHelper = ipojoHelper;
-        behaviorHelper = new BehaviorHelper(ipojoHelper);
+        functionalExtensionHelper = new FunctionalExtensionHelper(ipojoHelper);
         contextEntityHelper = new ContextEntityHelper(osGiHelper,ipojoHelper);
     }
 
@@ -27,8 +26,8 @@ public class ContextHelper{
         return contextEntityHelper;
     }
 
-    public BehaviorHelper getBehaviorHelper(){
-        return behaviorHelper;
+    public FunctionalExtensionHelper getFunctionalExtensionHelper(){
+        return functionalExtensionHelper;
     }
 
 

@@ -1,8 +1,8 @@
 package fr.liglab.adele.cream.it.facilities.requirement;
 
-import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
 
-@BehaviorProvider(contextServices = BehaviorServiceHeritage.class)
+@FunctionalExtender(contextServices = BehaviorServiceHeritage.class)
 public class BehaviorHeritageProviderComponent implements BehaviorServiceHeritage {
 
     @Override
