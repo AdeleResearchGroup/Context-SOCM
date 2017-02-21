@@ -61,23 +61,23 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
         }
 
         for (Element element:behaviorElements){
-            Element[] behaviorIndividualElements = element.getElements(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
+            Element[] behaviorIndividualElements = element.getElements(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME.toString(),"");
 
             if (behaviorIndividualElements == null){
                 throw new ConfigurationException("Behavior Individual Element is null ");
             }
 
             for (Element individualBehaviorElement:behaviorIndividualElements) {
-                RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),
-                        ParseUtils.parseArrays(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME)),
-                        individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME),
+                RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME.toString()),
+                        ParseUtils.parseArrays(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString())),
+                        individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString()),
                         configuration,
                         this,
                         getProvideServiceHandler()
                 );
-                myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),requiredBehavior);
+                myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME.toString()),requiredBehavior);
 
-                String fieldAttribute = individualBehaviorElement.getAttribute(BehaviorReference.FIELD_ATTRIBUTE_NAME);
+                String fieldAttribute = individualBehaviorElement.getAttribute(BehaviorReference.FIELD_ATTRIBUTE_NAME.toString());
                 FieldMetadata fieldMetadata = null;
                 if (fieldAttribute != null){
                     fieldMetadata = getPojoMetadata().getField(fieldAttribute);
@@ -87,11 +87,11 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
 
                 }
 
-                boolean mandatoryField = Boolean.parseBoolean(individualBehaviorElement.getAttribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME));
+                boolean mandatoryField = Boolean.parseBoolean(individualBehaviorElement.getAttribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME.toString()));
                 if (mandatoryField){
-                    mandatoryBehavior.add(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME));
+                    mandatoryBehavior.add(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME.toString()));
                 }
-                behaviorSpecs.add( individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+                behaviorSpecs.add( individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString()));
                 for (Map.Entry<ContextListener,String[]> listenerEntry : listeners.entrySet()){
                     requiredBehavior.registerContextListener(listenerEntry.getKey(),listenerEntry.getValue());
                 }
@@ -259,8 +259,8 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
     }
 
     protected boolean match(RequiredBehavior req, Map prop) {
-        String[] specs = (String[]) prop.get(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME);
-        String impl = (String) prop.get(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME);
+        String[] specs = (String[]) prop.get(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString());
+        String impl = (String) prop.get(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
         boolean specMatch = true;
         List<String> listOfSpec = Arrays.asList(specs);
 

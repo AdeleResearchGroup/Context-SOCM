@@ -22,7 +22,7 @@ public class BehaviorFactory extends ComponentFactory {
     public BehaviorFactory(BundleContext context, Element element) throws ConfigurationException {
         super(context, element);
         // Get the type
-        String[] spec = ParseUtils.parseArrays(element.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+        String[] spec = ParseUtils.parseArrays(element.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString()));
         if (spec != null) {
             mySpec = spec;
         } else {
@@ -30,7 +30,7 @@ public class BehaviorFactory extends ComponentFactory {
         }
 
         // Get the type
-        String impl = element.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME);
+        String impl = element.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
         if (impl != null) {
             myImplem = impl;
         } else {
@@ -83,9 +83,9 @@ public class BehaviorFactory extends ComponentFactory {
             if (this.getFactory().getClassName() != null) {
                 dict.put("component.class", this.getFactory().getClassName());
             }
-            dict.put(BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY,BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE);
-            dict.put(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,myImplem);
-            dict.put(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,mySpec);
+            dict.put(BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY.toString(),BehaviorReference.BEHAVIOR_FACTORY_TYPE_PROPERTY_VALUE.toString());
+            dict.put(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),myImplem);
+            dict.put(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString(),mySpec);
             return dict;
         }
     }

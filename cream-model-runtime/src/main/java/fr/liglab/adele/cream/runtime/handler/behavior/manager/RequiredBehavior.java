@@ -71,7 +71,7 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
                 myConfiguration.put(key,value);
             }
         }
-        myConfiguration.put(BehaviorReference.BEHAVIOR_ID_CONFIG,id);
+        myConfiguration.put(BehaviorReference.BEHAVIOR_ID_CONFIG.toString(),id);
         this.parent = parent;
 
     }

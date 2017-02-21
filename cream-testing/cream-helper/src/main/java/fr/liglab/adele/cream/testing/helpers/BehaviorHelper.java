@@ -70,7 +70,7 @@ public class BehaviorHelper {
             Element[] handlerElement = element1.getElements("handler");
             for (Element element2:handlerElement){
                 if ((HandlerReference.NAMESPACE+":"+HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER).equals(element2.getAttribute("name"))){
-                    String id = element2.getAttribute(BehaviorReference.BEHAVIOR_ID_CONFIG);
+                    String id = element2.getAttribute(BehaviorReference.BEHAVIOR_ID_CONFIG.toString());
                     if (id.equals(behaviorId)){
                         instanceName = element1.getAttribute("name");
                         Architecture behaviorArchitecture = ipojoHelper.getArchitectureByName(instanceName);

@@ -40,8 +40,8 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
 
         String specifications = Arrays.asList(annotation.contextServices()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
 
-        component.addAttribute(new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,specifications));
-        component.addAttribute(new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,classname));
+        component.addAttribute(new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString(),specifications));
+        component.addAttribute(new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),classname));
 
         if (getRootMetadata() != null) {
             error("Multiple 'component type' annotations on the class '{%s}'.", classname);

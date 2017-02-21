@@ -34,12 +34,12 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
             addSpecToProvideElement(service.getName());
         }
 
-        Element behaviorIndividualElement = new Element(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
+        Element behaviorIndividualElement = new Element(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME.toString(),"");
         String specifications = Arrays.asList(annotation.contextServices()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
-        Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,specifications);
-        Attribute implAttr = new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,annotation.implem().getName());
-        Attribute id = new Attribute(BehaviorReference.ID_ATTRIBUTE_NAME,annotation.id());
-        Attribute mandatory = new Attribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME,String.valueOf(annotation.mandatory()));
+        Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString(),specifications);
+        Attribute implAttr = new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),annotation.implem().getName());
+        Attribute id = new Attribute(BehaviorReference.ID_ATTRIBUTE_NAME.toString(),annotation.id());
+        Attribute mandatory = new Attribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME.toString(),String.valueOf(annotation.mandatory()));
         behaviorIndividualElement.addAttribute(specAttr);
         behaviorIndividualElement.addAttribute(implAttr);
         behaviorIndividualElement.addAttribute(id);
@@ -64,7 +64,7 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
         Element[] behaviorElements = element.getElements();
         for (Element individualElement : behaviorElements){
 
-            String[] specifications = ParseUtils.parseArrays(individualElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+            String[] specifications = ParseUtils.parseArrays(individualElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString()));
 
             for (String spec: specifications) {
                 if (specification.equals(spec)) {

@@ -25,8 +25,8 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 		}
 		checkFieldTypeCorrespondance(element,node.desc);
 
-		Attribute attributeField = new Attribute(BehaviorReference.FIELD_ATTRIBUTE_NAME,node.name);
-		Attribute mandatoryAttribute = new Attribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME,String.valueOf(true));
+		Attribute attributeField = new Attribute(BehaviorReference.FIELD_ATTRIBUTE_NAME.toString(),node.name);
+		Attribute mandatoryAttribute = new Attribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME.toString(),String.valueOf(true));
 		element.addAttribute(attributeField);
 		element.addAttribute(mandatoryAttribute);
 
@@ -36,7 +36,7 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 
 	private void checkFieldTypeCorrespondance(Element behaviorElement,String desc){
 		String javaType = convertASMType(desc);
-		String[] specifications = ParseUtils.parseArrays(behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+		String[] specifications = ParseUtils.parseArrays(behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString()));
 		boolean noMatch = true;
 
 		for (String specification : specifications){
@@ -47,7 +47,7 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 		}
 
 		if (noMatch){
-			error("Behavior injected field with id " + behaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME) + " have a specification ( "+ javaType+" ) that not match the corresponding behavior annotation ( "+ behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME)+" ).");
+			error("Behavior injected field with id " + behaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME.toString()) + " have a specification ( "+ javaType+" ) that not match the corresponding behavior annotation ( "+ behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME.toString())+" ).");
 		}
 	}
 

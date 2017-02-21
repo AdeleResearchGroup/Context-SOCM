@@ -41,10 +41,10 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler implements Context
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
         //Do nothing
-        if (configuration.get(BehaviorReference.BEHAVIOR_ID_CONFIG) == null){
+        if (configuration.get(BehaviorReference.BEHAVIOR_ID_CONFIG.toString()) == null){
             throw new ConfigurationException(BehaviorReference.BEHAVIOR_ID_CONFIG + "config parameter must be provided");
         }
-        id = (String) configuration.get(BehaviorReference.BEHAVIOR_ID_CONFIG);
+        id = (String) configuration.get(BehaviorReference.BEHAVIOR_ID_CONFIG.toString());
 
         Element[] elements = metadata.getElements(HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER,HandlerReference.NAMESPACE);
         if (elements == null || elements.length == 0){
@@ -165,7 +165,7 @@ public class BehaviorLifecyleHandler extends PrimitiveHandler implements Context
         @Override
         public Element getHandlerInfo() {
             Element element = super.getHandlerInfo();
-            element.addAttribute(new Attribute(BehaviorReference.BEHAVIOR_ID_CONFIG,id));
+            element.addAttribute(new Attribute(BehaviorReference.BEHAVIOR_ID_CONFIG.toString(),id));
             return element;
         }
     }
