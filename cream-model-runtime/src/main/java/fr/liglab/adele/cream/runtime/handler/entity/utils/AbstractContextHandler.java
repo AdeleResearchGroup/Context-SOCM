@@ -42,12 +42,12 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     private final Map<ContextListener,List<String>> contextSourceListeners	= new HashMap<>();
 
     /**
-     * The list of exposed context services
+     * The list of exposed context spec
      */
     protected final Set<String> services 					= new HashSet<>();
 
     /**
-     * The list of states defined in the implemented context services
+     * The list of states defined in the implemented context spec
      */
     protected final Set<String> stateIds 					= new HashSet<>();
 
@@ -104,7 +104,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
             extractDefinedStatesForService(service);
 
             /**
-             * keeps only exposed context services
+             * keeps only exposed context spec
              */
             if (service.isAnnotationPresent(ContextService.class)) {
                 services.add(service.getName());
@@ -136,7 +136,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
                 }
 
                 if (! stateIds.contains(stateId)) {
-                    throw new ConfigurationException("Malformed Manifest : the state "+stateId+" is not defined in the implemented context services");
+                    throw new ConfigurationException("Malformed Manifest : the state "+stateId+" is not defined in the implemented context spec");
                 }
 
                 if (implementedStates.contains(stateId)) {
@@ -224,7 +224,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
                 update(configuredState, getStateConfiguredValue(configuredState, configuration));
             }
             else {
-                debug("Configured state " + configuredState + " will be ignored, it is not defined in the context services of " + componentName);
+                debug("Configured state " + configuredState + " will be ignored, it is not defined in the context spec of " + componentName);
             }
         }
     }
@@ -236,7 +236,7 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
     private void extractDefinedStatesForService(Class<?> service) {
 
     	/*
-    	 * consider only context services
+    	 * consider only context spec
     	 */
         if (!service.isAnnotationPresent(ContextService.class)) {
             return;

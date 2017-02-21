@@ -29,7 +29,7 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 
 	/**
 	 * service controller to align life-cycle of the generic ContextEntity service with
-	 * the life-cycle of the domain-specific context services of the entity
+	 * the life-cycle of the domain-specific context spec of the entity
 	 */
 	@ServiceController(value=false, specification=ContextEntity.class)
 	private boolean instanceIsActive;
@@ -81,7 +81,7 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
 	}
 
 	/**
-	 * Propagate a state value change to the published properties of the context services
+	 * Propagate a state value change to the published properties of the context spec
 	 */
 	private void propagate(String stateId, Object value, boolean isUpdate) {
 

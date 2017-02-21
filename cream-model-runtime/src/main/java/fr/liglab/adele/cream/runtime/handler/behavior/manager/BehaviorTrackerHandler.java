@@ -69,7 +69,7 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
 
             for (Element individualBehaviorElement:behaviorIndividualElements) {
                 RequiredBehavior requiredBehavior = new RequiredBehavior(individualBehaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME),
-                        individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME),
+                        ParseUtils.parseArrays(individualBehaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME)),
                         individualBehaviorElement.getAttribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME),
                         configuration,
                         this,
@@ -259,9 +259,17 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
     }
 
     protected boolean match(RequiredBehavior req, Map prop) {
-        String spec = (String) prop.get(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME);
+        String[] specs = (String[]) prop.get(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME);
         String impl = (String) prop.get(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME);
-        return    req.getSpecName().equalsIgnoreCase(spec)  && req.getImplName().equalsIgnoreCase(impl);
+        boolean specMatch = true;
+        List<String> listOfSpec = Arrays.asList(specs);
+
+        for (String spec : req.getSpecName()){
+            if(!listOfSpec.contains(spec)){
+                specMatch = false;
+            }
+        }
+        return   specMatch && req.getImplName().equalsIgnoreCase(impl);
     }
 
     /**

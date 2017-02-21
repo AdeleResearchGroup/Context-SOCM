@@ -50,7 +50,7 @@ public class RelationHandler extends PrimitiveHandler implements ServiceTracking
 	private final Map<DependencyModel,String> dependencyToRelation	= new ConcurrentHashMap<>();
 
 	/**
-	 * For each relation defined in the context entity, the target services linked to this instance
+	 * For each relation defined in the context entity, the target spec linked to this instance
 	 */
 	private final Map<String,Set<String>> relationTargets			= new HashMap<>();
 

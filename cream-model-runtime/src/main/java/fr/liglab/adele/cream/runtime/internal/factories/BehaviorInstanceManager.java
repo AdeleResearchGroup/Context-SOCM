@@ -7,8 +7,6 @@ import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandl
 import fr.liglab.adele.cream.utils.*;
 import org.apache.felix.ipojo.*;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,8 +16,6 @@ import java.util.*;
  * Created by aygalinc on 31/05/16.
  */
 public class BehaviorInstanceManager extends InstanceManager implements CreamGenerator{
-
-    private static final Logger LOG = LoggerFactory.getLogger(BehaviorInstanceManager.class);
 
     private static final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE+":"+ HandlerReference.BEHAVIOR_LIFECYCLE_HANDLER;
 
@@ -87,16 +83,10 @@ public class BehaviorInstanceManager extends InstanceManager implements CreamGen
         if (proxyDelegatorMap.isEmpty()){
             Class clazz = getClazz();
             BehaviorProvider[] behaviors = (BehaviorProvider[]) clazz.getAnnotationsByType(BehaviorProvider.class);
-            for (BehaviorProvider provider:behaviors){
-                Class behaviorService = provider.spec();
-                Method[] methods = behaviorService.getMethods();
-                if ((methods == null)||(methods.length == 0)){
-                    break;
-                }
-                GeneratedDelegatorProxy proxy = (GeneratedDelegatorProxy) creamProxyFactory.getProxy(behaviorService);
-                for (Method method : methods){
-                    proxyDelegatorMap.put(method,proxy);
-                }
+            for (BehaviorProvider provider:behaviors) {
+                Class[] behaviorServices = provider.spec();
+                Set<Class> setOfBehaviorService = new HashSet<>(Arrays.asList(behaviorServices));
+                proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(setOfBehaviorService,creamProxyFactory);
             }
         }
         return proxyDelegatorMap;

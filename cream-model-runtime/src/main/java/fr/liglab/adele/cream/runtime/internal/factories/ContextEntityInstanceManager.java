@@ -40,16 +40,7 @@ public class ContextEntityInstanceManager extends InstanceManager implements Cre
             for (ContextEntity entity:contextEntities){
                 Class[] entityClass = entity.services();
                 Set<Class> classesFlatten = flattenClass(entityClass);
-                for (Class specToGenerate : classesFlatten){
-                    Method[] methods = specToGenerate.getMethods();
-                    if ((methods == null)||(methods.length == 0)){
-                        continue;
-                    }
-                    GeneratedDelegatorProxy proxy = (GeneratedDelegatorProxy) creamProxyFactory.getProxy(specToGenerate);
-                    for (Method method : methods){
-                        proxyDelegatorMap.put(method,proxy);
-                    }
-                }
+                proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(classesFlatten,creamProxyFactory);
             }
         }
         return proxyDelegatorMap;

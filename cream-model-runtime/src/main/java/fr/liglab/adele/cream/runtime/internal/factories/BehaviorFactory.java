@@ -1,30 +1,28 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
-import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.ParseUtils;
 import org.apache.felix.ipojo.util.Logger;
 import org.osgi.framework.BundleContext;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.List;
 
 /**
  * Created by aygalinc on 31/05/16.
  */
 public class BehaviorFactory extends ComponentFactory {
 
-    private final String mySpec;
+    private final String[] mySpec;
 
     private final String myImplem;
 
     public BehaviorFactory(BundleContext context, Element element) throws ConfigurationException {
         super(context, element);
         // Get the type
-        String spec = element.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME);
+        String[] spec = ParseUtils.parseArrays(element.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
         if (spec != null) {
             mySpec = spec;
         } else {

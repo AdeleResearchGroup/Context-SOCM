@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BehaviorProvider {
 
-    Class spec();
+    Class[] spec();
 
     @Target(ElementType.METHOD)
     @interface ChangeOn{

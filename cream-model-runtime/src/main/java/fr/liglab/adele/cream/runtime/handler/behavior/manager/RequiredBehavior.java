@@ -29,7 +29,7 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     private static final Logger LOG = LoggerFactory.getLogger(RequiredBehavior.class);
 
-    private final String mySpecification;
+    private final String[] mySpecifications;
 
     private final String myBehaviorNameImpl;
 
@@ -53,8 +53,8 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     private final Object lock = new Object();
 
-    public RequiredBehavior(String id, String spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent,ProvidedServiceHandler providedServiceHandler) {
-        mySpecification = spec;
+    public RequiredBehavior(String id, String[] spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent,ProvidedServiceHandler providedServiceHandler) {
+        mySpecifications = spec;
         myBehaviorNameImpl = behaviorImpl;
         myId = id;
         myProvideServiceHandler = providedServiceHandler;
@@ -78,7 +78,9 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
 
     public void setProvidedService(ProvidedService providedService){
-        providedService.setController(BEHAVIOR_CONTROLLER_FIELD+myId,false, mySpecification);
+        for (String spec : mySpecifications) {
+            providedService.setController(BEHAVIOR_CONTROLLER_FIELD + myId+spec, false, spec);
+        }
     }
 
     public BehaviorFactory getFactory() {
@@ -91,8 +93,8 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
         }
     }
 
-    public String getSpecName() {
-        return mySpecification;
+    public String[] getSpecName() {
+        return mySpecifications;
     }
 
     public String getImplName() {
@@ -149,7 +151,9 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     public synchronized void tryInvalid(){
         if (myManager != null && myManager.isStarted() ){
-            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
+            for (String spec : mySpecifications){
+                myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId+spec,false);
+            }
             myManager.getBehaviorLifeCycleHandler().stopBehavior();
             parent.unregisterContextEntityContextListener(myManager.getBehaviorLifeCycleHandler());
         }
@@ -157,7 +161,9 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
 
     public synchronized void tryDispose(){
         if (myManager != null){
-            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
+            for (String spec : mySpecifications){
+                myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId+spec,false);
+            }
             parent.unregisterContextEntityContextListener(myManager.getBehaviorLifeCycleHandler());
             myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
             myManager.unregisterContextListenerToBehaviorEntityHandler(parent.getBehaviorContextListener());
@@ -196,10 +202,14 @@ public class RequiredBehavior implements InvocationHandler,BehaviorStateListener
     @Override
     public void behaviorStateChange(int state,String id) {
         if (state == ComponentInstance.VALID){
-            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,true);
+            for (String spec : mySpecifications){
+                myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId+spec,true);
+            }
         }
         else if (state == ComponentInstance.INVALID){
-            myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId,false);
+            for (String spec : mySpecifications){
+                myProvideServiceHandler.onSet(null,BEHAVIOR_CONTROLLER_FIELD+myId+spec,false);
+            }
         }
         parent.behaviorStateChange(state,id);
     }

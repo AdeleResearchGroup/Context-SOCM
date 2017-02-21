@@ -84,11 +84,12 @@ public class ContextProvideStrategy extends CreationStrategy {
 
         synchronized (lock){
             for (Behavior behavior:behaviors){
-                Class service = behavior.spec();
-                if(interfazPublished.contains(service.getName())){
-                    listOfInterfaces.add(service);
+                Class[] services = behavior.spec();
+                for (Class service : services) {
+                    if (interfazPublished.contains(service.getName())) {
+                        listOfInterfaces.add(service);
+                    }
                 }
-
             }
 
             for (Class interfaz:clazzInterface){

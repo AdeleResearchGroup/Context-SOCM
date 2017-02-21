@@ -4,6 +4,7 @@ import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.ParseUtils;
 import org.objectweb.asm.tree.FieldNode;
 
 public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehavior> {
@@ -35,7 +36,17 @@ public class InjectedBehaviorProcessor extends AnnotationProcessor<InjectedBehav
 
 	private void checkFieldTypeCorrespondance(Element behaviorElement,String desc){
 		String javaType = convertASMType(desc);
-		if (!(behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME).equals(javaType))){
+		String[] specifications = ParseUtils.parseArrays(behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+		boolean noMatch = true;
+
+		for (String specification : specifications){
+			if ((specification.equals(javaType))){
+				noMatch = false;
+				break;
+			}
+		}
+
+		if (noMatch){
 			error("Behavior injected field with id " + behaviorElement.getAttribute(BehaviorReference.ID_ATTRIBUTE_NAME) + " have a specification ( "+ javaType+" ) that not match the corresponding behavior annotation ( "+ behaviorElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME)+" ).");
 		}
 	}

@@ -13,10 +13,10 @@ public @interface ContextEntity {
 	/**
 	 * The name of the service property used to describe context provider factories
 	 */
-	String ENTITY_CONTEXT_SERVICES = "factory.context.entity.services";
+	String ENTITY_CONTEXT_SERVICES = "factory.context.entity.spec";
 
 	/**
-	 * The list of provided context services
+	 * The list of provided context spec
 	 */
 	Class<?> [] services();
 

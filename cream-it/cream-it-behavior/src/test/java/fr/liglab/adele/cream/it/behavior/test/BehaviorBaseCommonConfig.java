@@ -16,6 +16,7 @@ public abstract class BehaviorBaseCommonConfig extends ContextBaseTest {
                 "fr.liglab.adele.cream.it.behavior.injection",
                 "fr.liglab.adele.cream.it.behavior.synchronisation",
                 "fr.liglab.adele.cream.it.behavior.changeOn",
+                "fr.liglab.adele.cream.it.behavior.multiple",
                 "fr.liglab.adele.cream.it.behavior.contextSource"
         );
     }

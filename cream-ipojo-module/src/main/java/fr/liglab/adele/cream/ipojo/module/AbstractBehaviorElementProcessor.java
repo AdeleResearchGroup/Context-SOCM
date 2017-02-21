@@ -7,8 +7,11 @@ import fr.liglab.adele.cream.annotations.internal.BehaviorReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.ParseUtils;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Created by aygalinc on 26/07/16.
@@ -25,9 +28,15 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
         if (getMetadataElement(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME+":"+annotation.id()) != null){
             error("Behavior id must be unique. Duplicate id : " + annotation.id());
         }
-        checkNoSpecificationRedundancy(annotation.spec().getName());
+
+        for (Class service : annotation.spec()){
+            checkNoSpecificationRedundancy(service.getName());
+            addSpecToProvideElement(service.getName());
+        }
+
         Element behaviorIndividualElement = new Element(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME,"");
-        Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,annotation.spec().getName());
+        String specifications = Arrays.asList(annotation.spec()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
+        Attribute specAttr = new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,specifications);
         Attribute implAttr = new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,annotation.implem().getName());
         Attribute id = new Attribute(BehaviorReference.ID_ATTRIBUTE_NAME,annotation.id());
         Attribute mandatory = new Attribute(BehaviorReference.BEHAVIOR_MANDATORY_ATTRIBUTE_NAME,String.valueOf(annotation.mandatory()));
@@ -37,7 +46,7 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
         behaviorIndividualElement.addAttribute(mandatory);
 
         addMetadataElement(BehaviorReference.BEHAVIOR_INDIVIDUAL_ELEMENT_NAME+":"+annotation.id(),behaviorIndividualElement,getBehaviorParentElement());
-        addSpecToProvideElement(annotation.spec().getName());
+
     }
 
     private String getBehaviorParentElement(){
@@ -54,9 +63,15 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
         Element element = getMetadataElement(getBehaviorParentElement());
         Element[] behaviorElements = element.getElements();
         for (Element individualElement : behaviorElements){
-            if (specification.equals(individualElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME))){
-                error(" Error in behavior annotation. Duplicate behavior for specification " + specification);
+
+            String[] specifications = ParseUtils.parseArrays(individualElement.getAttribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME));
+
+            for (String spec: specifications) {
+                if (specification.equals(spec)) {
+                    error(" Error in behavior annotation. Duplicate behavior for specification " + specification);
+                }
             }
+
         }
     }
 
@@ -84,7 +99,7 @@ public abstract class AbstractBehaviorElementProcessor<A extends Annotation> ext
             Element provides = new Element("provides","");
 
         /*
-         * Add a static property to the component specifying all the context services implemented by the entity
+         * Add a static property to the component specifying all the context spec implemented by the entity
          */
             Element property  = new Element("property", "");
 

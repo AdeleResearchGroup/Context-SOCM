@@ -8,6 +8,9 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * Created by aygalinc on 14/01/16.
  */
@@ -35,7 +38,9 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
         component.addAttribute(new Attribute("classname", classname));
         component.addAttribute(new Attribute("immediate", "true"));
 
-        component.addAttribute(new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,annotation.spec().getName()));
+        String specifications = Arrays.asList(annotation.spec()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
+
+        component.addAttribute(new Attribute(BehaviorReference.SPECIFICATION_ATTRIBUTE_NAME,specifications));
         component.addAttribute(new Attribute(BehaviorReference.IMPLEMEMENTATION_ATTRIBUTE_NAME,classname));
 
         if (getRootMetadata() != null) {
@@ -47,20 +52,20 @@ public class BehaviorProviderProcessor extends AnnotationProcessor<BehaviorProvi
         setRootMetadata(component);
         
         /*
-         * Verify the annotated class implements all the context services specified in the annotation
+         * Verify the annotated class implements all the context spec specified in the annotation
          */
         ClassNode clazz 	= getAnnotatedClass();
         boolean implemented = true;
 
-
-        if (!clazz.interfaces.contains(Type.getInternalName(annotation.spec()))) {
-            error("Class " + clazz.name + " is not an implementation of entity service " + annotation.spec());
-            implemented = false;
+        for (Class service : annotation.spec()) {
+            if (!clazz.interfaces.contains(Type.getInternalName(service))) {
+                error("Class " + clazz.name + " is not an implementation of context service " + service);
+                implemented = false;
+            }
         }
 
-
         if (! implemented) {
-            error("Cannot ensure that the class " + classname + " is the implementation of the specified context services");
+            error("Cannot ensure that the class " + classname + " is the implementation of the specified context spec");
         }
 
 
