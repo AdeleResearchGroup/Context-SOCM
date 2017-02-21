@@ -81,7 +81,7 @@ public abstract class AbstractFunctionalExtensionProcessor<A extends Annotation>
         if (provideElement.getAttribute(ProvideReferenceHandler.SPECIFICATIONS.toString()) == null || provideElement.getAttribute(ProvideReferenceHandler.SPECIFICATIONS.toString()).length() == 0 ){
             newSpecs = "{"+behaviorSpecification+"}";
         }else {
-            String specs = new String(provideElement.getAttribute(ProvideReferenceHandler.SPECIFICATIONS.toString()));
+            String specs = provideElement.getAttribute(ProvideReferenceHandler.SPECIFICATIONS.toString());
             String temp = specs.substring(0,specs.length()-1);
             newSpecs = temp + ","+behaviorSpecification+"}";
             Attribute newSpecAttribute= new Attribute(ProvideReferenceHandler.SPECIFICATIONS.toString(),newSpecs);

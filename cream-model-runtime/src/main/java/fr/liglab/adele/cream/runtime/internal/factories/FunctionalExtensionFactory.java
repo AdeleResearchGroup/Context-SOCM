@@ -83,7 +83,7 @@ public class FunctionalExtensionFactory extends ComponentFactory {
             if (this.getFactory().getClassName() != null) {
                 dict.put("component.class", this.getFactory().getClassName());
             }
-            dict.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY.toString(), FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE.toString());
+            dict.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY, FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE);
             dict.put(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),myImplem);
             dict.put(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString(),mySpec);
             return dict;

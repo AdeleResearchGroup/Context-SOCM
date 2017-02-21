@@ -108,6 +108,10 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
 
     private void createControllerForContextEntity(Element metadata,List<String> behaviorSpecs){
         ProvidedService providedService = getContextEntityProvidedService(metadata);
+        if(providedService == null){
+            error("provided service is null, must not be happen ");
+            return;
+        }
         int i=0;
         for(String spec:getContextEntitySpec(metadata)){
             if (!behaviorSpecs.contains(spec)){
