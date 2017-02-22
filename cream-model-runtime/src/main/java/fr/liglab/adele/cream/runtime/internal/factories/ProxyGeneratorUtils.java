@@ -27,7 +27,7 @@ public class ProxyGeneratorUtils {
         for (Class service : services) {
             Method[] methods = service.getMethods();
             if ((methods == null) || (methods.length == 0)) {
-                break;
+                continue;
             }
             GeneratedDelegatorProxy proxy = (GeneratedDelegatorProxy) creamProxyFactory.getProxy(service);
             for (Method method : methods) {
