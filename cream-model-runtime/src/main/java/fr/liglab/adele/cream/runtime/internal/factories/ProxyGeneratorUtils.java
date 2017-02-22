@@ -13,6 +13,9 @@ import java.util.Set;
  */
 public class ProxyGeneratorUtils {
 
+    private ProxyGeneratorUtils(){
+    }
+    
     public static Map<Method, GeneratedDelegatorProxy> getGeneratedProxyByMethodMap(Set<Class> services, CreamProxyFactory creamProxyFactory) {
 
         Map<Method, GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
