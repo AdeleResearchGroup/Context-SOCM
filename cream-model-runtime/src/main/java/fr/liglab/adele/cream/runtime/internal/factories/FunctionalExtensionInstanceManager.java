@@ -68,11 +68,12 @@ public class FunctionalExtensionInstanceManager extends InstanceManager implemen
         }
         entityHandler.unregisterContextListener(listener);
     }
-
+    
+    @Override
     public Map<Method, GeneratedDelegatorProxy> getProxyDelegationMap() {
         if (proxyDelegatorMap.isEmpty()) {
             Class clazz = getClazz();
-            FunctionalExtender[] behaviors = (FunctionalExtender[]) clazz.getAnnotationsByType(FunctionalExtender.class);
+            FunctionalExtender[] behaviors = clazz.getAnnotationsByType(FunctionalExtender.class);
             for (FunctionalExtender provider : behaviors) {
                 Class[] behaviorServices = provider.contextServices();
                 Set<Class> setOfBehaviorService = new HashSet<>(Arrays.asList(behaviorServices));
