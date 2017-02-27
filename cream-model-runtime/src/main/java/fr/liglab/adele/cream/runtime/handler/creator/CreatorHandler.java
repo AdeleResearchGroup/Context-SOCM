@@ -20,6 +20,7 @@ import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.osgi.framework.ServiceReference;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Handler(name = HandlerReference.CREATOR_HANDLER, namespace = HandlerReference.NAMESPACE)
@@ -27,10 +28,25 @@ import java.util.stream.Collectors;
 
 public class CreatorHandler extends PrimitiveHandler implements EntityProvider, RelationProvider {
 
-    private final Map<String, String> fieldToContext = new HashMap<>();
 
-    private final Map<String, ComponentCreator> creators = new HashMap<>();
 
+    private final Set<String> dynamicFields 						= new HashSet<>();
+    private final Map<String, String> fieldToContext 				= new HashMap<>();
+
+    private final Map<String, ComponentCreator> creators 			= new HashMap<>();
+
+  	private final Function<Factory,Creator.Entity<?>> dynamicCreator = (factory) -> {
+
+  		EntityCreator creator = (EntityCreator)creators.get(factory.getName());
+  		if (creator != null) {
+  			return creator;
+  		}
+  		
+  		creator = instantiateEntityCreator(factory.getName());
+		creator.bindFactory(factory);
+		return creator;
+	};
+    
     @Override
     public void configure(Element metadata, @SuppressWarnings("rawtypes") Dictionary configuration) throws ConfigurationException {
 
@@ -50,21 +66,30 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
                 throw new ConfigurationException("Malformed Manifest : the specified creator field '" + fieldName + "' is not defined in class " + componentName);
             }
 
-            String entity = creator.getAttribute("entity");
-            String relation = creator.getAttribute("relation");
+            boolean isStatic	= creator.getAttribute("dynamic") == null || ! Boolean.valueOf(creator.getAttribute("dynamic"));
+            String entity 		= creator.getAttribute("entity");
+            String relation 	= creator.getAttribute("relation");
 
-            if (entity == null && relation == null) {
+            if (isStatic && entity == null && relation == null) {
                 throw new ConfigurationException("Malformed Manifest : the creator entity or relation is not specified for field '" + fieldName + "' in class " + componentName);
             }
 
-            if (entity != null && relation == null) {
+            if (isStatic && entity == null && relation != null) {
+                throw new ConfigurationException("Malformed Manifest : the source for relation creator is not specified for field '" + fieldName + "' in class " + componentName);
+            }
+            
+            if (isStatic && entity != null && relation == null) {
                 instantiateEntityCreator(entity);
                 fieldToContext.put(fieldName, entity);
             }
 
-            if (entity != null && relation != null) {
+            if (isStatic && entity != null && relation != null) {
                 instantiateRelationCreator(relation);
                 fieldToContext.put(fieldName, relation);
+            }
+
+            if (!isStatic) {
+                dynamicFields.add(fieldName);
             }
 
             instanceManager.register(getPojoMetadata().getField(fieldName), this);
@@ -74,30 +99,35 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
     /**
      * Instantiate, if necessary, the creator associated with a given entity
      */
-    private void instantiateEntityCreator(String entity) {
+    private EntityCreator instantiateEntityCreator(String entity) {
 
         ComponentCreator creator = creators.get(entity);
         if (creator == null) {
             creator = new EntityCreator(entity);
             creators.put(entity, creator);
         }
+        
+        return (EntityCreator) creator;
     }
 
     /**
      * Instantiate, if necessary, the creator associated with a given relation
      */
-    private void instantiateRelationCreator(String relation) {
+    private RelationCreator instantiateRelationCreator(String relation) {
 
         ComponentCreator creator = creators.get(relation);
         if (creator == null) {
             creator = new RelationCreator(relation);
             creators.put(relation, creator);
         }
+        
+        return (RelationCreator) creator;
+
     }
 
     @Override
     public Object onGet(Object pojo, String fieldName, Object value) {
-        return creators.get(fieldToContext.get(fieldName));
+        return dynamicFields.contains(fieldName) ? dynamicCreator : creators.get(fieldToContext.get(fieldName));
     }
 
     @Override
@@ -505,5 +535,6 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
             return creatorHandlerDescription;
         }
     }
+
 
 }

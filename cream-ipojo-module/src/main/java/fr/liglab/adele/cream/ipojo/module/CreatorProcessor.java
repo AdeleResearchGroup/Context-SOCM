@@ -6,14 +6,14 @@ import org.apache.felix.ipojo.metadata.Element;
 
 import java.lang.annotation.Annotation;
 
-public abstract class ProviderProcessor<A extends Annotation> extends AnnotationProcessor<A> {
+public abstract class CreatorProcessor<A extends Annotation> extends AnnotationProcessor<A> {
 
     /**
      * The annotation currently processed
      */
     private A annotation;
 
-    protected ProviderProcessor(Class<A> annotationType, ClassLoader classReferenceLoader) {
+    protected CreatorProcessor(Class<A> annotationType, ClassLoader classReferenceLoader) {
         super(annotationType, classReferenceLoader);
     }
 

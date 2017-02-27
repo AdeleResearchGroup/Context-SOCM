@@ -23,6 +23,12 @@ public interface Creator {
         String value() default NO_PARAMETER;
     }
 
+    /**
+     * Annotation to allow using creators with dynamically created factories
+     */
+    @Target(ElementType.FIELD)
+    public @interface Dynamic {
+    }
 
     /**
      * A factory object used to create context entities of the specified type

@@ -1,6 +1,5 @@
 package fr.liglab.adele.cream.annotations.entity;
 
-import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.utils.CreamGenerator;
 import fr.liglab.adele.cream.utils.CreamInvocationException;
@@ -11,6 +10,7 @@ import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.handlers.providedservice.CreationStrategy;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,26 +28,32 @@ public class ContextProvideStrategy extends CreationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextProvideStrategy.class);
     private final Object lock = new Object();
-    FunctionalExtension[] functionalExtensions;
-    Class<?>[] clazzInterface;
     ClassLoader pojoClassLoader;
     /**
      * The instance manager passed to the iPOJO ServiceFactory to manage
      * instances.
      */
     private InstanceManager myManager;
-    private List<String> interfazPublished = new ArrayList<>();
+    private List<Class<?>> classPublished = new ArrayList<>();
 
     @Override
     public void onPublication(InstanceManager instance, String[] interfaces, Properties props) {
         this.myManager = instance;
-        Class clazz = myManager.getClazz();
+
+        pojoClassLoader = instance.getFactory().getBundleContext().getBundle().adapt(BundleWiring.class).getClassLoader();
         synchronized (lock) {
-            interfazPublished.clear();
-            interfazPublished.addAll(Arrays.asList(interfaces));
-            functionalExtensions = (FunctionalExtension[]) clazz.getAnnotationsByType(FunctionalExtension.class);
-            clazzInterface = clazz.getInterfaces();
-            pojoClassLoader = clazz.getClassLoader();
+            classPublished.clear();
+
+            for (String className : interfaces){
+                try {
+                    Class<?> clazz = pojoClassLoader.loadClass(className);
+                    if (clazz != null){
+                        classPublished.add(clazz);
+                    }
+                } catch (ClassNotFoundException e) {
+                    LOG.error("Unable to load interace " + className +" , the proxy will not implement this interace",e);
+                }
+            }
         }
     }
 
@@ -57,7 +62,8 @@ public class ContextProvideStrategy extends CreationStrategy {
         //Do nothing on publication
     }
 
-    @Override
+	@Override
+    @SuppressWarnings("rawtypes")
     public Object getService(Bundle bundle, ServiceRegistration serviceRegistration) {
 
         Object pojo = myManager.getPojoObject();
@@ -74,28 +80,12 @@ public class ContextProvideStrategy extends CreationStrategy {
                 new ParentSuccessorStrategy(), successor
         );
 
-        List<Class> listOfInterfaces = new ArrayList<>();
-        listOfInterfaces.add(Pojo.class);
-
         synchronized (lock) {
-            for (FunctionalExtension functionalExtension : functionalExtensions) {
-                Class[] services = functionalExtension.contextServices();
-                for (Class service : services) {
-                    if (interfazPublished.contains(service.getName())) {
-                        listOfInterfaces.add(service);
-                    }
-                }
-            }
 
-            for (Class interfaz : clazzInterface) {
-                if (interfazPublished.contains(interfaz.getName())) {
-                    listOfInterfaces.add(interfaz);
-                }
-            }
+            Class[] arrayOfInterfaz = new Class[classPublished.size() + 1];
 
-            Class[] arrayOfInterfaz = new Class[listOfInterfaces.size()];
-            arrayOfInterfaz = listOfInterfaces.toArray(arrayOfInterfaz);
-
+            arrayOfInterfaz = classPublished.toArray(arrayOfInterfaz);
+            arrayOfInterfaz[classPublished.size()] = Pojo.class;
             try {
                 return Proxy.newProxyInstance(pojoClassLoader, arrayOfInterfaz, invocationHandler);
             } catch (java.lang.NoClassDefFoundError e) {
@@ -107,7 +97,8 @@ public class ContextProvideStrategy extends CreationStrategy {
 
     }
 
-    @Override
+	@Override
+    @SuppressWarnings("rawtypes")
     public void ungetService(Bundle bundle, ServiceRegistration serviceRegistration, Object o) {
         //Do nothing on unget service
     }

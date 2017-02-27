@@ -20,6 +20,7 @@ import org.objectweb.asm.tree.FieldNode;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.apache.felix.ipojo.manipulator.spi.helper.Predicates.*;
 
@@ -93,19 +94,19 @@ public class ContextBindingModule extends AbsBindingModule {
                 );
 
         bind(State.Field.class)
-                .when(getFieldSuccessPredicate())
+                .when(isContextEntityField())
                 .to(
                         new StateVariableFieldProcessor(classReferenceLoader)
                 );
 
         bind(State.Pull.class)
-                .when(getFieldSuccessPredicate())
+                .when(isContextEntityField())
                 .to(
                         new PullFieldProcessor(classReferenceLoader)
                 );
 
         bind(State.Apply.class)
-                .when(getFieldSuccessPredicate())
+                .when(isContextEntityField())
                 .to(
                         new ApplyFieldProcessor(classReferenceLoader)
                 );
@@ -117,24 +118,30 @@ public class ContextBindingModule extends AbsBindingModule {
                         new PushMethodProcessor(classReferenceLoader)
                 );
         bind(Relation.Field.class)
-                .when(getFieldSuccessPredicate())
+                .when(isContextEntityField())
                 .to(
                         new RelationProcessor(classReferenceLoader)
                 );
 
     	/*
-    	 * Bind the context provider annotation processors
+    	 * Bind the creator annotation processors
     	 */
         bind(Creator.Field.class)
                 .when(and(on(ElementType.FIELD), field().hasType(Creator.Entity.class)))
                 .to(
-                        new EntityProviderProcessor(classReferenceLoader)
+                        new EntityCreatorProcessor(classReferenceLoader)
                 );
+
+        bind(Creator.Dynamic.class)
+        		.when(and(on(ElementType.FIELD), field().hasType(Function.class)))
+        		.to(
+        				new DynamicCreatorProcessor(classReferenceLoader)
+        				);
 
         bind(Creator.Field.class)
                 .when(and(on(ElementType.FIELD), field().hasType(Creator.Relation.class)))
                 .to(
-                        new RelationProviderProcessor(classReferenceLoader)
+                        new RelationCreatorProcessor(classReferenceLoader)
                 );
 
 
@@ -143,14 +150,14 @@ public class ContextBindingModule extends AbsBindingModule {
     	 */
 
         bind(State.Field.class)
-                .when(getFieldFailPredicate())
+                .when(not(isContextEntityField()))
                 .to((BindingContext context) ->
                         error(context, "Class %s must be annotated with %s or %s to use State injection annotation",
                                 context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(), FunctionalExtender.class.getSimpleName())
                 );
 
         bind(State.Pull.class)
-                .when(getFieldFailPredicate())
+                .when(not(isContextEntityField()))
                 .to((BindingContext context) ->
                         error(context, "Class %s must be annotated with %s or %s to use pull annotation",
                                 context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(), FunctionalExtender.class.getSimpleName())
@@ -158,7 +165,7 @@ public class ContextBindingModule extends AbsBindingModule {
 
 
         bind(State.Apply.class)
-                .when(getFieldFailPredicate())
+                .when(not(isContextEntityField()))
                 .to((BindingContext context) ->
                         error(context, "Class %s must be annotated with %s or %s to use aply annotation",
                                 context.getWorkbench().getClassNode().name, ContextEntity.class.getSimpleName(), FunctionalExtender.class.getSimpleName())
@@ -229,14 +236,20 @@ public class ContextBindingModule extends AbsBindingModule {
                                 context.getFieldNode().name, context.getWorkbench().getClassNode().name)
                 );
 
+        bind(Creator.Dynamic.class)
+        		.when(and(on(ElementType.FIELD),
+        				not(field().hasType(Function.class))
+        		))
+        		.to((BindingContext context) ->
+                		error(context, "Dynamic creator field '%s' in class %s must have type Function<Factory,Creator.Entity>",
+                				context.getFieldNode().name, context.getWorkbench().getClassNode().name)
+        		);
+
     }
 
-    public Predicate getFieldSuccessPredicate() {
-        return or(and(on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()), and(on(ElementType.FIELD), reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists()));
-    }
-
-    public Predicate getFieldFailPredicate() {
-        return and(on(ElementType.FIELD), not(or(reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists(), reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists())));
+    public Predicate isContextEntityField() {
+        return or(	and(on(ElementType.FIELD), reference(ContextEntityProcessor.CONTEXT_ENTITY_ELEMENT).exists()), 
+        		  	and(on(ElementType.FIELD), reference(FunctionalExtenderProcessor.FUNCTIONAL_EXTENSION_CONTEXT_ENTITY_ELEMENT).exists()));
     }
 
     public static class Method {

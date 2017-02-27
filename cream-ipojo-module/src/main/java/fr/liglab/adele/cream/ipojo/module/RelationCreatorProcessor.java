@@ -7,9 +7,9 @@ import org.apache.felix.ipojo.metadata.Element;
 
 import java.util.List;
 
-public class RelationProviderProcessor extends ProviderProcessor<Creator.Field> {
+public class RelationCreatorProcessor extends CreatorProcessor<Creator.Field> {
 
-    protected RelationProviderProcessor(ClassLoader classReferenceLoader) {
+    protected RelationCreatorProcessor(ClassLoader classReferenceLoader) {
         super(Creator.Field.class, classReferenceLoader);
     }
 

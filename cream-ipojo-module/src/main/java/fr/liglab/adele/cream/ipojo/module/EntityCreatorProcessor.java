@@ -6,9 +6,9 @@ import org.apache.felix.ipojo.metadata.Element;
 
 import java.util.List;
 
-public class EntityProviderProcessor extends ProviderProcessor<Creator.Field> {
+public class EntityCreatorProcessor extends CreatorProcessor<Creator.Field> {
 
-    protected EntityProviderProcessor(ClassLoader classReferenceLoader) {
+    protected EntityCreatorProcessor(ClassLoader classReferenceLoader) {
         super(Creator.Field.class, classReferenceLoader);
     }
 
