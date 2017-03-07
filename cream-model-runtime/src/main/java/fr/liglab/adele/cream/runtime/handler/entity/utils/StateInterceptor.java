@@ -8,17 +8,16 @@ import org.apache.felix.ipojo.FieldInterceptor;
  * of context state fields.
  *
  * @author vega
- *
  */
 public interface StateInterceptor extends FieldInterceptor {
 
-	/**
-	 * Notifies the interceptor that the iPOJO instance has been activated
-	 */
-	void validate();
+    /**
+     * Notifies the interceptor that the iPOJO instance has been activated
+     */
+    void validate();
 
-	/**
-	 * Notifies the interceptor that the iPOJO instance has been invalidated.
-	 */
-	void invalidate();
+    /**
+     * Notifies the interceptor that the iPOJO instance has been invalidated.
+     */
+    void invalidate();
 }

@@ -13,25 +13,22 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Map;
 
-@Handler(name = HandlerReference.BEHAVIOR_ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
-public class BehaviorEntityHandler extends AbstractContextHandler implements ContextEntity,ContextSource{
+@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER, namespace = HandlerReference.NAMESPACE)
+public class BehaviorEntityHandler extends AbstractContextHandler implements ContextEntity, ContextSource {
 
-    private boolean instanceIsActive=false;
+    /**
+     * The Wisdom Scheduler used to handle periodic tasks
+     */
+    @Requires(id = "scheduler", proxy = false)
+    public ManagedScheduledExecutorService scheduler;
+    private boolean instanceIsActive = false;
 
     @Override
     protected boolean isInstanceActive() {
         return instanceIsActive;
     }
-
-    /**
-     * The Wisdom Scheduler used to handle periodic tasks
-     */
-    @Requires(id="scheduler",proxy = false)
-    public ManagedScheduledExecutorService scheduler;
-
 
     @Override
     protected ManagedScheduledExecutorService getScheduler() {
@@ -47,8 +44,8 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
         if (state == InstanceManager.VALID) {
             instanceIsActive = true;
 
-            for (Map.Entry<String,Object> initialEntry : this.getInitialConfiguration().entrySet()){
-                update(initialEntry.getKey(),initialEntry.getValue());
+            for (Map.Entry<String, Object> initialEntry : this.getInitialConfiguration().entrySet()) {
+                update(initialEntry.getKey(), initialEntry.getValue());
             }
 
             /*
@@ -70,8 +67,8 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
             }
 
             stateValues.clear();
-            for (String stateId : stateIds){
-                notifyContextListener(stateId,null);
+            for (String stateId : stateIds) {
+                notifyContextListener(stateId, null);
             }
         }
     }
@@ -84,7 +81,7 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
     @Override
     public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
-        super.configure(element,dictionary,HandlerReference.NAMESPACE,HandlerReference.BEHAVIOR_ENTITY_HANDLER);
+        super.configure(element, dictionary, HandlerReference.NAMESPACE, HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
     }
 
     @Override
@@ -100,18 +97,19 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
     /**
      * Updates the value of a state property, propagating the change to the published service properties
+     *
      * @param stateId
      * @param value
      */
     @Override
     public void update(String stateId, Object value) {
 
-        if(stateId == null && !stateIds.contains(stateId)){
+        if (stateId == null && !stateIds.contains(stateId)) {
             return;
         }
 
-        Object oldValue 	= stateValues.get(stateId);
-        boolean bothNull 	= oldValue == null && value == null;
+        Object oldValue = stateValues.get(stateId);
+        boolean bothNull = oldValue == null && value == null;
         boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
         boolean noChange = bothNull || equals;
 
@@ -122,15 +120,14 @@ public class BehaviorEntityHandler extends AbstractContextHandler implements Con
 
         if (value != null) {
             stateValues.put(stateId, value);
-        }
-        else {
+        } else {
             stateValues.remove(stateId);
         }
 
-        if (CONTEXT_ENTITY_ID.equals(stateId)){
+        if (CONTEXT_ENTITY_ID.equals(stateId)) {
             return;
         }
 
-        notifyContextListener(stateId,value);
+        notifyContextListener(stateId, value);
     }
 }

@@ -14,30 +14,32 @@ public class ContextConsumer<A extends ContextProvideService & BehaviorService> 
 
     int unbind = 0;
 
-    int bind=0;
+    int bind = 0;
 
-    @Requires(id = "ContextReq",specification = ContextProvideService.class,optional = true,proxy = false)
+    @Requires(id = "ContextReq", specification = ContextProvideService.class, optional = true, proxy = false)
     @ContextRequirement(spec = {BehaviorService.class})
     ContextProvideService service;
+    @Requires(id = "ContextReq2", specification = ContextProvideService.class, optional = true, proxy = false)
+    @ContextRequirement(spec = {BehaviorService.class})
+    A serviceGeneric;
 
-    @Bind(id = "ContextReq" )
-    public synchronized void bindService(ContextProvideService service){
+    @Bind(id = "ContextReq")
+    public synchronized void bindService(ContextProvideService service) {
         bind++;
     }
 
-    @Unbind(id = "ContextReq" )
-    public synchronized void unbindService(ContextProvideService service){
+    @Unbind(id = "ContextReq")
+    public synchronized void unbindService(ContextProvideService service) {
         unbind++;
     }
 
     @Validate
-    public void validate(){
+    public void validate() {
 
     }
 
-
     @Invalidate
-    public void invalidate(){
+    public void invalidate() {
 
     }
 
@@ -50,13 +52,6 @@ public class ContextConsumer<A extends ContextProvideService & BehaviorService> 
     public synchronized int getUnbind() {
         return unbind;
     }
-
-
-
-    @Requires(id = "ContextReq2",specification = ContextProvideService.class,optional = true,proxy = false)
-    @ContextRequirement(spec = {BehaviorService.class})
-    A serviceGeneric;
-
 
     @Override
     public void callGenericBind() {

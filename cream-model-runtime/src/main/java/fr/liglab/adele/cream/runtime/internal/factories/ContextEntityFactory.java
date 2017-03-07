@@ -52,13 +52,13 @@ public class ContextEntityFactory extends ComponentFactory {
         return new ContextEntityTypeDescription(this);
     }
 
-    private class ContextEntityTypeDescription extends ComponentTypeDescription{
+    private class ContextEntityTypeDescription extends ComponentTypeDescription {
         public ContextEntityTypeDescription(IPojoFactory factory) {
             super(factory);
         }
 
         @Override
-        public Dictionary getPropertiesToPublish(){
+        public Dictionary getPropertiesToPublish() {
             Dictionary dict = super.getPropertiesToPublish();
             if (this.getFactory().getClassName() != null) {
                 dict.put("component.class", this.getFactory().getClassName());

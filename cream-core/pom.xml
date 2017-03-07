@@ -97,6 +97,7 @@
                         </Export-Package>
                         <Import-Package>
                             org.osgi.framework,
+                            org.osgi.framework.wiring,
                             org.slf4j,
                             org.apache.felix.ipojo,
                             org.apache.felix.ipojo.handlers.providedservice.*,

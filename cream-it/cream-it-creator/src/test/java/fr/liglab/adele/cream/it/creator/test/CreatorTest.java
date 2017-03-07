@@ -57,7 +57,7 @@ public class CreatorTest extends ContextBaseTest {
 
         ContextServiceProvider serviceObj1 = osgiHelper.getServiceObject(ContextServiceProvider.class);
 
-        serviceObj1.createInstanceOfcontextEntity(null,"contextEntityInstance1");
+        serviceObj1.createInstanceOfcontextEntity(null, "contextEntityInstance1");
 
         ContextService1 contextEntity1 = osgiHelper.getServiceObject(ContextService1.class);
         assertThat(contextEntity1).isNotNull();

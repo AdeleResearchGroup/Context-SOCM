@@ -16,24 +16,22 @@ import java.util.stream.Collectors;
  */
 public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
 
-    protected static final String CONTEXT_ENTITY_ELEMENT = HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER;
-
     public static final String COMPONENT_TYPE = "context-component";
-
     public static final String CONTEXT_PROVIDE_TYPE = "context-provide";
+    protected static final String CONTEXT_ENTITY_ELEMENT = HandlerReference.NAMESPACE + ":" + HandlerReference.ENTITY_HANDLER;
 
     public ContextEntityProcessor(ClassLoader classReferenceLoader) {
-        super(ContextEntity.class,classReferenceLoader);
+        super(ContextEntity.class, classReferenceLoader);
     }
 
     @Override
     public void process(ContextEntity annotation) {
-    	
+
     	/*
     	 * Create the corresponding root iPOJO component
     	 */
-        Element component			= new Element(COMPONENT_TYPE, "");
-        String classname 			= getAnnotatedClassType().getClassName();
+        Element component = new Element(COMPONENT_TYPE, "");
+        String classname = getAnnotatedClassType().getClassName();
 
         component.addAttribute(new Attribute("classname", classname));
         component.addAttribute(new Attribute("immediate", "true"));
@@ -41,7 +39,7 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
         if (getRootMetadata() != null) {
             error("Multiple 'component type' annotations on the class '{%s}'.", classname);
             warn("@Entity is ignored.");
-            component =getRootMetadata();
+            component = getRootMetadata();
         }
 
         setRootMetadata(component);
@@ -49,60 +47,60 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
         /*
          * Verify the annotated class implements all the context services specified in the annotation
          */
-        ClassNode clazz 	= getAnnotatedClass();
+        ClassNode clazz = getAnnotatedClass();
         boolean implemented = true;
 
         for (Class<?> service : annotation.services()) {
 
             if (!clazz.interfaces.contains(Type.getInternalName(service))) {
-                error("Class " + clazz.name + " is not an implementation of entity service " + service);
+                error("Class " + clazz.name + " is not an implementation of context service " + service);
                 implemented = false;
             }
 
         }
 
-        if (! implemented) {
+        if (!implemented) {
             error("Cannot ensure that the class " + classname + " is the implementation of the specified context services");
         }
         
         /*
          * Add the specified context services as provided specifications of the IPOJO component
          */
-        String specifications = Arrays.asList(annotation.services()).stream().map(service -> service.getName()).collect(Collectors.joining(",","{","}"));
+        String specifications = Arrays.asList(annotation.services()).stream().map(service -> service.getName()).collect(Collectors.joining(",", "{", "}"));
 
 
         if (annotation.services().length > 0) {
-            Element provides = new Element("provides","");
-            Attribute attribute = new Attribute("specifications", specifications);
+            Element provides = new Element(ProvideReferenceHandler.PROVIDES.toString(), "");
+            Attribute attribute = new Attribute(ProvideReferenceHandler.SPECIFICATIONS.toString(), specifications);
 
             provides.addAttribute(attribute);
 
         /*
          * Add a static property to the component specifying all the context services implemented by the entity
          */
-            Element property  = new Element("property", "");
+            Element property = new Element(ProvideReferenceHandler.PROPERTY.toString(), "");
 
-            property.addAttribute(new Attribute("name", ContextEntity.ENTITY_CONTEXT_SERVICES));
-            property.addAttribute(new Attribute("type", "string[]"));
-            property.addAttribute(new Attribute("value", specifications));
-            property.addAttribute(new Attribute("mandatory", "false"));
-            property.addAttribute(new Attribute("immutable", "true"));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.NAME.toString(), ContextEntity.ENTITY_CONTEXT_SERVICES));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.TYPE.toString(), "string[]"));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.VALUE.toString(), specifications));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.MANDATORY.toString(), "false"));
+            property.addAttribute(new Attribute(ProvideReferenceHandler.IMMUTABLE.toString(), "true"));
 
             provides.addElement(property);
 
 
-            Attribute attributeStrategy = new Attribute("strategy", StrategyReference.STRATEGY_PATH);
+            Attribute attributeStrategy = new Attribute(ProvideReferenceHandler.STRATEGY.toString(), StrategyReference.STRATEGY_PATH);
             provides.addAttribute(attributeStrategy);
 
-            addMetadataElement(CONTEXT_PROVIDE_TYPE,provides,null);
+            addMetadataElement(CONTEXT_PROVIDE_TYPE, provides, null);
         }
 
 
         /*
          *  Create the Entity element that will own all definitions regarding the context
          */
-        Element context = new Element(HandlerReference.ENTITY_HANDLER,HandlerReference.NAMESPACE);
-        addMetadataElement(CONTEXT_ENTITY_ELEMENT,context);
+        Element context = new Element(HandlerReference.ENTITY_HANDLER, HandlerReference.NAMESPACE);
+        addMetadataElement(CONTEXT_ENTITY_ELEMENT, context);
 
     }
 

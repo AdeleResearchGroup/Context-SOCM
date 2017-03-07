@@ -1,8 +1,8 @@
 package fr.liglab.adele.cream.it.facilities.requirement;
 
-import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
 
-@BehaviorProvider(spec = BehaviorService.class)
+@FunctionalExtender(contextServices = BehaviorService.class)
 public class BehaviorProviderComponent implements BehaviorService {
     @Override
     public boolean getTrue() {

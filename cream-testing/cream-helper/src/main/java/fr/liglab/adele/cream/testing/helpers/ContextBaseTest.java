@@ -43,10 +43,10 @@ public abstract class ContextBaseTest extends BaseTest {
         options = OptionUtils.combine(options, creamBundles());
         options = OptionUtils.combine(options, assertjBundles());
         options = OptionUtils.combine(options, festBundles());
-        options = OptionUtils.combine(options,  systemProperty("logback.configurationFile")
+        options = OptionUtils.combine(options, systemProperty("logback.configurationFile")
                 .value("file:" + PathUtils.getBaseDir() + "/src/test/resources/logger.xml"));
-        options = OptionUtils.combine(options,   log());
-        if (deployCreamRuntimeFacilities()){
+        options = OptionUtils.combine(options, log());
+        if (deployCreamRuntimeFacilities()) {
             options = OptionUtils.combine(options, creamRuntimeFacilitiesBundles());
         }
 
@@ -131,7 +131,7 @@ public abstract class ContextBaseTest extends BaseTest {
      */
     @Before
     public void fuchsiaSetUp() {
-        contextHelper = new ContextHelper(this.osgiHelper,this.ipojoHelper);
+        contextHelper = new ContextHelper(this.osgiHelper, this.ipojoHelper);
     }
 
 }

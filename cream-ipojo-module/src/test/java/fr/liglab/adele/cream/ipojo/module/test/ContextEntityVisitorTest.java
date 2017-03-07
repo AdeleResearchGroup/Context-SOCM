@@ -12,10 +12,10 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by aygalinc on 26/08/16.
  */
-public class ContextEntityVisitorTest extends UtilityProcessorTest{
+public class ContextEntityVisitorTest extends UtilityProcessorTest {
 
     /*
-    	 * The loader used to load the classes referenced in annotations. Notice that we try to load classes using
+         * The loader used to load the classes referenced in annotations. Notice that we try to load classes using
     	 * the class loader of this module, and if it is not possible we use a loader that creates an empty mocked-up
     	 * class that represent the referenced class.
     	 */
@@ -29,7 +29,7 @@ public class ContextEntityVisitorTest extends UtilityProcessorTest{
 
         ContextEntity contextEntity = Component.class.getAnnotation(ContextEntity.class);
 
-        processorFactory.process(context,contextEntity);
+        processorFactory.process(context, contextEntity);
 
         assertNotNull(root);
         assertEquals(FakeServiceClass.class.getName(), root.getAttribute("classname"));
@@ -38,12 +38,12 @@ public class ContextEntityVisitorTest extends UtilityProcessorTest{
     }
 
 
-    @ContextEntity(services={FakeServiceClass.class})
-    private class Component implements FakeServiceClass {}
-
-
     private interface FakeServiceClass {
 
+    }
+
+    @ContextEntity(services = {FakeServiceClass.class})
+    private class Component implements FakeServiceClass {
     }
 
 }

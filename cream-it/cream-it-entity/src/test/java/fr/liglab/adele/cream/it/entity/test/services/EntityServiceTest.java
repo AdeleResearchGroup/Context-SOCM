@@ -42,6 +42,7 @@ public class EntityServiceTest extends EntityBaseCommonConfig {
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1.returnFalse()).isFalse();
     }
+
     @Test
     public void testContextExplicitServiceHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntityExplicitHeritage();
@@ -71,7 +72,7 @@ public class EntityServiceTest extends EntityBaseCommonConfig {
         assertThat(serviceObj1 instanceof ContextService1).isTrue();
         assertThat(serviceObj1 instanceof Pojo).isTrue();
 
-        Pojo pojo = (Pojo)serviceObj1;
+        Pojo pojo = (Pojo) serviceObj1;
 
         ComponentInstance instance = pojo.getComponentInstance();
 
@@ -90,19 +91,19 @@ public class EntityServiceTest extends EntityBaseCommonConfig {
     }
 
     private void createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(),"ContextEntityTest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntity1.class.getName(), "ContextEntityTest", null);
     }
 
     private void createContextEntityHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityHeritageImpl.class.getName(),"ContextEntityHeritageTest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityHeritageImpl.class.getName(), "ContextEntityHeritageTest", null);
     }
 
     private void createContextEntityExplicitHeritage() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityExplicitHeritageImpl.class.getName(),"ContextEntityExplicitHeritageTest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityExplicitHeritageImpl.class.getName(), "ContextEntityExplicitHeritageTest", null);
     }
 
     private void createContextEntityExtends() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityExtends.class.getName(),"ContextEntityExtendstest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntityExtends.class.getName(), "ContextEntityExtendstest", null);
     }
 
 }

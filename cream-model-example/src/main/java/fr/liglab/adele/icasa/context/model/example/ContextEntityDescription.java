@@ -4,13 +4,17 @@ import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
 
 
-public @ContextService interface ContextEntityDescription extends ContextEntityFirstLevel {
+public
+@ContextService
+interface ContextEntityDescription extends ContextEntityFirstLevel {
 
-    public static final @State String HELLO = "hello";
+    public static final
+    @State
+    String HELLO = "hello";
 
     String hello();
-    
+
     void setHello(String hello);
-    
+
     public String externalNotification(String externalEvent);
 }

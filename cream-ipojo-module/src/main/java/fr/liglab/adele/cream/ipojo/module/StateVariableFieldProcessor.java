@@ -8,20 +8,20 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
  */
 public class StateVariableFieldProcessor extends StateProcessor<State.Field> {
 
-	public StateVariableFieldProcessor(ClassLoader classReferenceLoader) {
-		super(State.Field.class,classReferenceLoader);
-	}
+    public StateVariableFieldProcessor(ClassLoader classReferenceLoader) {
+        super(State.Field.class, classReferenceLoader);
+    }
 
-	@Override
-	protected String getStateId() {
-		return State.id(getAnnotation().service(), getAnnotation().state());
-	}
+    @Override
+    protected String getStateId() {
+        return State.id(getAnnotation().service(), getAnnotation().state());
+    }
 
-	@Override
-	protected void processStateAttributes() {
-		setDirectAccess(getAnnotation().directAccess());
-		addStateAttribute("field", getAnnotatedField().name, true);
-		addStateAttribute("value", getAnnotation().value(), true);
-	}
+    @Override
+    protected void processStateAttributes() {
+        setDirectAccess(getAnnotation().directAccess());
+        addStateAttribute("field", getAnnotatedField().name, true);
+        addStateAttribute("value", getAnnotation().value(), true);
+    }
 
 }

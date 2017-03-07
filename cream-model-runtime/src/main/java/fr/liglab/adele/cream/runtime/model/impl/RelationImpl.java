@@ -9,29 +9,29 @@ import org.apache.felix.ipojo.annotations.Provides;
 @Provides
 public class RelationImpl implements Relation {
 
-	@Property(name = "relation.source.id",mandatory = true)
-	public String source;
+    @Property(name = "relation.source.id", mandatory = true)
+    public String source;
 
-	@Property(name = "relation.target.id",mandatory = true)
-	public String target;
+    @Property(name = "relation.target.id", mandatory = true)
+    public String target;
 
-	@Property(name = "relation.id",mandatory = true)
-	public String name;
+    @Property(name = "relation.id", mandatory = true)
+    public String name;
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String getSource() {
-		return source;
-	}
+    @Override
+    public String getSource() {
+        return source;
+    }
 
-	@Override
-	public String getTarget() {
-		return target;
-	}
+    @Override
+    public String getTarget() {
+        return target;
+    }
 
 
 }

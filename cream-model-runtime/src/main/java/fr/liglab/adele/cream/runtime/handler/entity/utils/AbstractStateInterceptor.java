@@ -12,23 +12,23 @@ import java.util.Map;
 /**
  * Created by aygalinc on 26/08/16.
  */
-public abstract class AbstractStateInterceptor implements StateInterceptor{
+public abstract class AbstractStateInterceptor implements StateInterceptor {
 
     /**
      * The mapping from fields handled by this interceptor to states of the context
      */
-    protected final Map<String,String> fieldToState = new HashMap<>();
+    protected final Map<String, String> fieldToState = new HashMap<>();
 
     /**
      * Adds a new managed field
      */
     public void handleState(InstanceManager component, PojoMetadata componentMetadata, Element state) throws ConfigurationException {
 
-        String stateId				= state.getAttribute("id");
-        String stateField			= state.getAttribute("field");
+        String stateId = state.getAttribute("id");
+        String stateField = state.getAttribute("field");
 
 		/*
-		 * Check the association field to state
+         * Check the association field to state
 		 */
         if (stateField == null) {
             throw new ConfigurationException("Malformed Manifest : a state variable is declared with no 'field' attribute");
@@ -36,10 +36,10 @@ public abstract class AbstractStateInterceptor implements StateInterceptor{
 
         FieldMetadata fieldMetadata = componentMetadata.getField(stateField);
         if (fieldMetadata == null) {
-            throw new ConfigurationException("Malformed Manifest : the specified field doesn't exists "+stateField);
+            throw new ConfigurationException("Malformed Manifest : the specified field doesn't exists " + stateField);
         }
 
-        fieldToState.put(stateField,stateId);
-        component.register(fieldMetadata,this);
+        fieldToState.put(stateField, stateId);
+        component.register(fieldMetadata, this);
     }
 }

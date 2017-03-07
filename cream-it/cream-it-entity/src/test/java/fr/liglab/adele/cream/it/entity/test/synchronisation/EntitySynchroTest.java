@@ -46,13 +46,13 @@ public class EntitySynchroTest extends EntityBaseCommonConfig {
         ServiceReference serviceReference = osgiHelper.getServiceReference(ServiceSynchroSpec.class);
 
         assertThat(serviceObj1.getterMethodParam1()).isEqualTo(ServiceSynchroSpec.PARAM_1_INIT_VALUE).overridingErrorMessage("first getter call didn't return the right value");
-        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_1_DIRECTACCESS))).isEqualTo(ServiceSynchroSpec.PARAM_1_INIT_VALUE).overridingErrorMessage("Service property isn't set to initial value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_1_DIRECTACCESS))).isEqualTo(ServiceSynchroSpec.PARAM_1_INIT_VALUE).overridingErrorMessage("Service property isn't set to initial value");
 
         boolean newValue = !ServiceSynchroSpec.PARAM_1_INIT_VALUE;
         serviceObj1.setterMethodParam1(newValue);
 
         assertThat(serviceObj1.getterMethodParam1()).isEqualTo(newValue);
-        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_1_DIRECTACCESS))).isEqualTo(newValue).overridingErrorMessage("Service property isn't set to the modified value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_1_DIRECTACCESS))).isEqualTo(newValue).overridingErrorMessage("Service property isn't set to the modified value");
 
     }
 
@@ -64,12 +64,12 @@ public class EntitySynchroTest extends EntityBaseCommonConfig {
         ServiceReference serviceReference = osgiHelper.getServiceReference(ServiceSynchroSpec.class);
 
         assertThat(serviceObj1.getterMethodParam2()).isEqualTo(ServiceSynchroSpec.PARAM_2_VALUE);
-        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_2_PULL))).isEqualTo(ServiceSynchroSpec.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_2_PULL))).isEqualTo(ServiceSynchroSpec.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
 
         serviceObj1.setterMethodParam2(!ServiceSynchroSpec.PARAM_2_VALUE);
 
         assertThat(serviceObj1.getterMethodParam2()).isEqualTo(ServiceSynchroSpec.PARAM_2_VALUE);
-        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_2_PULL))).isEqualTo(ServiceSynchroSpec.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_2_PULL))).isEqualTo(ServiceSynchroSpec.PARAM_2_VALUE).overridingErrorMessage("Service property isn't set to the pulled value");
 
     }
 
@@ -79,14 +79,14 @@ public class EntitySynchroTest extends EntityBaseCommonConfig {
 
         ServiceReference serviceReference = osgiHelper.getServiceReference(ServiceSynchroSpec.class);
 
-        assertThat( serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
+        assertThat(serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
         assertThat(serviceObj1.getterMethodParam3WithChange()).isEqualTo(true);
-        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_3_APPLY))).isEqualTo(null);
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_3_APPLY))).isEqualTo(null);
 
         serviceObj1.setterMethodParam3(false);
         assertThat(serviceObj1.getterMethodParam3ReturnAlwaysNull()).isEqualTo(null);
         assertThat(serviceObj1.getterMethodParam3WithChange()).isEqualTo(false);
-        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_3_APPLY))).isEqualTo(null);
+        assertThat(serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_3_APPLY))).isEqualTo(null);
 
 
     }
@@ -97,7 +97,7 @@ public class EntitySynchroTest extends EntityBaseCommonConfig {
 
         ServiceReference serviceReference = osgiHelper.getServiceReference(ServiceSynchroSpec.class);
 
-        assertThat( serviceObj1.getterMethodParam5()).isEqualTo(true);
+        assertThat(serviceObj1.getterMethodParam5()).isEqualTo(true);
         assertThat(serviceObj1.getterMethodParam5WithChange()).isEqualTo(true);
 
         serviceObj1.setterMethodParam5(false);
@@ -115,7 +115,7 @@ public class EntitySynchroTest extends EntityBaseCommonConfig {
 
     @Test
     public void testPeriodicPullSVBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        ServiceSynchroSpec serviceObj1 =createContextEntity();
+        ServiceSynchroSpec serviceObj1 = createContextEntity();
 
         ServiceReference serviceReference = osgiHelper.getServiceReference(ServiceSynchroSpec.class);
 /**
@@ -128,14 +128,14 @@ public class EntitySynchroTest extends EntityBaseCommonConfig {
             assertThat(true).isEqualTo(false);
         }
 
-        long secondValue = (long) serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_4_PERIODICPULL));
+        long secondValue = (long) serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_4_PERIODICPULL));
 
         try {
             Thread.currentThread().sleep(2500);
         } catch (InterruptedException e) {
             assertThat(true).isEqualTo(false);
         }
-        long thirdValue = (long) serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class,ServiceSynchroSpec.PARAM_4_PERIODICPULL));
+        long thirdValue = (long) serviceReference.getProperty(ContextEntity.State.id(ServiceSynchroSpec.class, ServiceSynchroSpec.PARAM_4_PERIODICPULL));
 
         /**
          * see TODO
@@ -147,7 +147,7 @@ public class EntitySynchroTest extends EntityBaseCommonConfig {
 
 
     private ServiceSynchroSpec createContextEntity() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        contextHelper.getContextEntityHelper().createContextEntity(ContextEntitySynchro.class.getName(),"ContextEntityTest",null);
+        contextHelper.getContextEntityHelper().createContextEntity(ContextEntitySynchro.class.getName(), "ContextEntityTest", null);
         return osgiHelper.getServiceObject(ServiceSynchroSpec.class);
     }
 }

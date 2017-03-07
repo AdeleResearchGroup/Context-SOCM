@@ -13,13 +13,13 @@ public class CustomInvocationHandler implements InvocationHandler {
 
     private final SuccessorStrategy mySuccessorStrategy;
 
-    private final  Object myPojo;
+    private final Object myPojo;
 
     private final List<InvocationHandler> mySuccessor = new ArrayList<>();
 
     private final CreamGenerator myCreamGenerator;
 
-    public CustomInvocationHandler(Object pojo, CreamGenerator manager, SuccessorStrategy successorStrategy, List<InvocationHandler> successors){
+    public CustomInvocationHandler(Object pojo, CreamGenerator manager, SuccessorStrategy successorStrategy, List<InvocationHandler> successors) {
         myPojo = pojo;
         mySuccessorStrategy = successorStrategy;
         mySuccessor.addAll(successors);
@@ -28,13 +28,13 @@ public class CustomInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Map<Method,GeneratedDelegatorProxy> mapOfDelegator = myCreamGenerator.getProxyDelegationMap();
-        if (mapOfDelegator.containsKey(method)){
+        Map<Method, GeneratedDelegatorProxy> mapOfDelegator = myCreamGenerator.getProxyDelegationMap();
+        if (mapOfDelegator.containsKey(method)) {
             GeneratedDelegatorProxy generatedDelegatorProxy = mapOfDelegator.get(method);
             generatedDelegatorProxy.setPojo(myPojo);
-            return generatedDelegatorProxy.delegate(method.hashCode(),args);
+            return generatedDelegatorProxy.delegate(method.hashCode(), args);
         }
 
-        return mySuccessorStrategy.successorStrategy(myPojo,mySuccessor,proxy,method,args);
+        return mySuccessorStrategy.successorStrategy(myPojo, mySuccessor, proxy, method, args);
     }
 }

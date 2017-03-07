@@ -18,5 +18,5 @@ public interface ContextEntity {
 
     public Set<String> getStates();
 
-    public Map<String,Object> dumpState();
+    public Map<String, Object> dumpState();
 }

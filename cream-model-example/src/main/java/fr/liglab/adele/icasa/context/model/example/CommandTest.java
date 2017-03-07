@@ -16,31 +16,29 @@ public class CommandTest {
     @ServiceProperty(name = "osgi.command.scope", value = "cream")
     String m_scope;
 
-    @Requires(optional = false,specification = Factory.class,filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
-    Factory contextEntityFacto ;
+    @Requires(optional = false, specification = Factory.class, filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
+    Factory contextEntityFacto;
 
-    @Requires(specification = ContextEntityDescription.class,id = "test", optional = true,proxy = false)
-    ContextEntityDescription description ;
+    @Requires(specification = ContextEntityDescription.class, id = "test", optional = true, proxy = false)
+    ContextEntityDescription description;
 
-    @Requires(specification = BehaviorService.class,id = "test2", optional = true,proxy = false)
+    @Requires(specification = BehaviorService.class, id = "test2", optional = true, proxy = false)
     BehaviorService behaviorService;
-
-    @ContextUpdate(specification = ContextEntityDescription.class,stateId = ContextEntityDescription.HELLO)
-    public void updateState(ContextEntityDescription entityDescription,Object newP,Object old){
-        System.out.println(" change on Hello catch");
-    }
-
-    @Bind(id = "test")
-    public void bindTest(ContextEntityDescription description){
-        System.out.println(description.hello());
-    }
-
     /**
      * Defines the functions (commands).
      */
     @ServiceProperty(name = "osgi.command.function", value = "{}")
-    String[] m_function = new String[]{"create","testBehavior","testEvent"};
+    String[] m_function = new String[]{"create", "testBehavior", "testEvent"};
 
+    @ContextUpdate(specification = ContextEntityDescription.class, stateId = ContextEntityDescription.HELLO)
+    public void updateState(ContextEntityDescription entityDescription, Object newP, Object old) {
+        System.out.println(" change on Hello catch");
+    }
+
+    @Bind(id = "test")
+    public void bindTest(ContextEntityDescription description) {
+        System.out.println(description.hello());
+    }
 
     @Descriptor("Create A Entity")
     public void create(@Descriptor("create") String... handleId) {
@@ -51,7 +49,7 @@ public class CommandTest {
             } else {
                 id = handleId[0];
                 Hashtable prop = new Hashtable();
-                prop.put("context.entity.id",id);
+                prop.put("context.entity.id", id);
                 contextEntityFacto.createComponentInstance(prop);
             }
         } catch (Exception e) {
@@ -71,7 +69,8 @@ public class CommandTest {
 
     @Descriptor("Create A Entity")
     public void testEvent(@Descriptor("testEvent") String... handleId) {
-        try { description.setHello(" cuicui ");
+        try {
+            description.setHello(" cuicui ");
         } catch (Exception e) {
             e.printStackTrace();
         }

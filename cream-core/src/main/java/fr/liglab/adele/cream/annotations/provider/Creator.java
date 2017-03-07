@@ -9,19 +9,18 @@ import java.util.Set;
 
 /**
  * This interface groups all annotations useful to context entity provider
- *
  */
 public interface Creator {
 
 
-	/**
-	 * Annotation to allow automatic injection of creator factories
-	 *
-	 */
-	@Target(ElementType.FIELD)
-	public @interface Field {
+    /**
+     * Annotation to allow automatic injection of creator factories
+     */
+    @Target(ElementType.FIELD)
+    public @interface Field {
 
-		public static final String NO_PARAMETER = "";
+        public static final String NO_PARAMETER = "";
+
 
 		String value() default NO_PARAMETER;
 
@@ -32,73 +31,80 @@ public interface Creator {
 		public Set<String> getRequirements();
 	}
 
-	/**
-	 * A factory object used to create context entities of the specified type
-	 *
-	 * @param <E> The entity type
-	 */
-	public interface Entity<E> {
+    /**
+     * Annotation to allow using creators with dynamically created factories
+     */
+    @Target(ElementType.FIELD)
+    public @interface Dynamic {
+    }
 
-		public Set<String> getInstances();
+    /**
+     * A factory object used to create context entities of the specified type
+     *
+     * @param <E> The entity type
+     */
+    public interface Entity<E> {
 
-		/**
-		 * Return the created instance of the context entity
-		 *
-		 * TODO should return a Future because if the creator is disabled the actual instance
-		 * may not be available
-		 */
-		public E getInstance(String id);
+        public Set<String> getInstances();
 
-		/**
-		 * Creates a new instance of the context entity
-		 *
-		 * TODO If there are errors at instantiation, and the creator is disabled how to notify
-		 * the client?
-		 */
-		public void create(String id, Map<String, Object> initialization);
+        /**
+         * Return the created instance of the context entity
+         * <p>
+         * TODO should return a Future because if the creator is disabled the actual instance
+         * may not be available
+         */
+        public E getInstance(String id);
 
-		public void create(String id);
+        /**
+         * Creates a new instance of the context entity
+         * <p>
+         * TODO If there are errors at instantiation, and the creator is disabled how to notify
+         * the client?
+         */
+        public void create(String id, Map<String, Object> initialization);
 
-		public void delete(String id);
+        public void create(String id);
 
-		public void deleteAll();
-	}
+        public void delete(String id);
 
-	/**
-	 * A factory object used to create relations between entities of the specified type
-	 *
-	 * @param <S> The source entity type
-	 * @param <T> The target entity type
-	 */
-	public interface Relation<S,T> {
+        public void deleteAll();
+    }
 
-		public Set<String> getInstances();
+    /**
+     * A factory object used to create relations between entities of the specified type
+     *
+     * @param <S> The source entity type
+     * @param <T> The target entity type
+     */
+    public interface Relation<S, T> {
 
-		public fr.liglab.adele.cream.model.Relation getInstance(String id);
+        public Set<String> getInstances();
 
-		public List<fr.liglab.adele.cream.model.Relation> getInstancesRelatedTo(String sourceId);
+        public fr.liglab.adele.cream.model.Relation getInstance(String id);
 
-		public List<fr.liglab.adele.cream.model.Relation> getInstancesRelatedTo(S source);
+        public List<fr.liglab.adele.cream.model.Relation> getInstancesRelatedTo(String sourceId);
 
-		public String create(S source, T target);
+        public List<fr.liglab.adele.cream.model.Relation> getInstancesRelatedTo(S source);
 
-		public String create(String sourceId, String targetId);
+        public String create(S source, T target);
 
-		public String create(S source, String targetId);
+        public String create(String sourceId, String targetId);
 
-		public String create(String sourceId, T target);
+        public String create(S source, String targetId);
 
-		public void delete(S source, T target);
+        public String create(String sourceId, T target);
 
-		public void delete(String sourceId, String targetId);
+        public void delete(S source, T target);
 
-		public void delete(S source, String targetId);
+        public void delete(String sourceId, String targetId);
 
-		public void delete(String sourceId, T target);
-		
-		void delete(String id);
+        public void delete(S source, String targetId);
 
-		void deleteAll();
+        public void delete(String sourceId, T target);
 
-	}
+        void delete(String id);
+
+        void deleteAll();
+
+    }
 }

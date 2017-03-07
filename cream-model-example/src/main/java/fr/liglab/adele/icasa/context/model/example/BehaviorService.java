@@ -6,9 +6,13 @@ import fr.liglab.adele.cream.annotations.State;
 /**
  * Created by aygalinc on 01/06/16.
  */
-public @ContextService interface BehaviorService {
+public
+@ContextService
+interface BehaviorService {
 
-    public static final @State String BEHAVIOR_STATE = "behaviorparam";
+    public static final
+    @State
+    String BEHAVIOR_STATE = "behaviorparam";
 
     public String coucou();
 }

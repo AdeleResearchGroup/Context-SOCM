@@ -67,7 +67,7 @@
 
 
         <!--Plug in version-->
-        <depends-maven-plugin.version>1.2</depends-maven-plugin.version>
+        <depends-maven-plugin.version>1.3.1</depends-maven-plugin.version>
         <sonar-maven-plugin>3.0.2</sonar-maven-plugin>
         <maven-clean-plugin>3.0.0</maven-clean-plugin>
         <maven-bundle-plugin>3.2.0</maven-bundle-plugin>
@@ -89,7 +89,7 @@
         <module>cream-testing</module>
         <module>cream-it/cream-it-entity</module>
         <module>cream-it/cream-it-creator</module>
-        <module>cream-it/cream-it-behavior</module>
+        <module>cream-it/cream-it-functional-extension</module>
         <module>cream-it/cream-it-facilities-requirements</module>
         <module>cream-distribution</module>
         <module>cream-model-example</module>

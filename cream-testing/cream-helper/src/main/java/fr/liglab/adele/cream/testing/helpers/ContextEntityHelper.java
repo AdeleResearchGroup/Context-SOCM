@@ -29,23 +29,23 @@ public class ContextEntityHelper {
     }
 
     public Factory getContextEntityFactory(String factoryName, long timeout, boolean fail) {
-        return (Factory)this.osgiHelper.waitForService(Factory.class, "(factory.name=" + factoryName + ")", timeout, fail);
+        return (Factory) this.osgiHelper.waitForService(Factory.class, "(factory.name=" + factoryName + ")", timeout, fail);
     }
 
-    public ComponentInstance createContextEntity(String contextEntityType, String contextEntityId, Map<String,Object> contextEntityInitParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
-        return createContextEntity(contextEntityType,contextEntityId,contextEntityInitParameters,null);
+    public ComponentInstance createContextEntity(String contextEntityType, String contextEntityId, Map<String, Object> contextEntityInitParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        return createContextEntity(contextEntityType, contextEntityId, contextEntityInitParameters, null);
     }
 
-    public ComponentInstance createContextEntity(String contextEntityType, String contextEntityId, Map<String,Object> contextEntityInitParameters, Map<String,Object> pojoParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+    public ComponentInstance createContextEntity(String contextEntityType, String contextEntityId, Map<String, Object> contextEntityInitParameters, Map<String, Object> pojoParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         Factory contextEntityFactory = getContextEntityFactory(contextEntityType);
         Hashtable param = new Hashtable();
 
-        param.put("context.entity.id",contextEntityId);
+        param.put("context.entity.id", contextEntityId);
 
         if (contextEntityInitParameters != null) {
-            param.put("context.entity.init",contextEntityInitParameters);
+            param.put("context.entity.init", contextEntityInitParameters);
         }
-        if (pojoParameters != null){
+        if (pojoParameters != null) {
             param.putAll(pojoParameters);
         }
 
