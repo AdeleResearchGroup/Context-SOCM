@@ -12,6 +12,7 @@ import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
@@ -35,6 +36,9 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
     private final Map<String, ComponentCreator> creators 			= new HashMap<>();
 
 	private final Map<String, Set<String>> requirementMap 	= new HashMap<>();
+
+    @ServiceProperty(name="provided", value="")
+    private String[] provided;
 
   	private final Function<Factory,Creator.Entity<?>> dynamicCreator = (factory) -> {
 
@@ -119,6 +123,8 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
         if (creator == null) {
             creator = new EntityCreator(entity);
             creators.put(entity, creator);
+            
+            provided = creators.keySet().toArray(new String[0]);
         }
         
         return (EntityCreator) creator;
@@ -133,6 +139,8 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
         if (creator == null) {
             creator = new RelationCreator(relation);
             creators.put(relation, creator);
+
+            provided = creators.keySet().toArray(new String[0]);
         }
         
         return (RelationCreator) creator;
