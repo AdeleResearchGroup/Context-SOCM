@@ -64,21 +64,19 @@ public abstract class ComponentCreator {
      * Creates a new instance declaration and add it to the list of handled declarations
      */
     protected void create(InstanceDeclaration instance) {
-        instances.put(instance.getName(), instance);
         if (isEnabled() && factory != null) {
             instance.instantiate(factory);
         }
-
+        instances.put(instance.getName(), instance);
     }
 
     /**
      * Destroys the specified instance and remove it from the list of created items
      */
     protected void deleteComponent(String id) {
-        InstanceDeclaration instance = instances.get(id);
+        InstanceDeclaration instance = instances.remove(id);
         if (instance != null) {
             instance.dispose();
-            instances.remove(id);
         }
     }
 
