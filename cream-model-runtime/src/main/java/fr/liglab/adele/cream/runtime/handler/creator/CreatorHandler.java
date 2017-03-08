@@ -46,8 +46,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
   			return creator;
   		}
   		
-  		creator = instantiateEntityCreator(factory.getName());
-		creator.bindFactory(factory);
+  		creator = instantiateEntityCreator(factory.getName(),factory);
 		return creator;
 	};
     
@@ -83,7 +82,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
             }
             
             if (isStatic && entity != null && relation == null) {
-                instantiateEntityCreator(entity);
+                instantiateEntityCreator(entity,null);
                 fieldToContext.put(fieldName, entity);
             }
 
@@ -103,13 +102,17 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
     /**
      * Instantiate, if necessary, the creator associated with a given entity
      */
-    private EntityCreator instantiateEntityCreator(String entity) {
+    private EntityCreator instantiateEntityCreator(String entity, Factory factory) {
 
         ComponentCreator creator = creators.get(entity);
         if (creator == null) {
             creator = new EntityCreator(entity);
             creators.put(entity, creator);
-            
+
+            if (factory != null) {
+                creator.bindFactory(factory);
+            }
+
             provided = creators.keySet().toArray(new String[0]);
         }
         

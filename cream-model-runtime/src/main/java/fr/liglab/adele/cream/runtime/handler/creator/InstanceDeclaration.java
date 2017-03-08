@@ -54,7 +54,7 @@ public class InstanceDeclaration {
      * Tries to instantiate a pending instance
      */
     public void instantiate(Factory factory) {
-        if (factory != null) {
+        if (factory != null && !isInstantiated()) {
             try {
                 instance = factory.createComponentInstance(configuration);
             } catch (UnacceptableConfiguration | MissingHandlerException | ConfigurationException ignored) {
