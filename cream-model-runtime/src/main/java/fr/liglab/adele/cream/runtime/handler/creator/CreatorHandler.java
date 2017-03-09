@@ -462,23 +462,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
                 configuration.put("context.entity.init", initialization);
             }
 
-            super.create(new InstanceDeclaration(id, configuration) {
-
-                @Override
-                public void dispose() {
-
-                    /**
-                     * For entities we try to save the state of the entity before disposing it
-                     */
-                    ContextEntity entityToSave = EntityHandler.getContextEntity(this.instance);
-                    if (entityToSave != null) {
-                        configuration.put("context.entity.init", entityToSave.dumpState());
-                    }
-
-                    super.dispose();
-                }
-
-            });
+            super.create(new InstanceDeclaration(id, configuration));
         }
 
         @Override
