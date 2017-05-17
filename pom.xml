@@ -85,12 +85,17 @@
         <module>cream-core</module>
         <module>cream-ipojo-module</module>
         <module>cream-model-runtime</module>
-        <module>cream-runtime-facilities</module>
         <module>cream-testing</module>
         <module>cream-it/cream-it-entity</module>
         <module>cream-it/cream-it-creator</module>
         <module>cream-it/cream-it-functional-extension</module>
+
+        <module>cream-runtime-facilities</module>
         <module>cream-it/cream-it-facilities-requirements</module>
+
+        <module>cream-administration</module>
+        <module>cream-it/cream-it-administration</module>
+
         <module>cream-distribution</module>
         <module>cream-model-example</module>
     </modules>

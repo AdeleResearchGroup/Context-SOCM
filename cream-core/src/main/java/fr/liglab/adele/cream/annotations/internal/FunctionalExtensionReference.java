@@ -9,6 +9,7 @@ public enum FunctionalExtensionReference {
 
     SPECIFICATION_ATTRIBUTE_NAME("functional.extension.spec"),
 
+
     IMPLEMEMENTATION_ATTRIBUTE_NAME("implementation"),
 
     FIELD_ATTRIBUTE_NAME("field"),
@@ -17,7 +18,9 @@ public enum FunctionalExtensionReference {
 
     FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME("mandatory"),
 
-    FUNCTIONAL_EXTENSION_ID_CONFIG("functional.extension.id");
+    FUNCTIONAL_EXTENSION_ID_CONFIG("functional.extension.id"),
+
+    FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG("functional.extension.managed.specs");
 
     /**
      * Constante used in filter

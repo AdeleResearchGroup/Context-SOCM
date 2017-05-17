@@ -4,6 +4,7 @@ import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.MethodInterceptor;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
@@ -209,5 +210,34 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
         //Do nothing
     }
 
+    @Override
+    public void addInterceptorDescription(Element stateElement) {
+        if( ! fieldToState.containsValue(stateElement.getAttribute("id"))){
+            stateElement.addAttribute(new Attribute("applyFunction","false"));
+            stateElement.addAttribute(new Attribute("pullFunction","false"));
+            return;
+        }
+        String stateId = stateElement.getAttribute("id");
+        for (Map.Entry<String,String> entry : fieldToState.entrySet()){
+            if (entry.getValue().equals(stateId)){
+                String stateField = entry.getKey();
+                if (applyFunctions.containsKey(stateField)){
+                    stateElement.addAttribute(new Attribute("applyFunction","true"));
+                }else {
+                    stateElement.addAttribute(new Attribute("applyFunction","false"));
+                }
+                if (pullFunctions.containsKey(stateField)){
+                    stateElement.addAttribute(new Attribute("pullFunction","true"));
+                    if (pullTasks.containsKey(stateField)){
+                        AbstractContextHandler.PeriodicTask task = pullTasks.get(stateField);
+                        stateElement.addAttribute(new Attribute("period",String.valueOf(task.getPeriod())));
+                        stateElement.addAttribute(new Attribute("unit",task.getUnit().toString()));
+                    }
+                }else {
+                    stateElement.addAttribute(new Attribute("pullFunction","false"));
+                }
+            }
+        }
+    }
 
 }

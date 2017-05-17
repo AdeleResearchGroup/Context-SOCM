@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
+import fr.liglab.adele.cream.annotations.internal.ReservedCreamValueReference;
 import fr.liglab.adele.cream.model.ContextEntity;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
@@ -509,9 +510,18 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         public Element getHandlerInfo() {
             Element handlerInfo = super.getHandlerInfo();
 
-            for (Map.Entry<String, Object> entry : dumpState().entrySet()) {
+            for ( String stateId : getStates()) {
                 Element stateElement = new Element("state", null);
-                stateElement.addAttribute(new Attribute(entry.getKey(), entry.getValue().toString()));
+                stateElement.addAttribute(new Attribute("id", stateId));
+                Map<String,Object> val = dumpState();
+                if (val.containsKey(stateId)){
+                    stateElement.addAttribute(new Attribute("value", val.get(stateId).toString()));
+                } else {
+                    stateElement.addAttribute(new Attribute("value", ReservedCreamValueReference.NOT_VALUED_STATES.toString()));
+                }
+                for (StateInterceptor interceptor : interceptors){
+                    interceptor.addInterceptorDescription(stateElement);
+                }
                 handlerInfo.addElement(stateElement);
             }
 
@@ -573,5 +583,14 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
                 taskHandle = null;
             }
         }
+
+        public long getPeriod() {
+            return period;
+        }
+
+        public TimeUnit getUnit() {
+            return unit;
+        }
+
     }
 }

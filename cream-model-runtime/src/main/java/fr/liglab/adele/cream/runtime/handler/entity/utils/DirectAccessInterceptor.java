@@ -1,6 +1,11 @@
 package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 import org.apache.felix.ipojo.FieldInterceptor;
+import org.apache.felix.ipojo.metadata.Attribute;
+import org.apache.felix.ipojo.metadata.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Interceptor to handle state fields that are directly manipulated by the entity code
@@ -38,5 +43,16 @@ public class DirectAccessInterceptor extends AbstractStateInterceptor implements
     public void invalidate() {
         //Do nothing
     }
+
+    @Override
+    public void addInterceptorDescription(Element stateElement) {
+        String stateId = stateElement.getAttribute("id");
+        if (fieldToState.values().contains(stateId)){
+            stateElement.addAttribute(new Attribute("directAcess","true"));
+        }else {
+            stateElement.addAttribute(new Attribute("directAcess","false"));
+        }
+    }
+
 
 }
