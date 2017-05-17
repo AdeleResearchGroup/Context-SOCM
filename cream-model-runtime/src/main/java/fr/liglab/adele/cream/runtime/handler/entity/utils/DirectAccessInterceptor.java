@@ -4,8 +4,7 @@ import org.apache.felix.ipojo.FieldInterceptor;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Interceptor to handle state fields that are directly manipulated by the entity code
@@ -52,6 +51,11 @@ public class DirectAccessInterceptor extends AbstractStateInterceptor implements
         }else {
             stateElement.addAttribute(new Attribute("directAcess","false"));
         }
+    }
+
+    @Override
+    public void handleReconfiguration(Map<String,Object> dictionary) {
+        //DO NOTHING, this interceptor cannot handle a reconfiguration
     }
 
 

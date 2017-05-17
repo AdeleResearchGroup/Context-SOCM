@@ -593,4 +593,11 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         }
 
     }
+
+    @Override
+    public void reconfigure(Dictionary configuration) {
+        for (StateInterceptor interceptor : interceptors){
+            interceptor.handleReconfiguration((Map<String,Object>) configuration);
+        }
+    }
 }

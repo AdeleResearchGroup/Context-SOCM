@@ -20,6 +20,11 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
     protected final Map<String, String> fieldToState = new HashMap<>();
 
     /**
+     * The mapping from fields handled by this interceptor to states of the context
+     */
+    protected final Map<String, String> stateToField = new HashMap<>();
+
+    /**
      * Adds a new managed field
      */
     public void handleState(InstanceManager component, PojoMetadata componentMetadata, Element state) throws ConfigurationException {
@@ -40,6 +45,7 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
         }
 
         fieldToState.put(stateField, stateId);
+        stateToField.put(stateId,stateField);
         component.register(fieldMetadata, this);
     }
 }

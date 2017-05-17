@@ -260,4 +260,10 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         }
     }
 
+    public void propagateReconfigure(Dictionary configuration){
+        if (myManager != null) {
+            myManager.reconfigure(configuration);
+        }
+    }
+
 }

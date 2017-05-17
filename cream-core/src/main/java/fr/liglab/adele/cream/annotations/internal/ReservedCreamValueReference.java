@@ -5,7 +5,16 @@ package fr.liglab.adele.cream.annotations.internal;
  */
 public enum ReservedCreamValueReference {
 
+    RECONFIGURATION_FREQUENCY("reconfiguration.frequency"),
+
+    RECONFIGURATION_FREQUENCY_ID("reconfiguration.frequency.id"),
+
+    RECONFIGURATION_FREQUENCY_PERIOD("reconfiguration.frequency.period"),
+
+    RECONFIGURATION_FREQUENCY_UNIT("reconfiguration.frequency.unit"),
+
     NOT_VALUED_STATES("$NOT_VALUED$");
+
 
 
     private final String property;

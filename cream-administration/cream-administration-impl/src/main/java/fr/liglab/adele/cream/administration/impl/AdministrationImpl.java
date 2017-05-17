@@ -6,12 +6,15 @@ import fr.liglab.adele.cream.administration.api.ImmutableContextState;
 import fr.liglab.adele.cream.administration.api.ImmutableFunctionalExtension;
 import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import fr.liglab.adele.cream.annotations.internal.ReservedCreamValueReference;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.architecture.Architecture;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.ParseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +24,11 @@ import java.util.concurrent.TimeUnit;
 @Instantiate
 @Provides(specifications = AdministrationService.class)
 public class AdministrationImpl implements AdministrationService{
+
+    /**
+     * logger
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(AdministrationImpl.class);
 
     @Requires(id = "archi",specification = Architecture.class)
     List<Architecture> architectures;
@@ -51,8 +59,35 @@ public class AdministrationImpl implements AdministrationService{
     }
 
     @Override
-    public void reconfigureContextEntityFrequency(String contextEntityId, String contextStateId, int frequency, TimeUnit unit) {
-//TODO
+    public void reconfigureContextEntityFrequency(String contextEntityId, String contextStateId, long frequency, TimeUnit unit) {
+        if (contextEntityId == null || contextStateId == null || unit == null){
+            LOG.warn("Cannot try to reconfigure, one of the parameter is false ");
+            return;
+        }
+
+        for (Architecture architecture : architectures){
+            InstanceDescription instanceDescription = architecture.getInstanceDescription();
+            HandlerDescription entityHandlerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER);
+
+            if (entityHandlerDescription == null){
+                continue;
+            }
+
+            String entityId = getContextEntityIdFromEntityHandlerDescription(entityHandlerDescription);
+            if (contextEntityId.equals(entityId)){
+                Hashtable configuration = new Hashtable();
+
+                Map stateMap = new HashMap();
+                Map frequencyParam = new HashMap();
+                frequencyParam.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_UNIT, unit );
+                frequencyParam.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_PERIOD,frequency);
+                stateMap.put(contextStateId,frequencyParam);
+                configuration.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY,stateMap);
+
+                architecture.getInstanceDescription().getInstance().reconfigure(configuration);
+            }
+        }
+
     }
 
     @Override

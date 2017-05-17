@@ -432,4 +432,11 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
         }
     }
 
+    @Override
+    public void reconfigure(Dictionary configuration) {
+        for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
+            entry.getValue().propagateReconfigure(configuration);
+        }
+    }
+
 }
