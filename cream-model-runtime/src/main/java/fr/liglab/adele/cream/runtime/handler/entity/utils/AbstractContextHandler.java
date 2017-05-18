@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
+import fr.liglab.adele.cream.annotations.internal.ReservedCreamValueReference;
 import fr.liglab.adele.cream.model.ContextEntity;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
@@ -20,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by aygalinc on 19/07/16.
@@ -508,10 +510,21 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         @Override
         public Element getHandlerInfo() {
             Element handlerInfo = super.getHandlerInfo();
+            String specifications = getServices().stream().collect(Collectors.joining(",", "{", "}"));
+            handlerInfo.addAttribute(new Attribute("context.specifications",specifications));
 
-            for (Map.Entry<String, Object> entry : dumpState().entrySet()) {
+            for ( String stateId : getStates()) {
                 Element stateElement = new Element("state", null);
-                stateElement.addAttribute(new Attribute(entry.getKey(), entry.getValue().toString()));
+                stateElement.addAttribute(new Attribute("id", stateId));
+                Map<String,Object> val = dumpState();
+                if (val.containsKey(stateId)){
+                    stateElement.addAttribute(new Attribute("value", val.get(stateId).toString()));
+                } else {
+                    stateElement.addAttribute(new Attribute("value", ReservedCreamValueReference.NOT_VALUED_STATES.toString()));
+                }
+                for (StateInterceptor interceptor : interceptors){
+                    interceptor.addInterceptorDescription(stateElement);
+                }
                 handlerInfo.addElement(stateElement);
             }
 
@@ -572,6 +585,22 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
                 taskHandle.cancel(true);
                 taskHandle = null;
             }
+        }
+
+        public long getPeriod() {
+            return period;
+        }
+
+        public TimeUnit getUnit() {
+            return unit;
+        }
+
+    }
+
+    @Override
+    public void reconfigure(Dictionary configuration) {
+        for (StateInterceptor interceptor : interceptors){
+            interceptor.handleReconfiguration((Map<String,Object>) configuration);
         }
     }
 }

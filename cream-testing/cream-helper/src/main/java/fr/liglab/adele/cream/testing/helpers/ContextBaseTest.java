@@ -50,6 +50,10 @@ public abstract class ContextBaseTest extends BaseTest {
             options = OptionUtils.combine(options, creamRuntimeFacilitiesBundles());
         }
 
+        if (deployCreamAdministration()) {
+            options = OptionUtils.combine(options, creamAdministrationBundles());
+        }
+
         return options;
     }
 
@@ -74,6 +78,13 @@ public abstract class ContextBaseTest extends BaseTest {
     protected Option creamRuntimeFacilitiesBundles() {
         return composite(
                 mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.runtime.facilities").versionAsInProject()
+        );
+    }
+
+    protected Option creamAdministrationBundles() {
+        return composite(
+                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.administration.api").versionAsInProject(),
+                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.administration.impl").versionAsInProject()
         );
     }
 
@@ -123,6 +134,10 @@ public abstract class ContextBaseTest extends BaseTest {
     }
 
     public boolean deployCreamRuntimeFacilities() {
+        return false;
+    }
+
+    public boolean deployCreamAdministration() {
         return false;
     }
 

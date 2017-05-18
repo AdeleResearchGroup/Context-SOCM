@@ -35,7 +35,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
 
     private final Hashtable myConfiguration = new Hashtable();
 
-    private final BehaviorTrackerHandler parent;
+    private final FunctionalExtensionTrackerHandler parent;
 
     private final ProvidedServiceHandler myProvideServiceHandler;
 
@@ -47,7 +47,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
     private ContextListener contextListener;
     private String[] propertiesToListen;
 
-    public RequiredFunctionalExtension(String id, String[] spec, String behaviorImpl, Dictionary config, BehaviorTrackerHandler parent, ProvidedServiceHandler providedServiceHandler) {
+    public RequiredFunctionalExtension(String id, String[] spec, String behaviorImpl, Dictionary config, FunctionalExtensionTrackerHandler parent, ProvidedServiceHandler providedServiceHandler) {
         mySpecifications = spec;
         myExtensionNameImpl = behaviorImpl;
         myId = id;
@@ -66,6 +66,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
             }
         }
         myConfiguration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(), id);
+        myConfiguration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString(), spec);
         this.parent = parent;
 
     }
@@ -165,12 +166,12 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         }
     }
 
-    public synchronized void getExtensionDescription(Element elmentToAttach) {
+    public synchronized void getExtensionDescription(Element elementToAttach) {
         if (myManager != null) {
             InstanceDescription description = myManager.getInstanceDescription();
 
             Element behaviorDescription = description.getDescription();
-            elmentToAttach.addElement(behaviorDescription);
+            elementToAttach.addElement(behaviorDescription);
         }
     }
 
@@ -256,6 +257,12 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         @Override
         public Object onGet(Object pojo, String fieldName, Object value) {
             return myManager.getPojoObject();
+        }
+    }
+
+    public void propagateReconfigure(Dictionary configuration){
+        if (myManager != null) {
+            myManager.reconfigure(configuration);
         }
     }
 

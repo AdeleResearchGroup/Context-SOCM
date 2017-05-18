@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 @Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER, namespace = HandlerReference.NAMESPACE, level = 1)
-public class BehaviorTrackerHandler extends PrimitiveHandler implements InvocationHandler, FunctionalExtensionStateListener, ContextSource {
+public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implements InvocationHandler, FunctionalExtensionStateListener, ContextSource {
 
     private static final String[] NO_SPEC = {};
 
@@ -419,7 +419,7 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
     public class BehaviorHandlerDescription extends HandlerDescription {
 
         public BehaviorHandlerDescription() {
-            super(BehaviorTrackerHandler.this);
+            super(FunctionalExtensionTrackerHandler.this);
         }
 
         @Override
@@ -429,6 +429,13 @@ public class BehaviorTrackerHandler extends PrimitiveHandler implements Invocati
                 entry.getValue().getExtensionDescription(element);
             }
             return element;
+        }
+    }
+
+    @Override
+    public void reconfigure(Dictionary configuration) {
+        for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
+            entry.getValue().propagateReconfigure(configuration);
         }
     }
 

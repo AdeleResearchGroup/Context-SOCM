@@ -1,13 +1,17 @@
 package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
+import fr.liglab.adele.cream.annotations.internal.ReservedCreamValueReference;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.MethodInterceptor;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Member;
 import java.util.HashMap;
@@ -44,6 +48,16 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
      * The mapping from methods handled by this interceptor to states of the context
      */
     private final Map<String, String> methodToState = new HashMap<>();
+
+    /**
+     * logger
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SynchronisationInterceptor.class);
+
+    /**
+     * logger
+     */
+    private final Object lock = new Object();
 
     /**
      * @param abstractContextHandler
@@ -121,13 +135,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
             Long period = Long.valueOf(state.getAttribute("period"));
             TimeUnit unit = TimeUnit.valueOf(state.getAttribute("unit"));
 
-            AbstractContextHandler.PeriodicTask pullTask = abstractContextHandler.schedule((InstanceManager instance) -> {
-                Function<Object, Object> pullFunction = pullFunctions.get(stateField);
-                if (pullFunction != null) {
-                    Object pulledValue = pullFunction.apply(instance.getPojoObject());
-                    abstractContextHandler.update(stateId, pulledValue);
-                }
-            }, period, unit);
+            AbstractContextHandler.PeriodicTask pullTask = createPullTask(stateId,stateField,period,unit);
 
             pullTasks.put(stateField, pullTask);
         }
@@ -182,15 +190,19 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
 
     @Override
     public void validate() {
-        for (AbstractContextHandler.PeriodicTask pullTask : pullTasks.values()) {
-            pullTask.start();
+        synchronized (lock) {
+            for (AbstractContextHandler.PeriodicTask pullTask : pullTasks.values()) {
+                pullTask.start();
+            }
         }
     }
 
     @Override
     public void invalidate() {
-        for (AbstractContextHandler.PeriodicTask pullTask : pullTasks.values()) {
-            pullTask.stop();
+        synchronized (lock) {
+            for (AbstractContextHandler.PeriodicTask pullTask : pullTasks.values()) {
+                pullTask.stop();
+            }
         }
     }
 
@@ -209,5 +221,75 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
         //Do nothing
     }
 
+    @Override
+    public void addInterceptorDescription(Element stateElement) {
+        if( ! fieldToState.containsValue(stateElement.getAttribute("id"))){
+            stateElement.addAttribute(new Attribute("applyFunction","false"));
+            stateElement.addAttribute(new Attribute("pullFunction","false"));
+            return;
+        }
+        String stateId = stateElement.getAttribute("id");
+        for (Map.Entry<String,String> entry : fieldToState.entrySet()){
+            if (entry.getValue().equals(stateId)){
+                String stateField = entry.getKey();
+                if (applyFunctions.containsKey(stateField)){
+                    stateElement.addAttribute(new Attribute("applyFunction","true"));
+                }else {
+                    stateElement.addAttribute(new Attribute("applyFunction","false"));
+                }
+                if (pullFunctions.containsKey(stateField)){
+                    stateElement.addAttribute(new Attribute("pullFunction","true"));
+                    synchronized (lock) {
+                        if (pullTasks.containsKey(stateField)) {
+                            AbstractContextHandler.PeriodicTask task = pullTasks.get(stateField);
+                            stateElement.addAttribute(new Attribute("period", String.valueOf(task.getPeriod())));
+                            stateElement.addAttribute(new Attribute("unit", task.getUnit().toString()));
+                        }
+                    }
+                }else {
+                    stateElement.addAttribute(new Attribute("pullFunction","false"));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void handleReconfiguration(Map<String,Object> newConfiguration) {
+        Map<String,Object> reconfiguration = (Map<String,Object>) newConfiguration.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY);
+
+        for (Map.Entry<String,Object> paramToReconfigure : reconfiguration.entrySet()){
+            String stateId = paramToReconfigure.getKey();
+            String stateField = stateToField.get(stateId);
+            if (stateField == null ){
+                continue;
+            }
+            synchronized (lock) {
+                if (pullTasks.containsKey(stateField)) {
+
+                    Map<String, Object> reconfigurationParameters = (Map<String, Object>) paramToReconfigure.getValue();
+                    Long newPeriod = (Long) reconfigurationParameters.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_PERIOD);
+                    TimeUnit newUnit = (TimeUnit) reconfigurationParameters.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_UNIT);
+
+                    pullTasks.remove(stateField).stop();
+
+                    AbstractContextHandler.PeriodicTask pullTask =createPullTask(stateId,stateField,newPeriod,newUnit);
+
+                    pullTasks.put(stateField,pullTask);
+                } else {
+                    LOG.warn("Cannot reconfigure state :" + paramToReconfigure.getKey() + " cause : no pull function available");
+                }
+            }
+        }
+    }
+
+    private AbstractContextHandler.PeriodicTask createPullTask(String stateId,String stateField,Long period,TimeUnit unit){
+        return abstractContextHandler.schedule((InstanceManager instance) -> {
+            Function<Object, Object> pullFunction = pullFunctions.get(stateField);
+            if (pullFunction != null) {
+                Object pulledValue = pullFunction.apply(instance.getPojoObject());
+                abstractContextHandler.update(stateId, pulledValue);
+            }
+        }, period, unit);
+    }
 
 }
