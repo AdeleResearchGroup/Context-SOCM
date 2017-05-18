@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by aygalinc on 19/07/16.
@@ -509,6 +510,8 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
         @Override
         public Element getHandlerInfo() {
             Element handlerInfo = super.getHandlerInfo();
+            String specifications = getServices().stream().collect(Collectors.joining(",", "{", "}"));
+            handlerInfo.addAttribute(new Attribute("context.specifications",specifications));
 
             for ( String stateId : getStates()) {
                 Element stateElement = new Element("state", null);

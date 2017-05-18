@@ -14,13 +14,17 @@ public class ImmutableContextEntity {
 
     private final List<ImmutableFunctionalExtension> extensions;
 
+    private final List<String> implementedSpecifications;
+
     private final String state;
 
-    public ImmutableContextEntity(String id,String state, List<ImmutableContextState> states, List<ImmutableFunctionalExtension> extensions) {
+    public ImmutableContextEntity(String id,String state,List<String> implementedSpecifications ,List<ImmutableContextState> states, List<ImmutableFunctionalExtension> extensions) {
         this.id = id;
         this.state = state;
         this.contextStates = new ArrayList<>(states);
         this.extensions = new ArrayList<>(extensions);
+        this.implementedSpecifications = new ArrayList<>(implementedSpecifications);
+
     }
 
     public List<ImmutableFunctionalExtension> getExtensions() {
@@ -29,6 +33,10 @@ public class ImmutableContextEntity {
 
     public List<ImmutableContextState> getContextStates() {
         return new ArrayList<>(contextStates);
+    }
+
+    public List<String> getImplementedSpecifications() {
+        return new ArrayList<>(implementedSpecifications);
     }
 
     public String getId() {

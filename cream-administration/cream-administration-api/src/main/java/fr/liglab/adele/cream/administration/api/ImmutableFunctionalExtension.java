@@ -12,14 +12,17 @@ public class ImmutableFunctionalExtension {
 
     private final String state;
 
-    private final List<String> specifications;
+    private final List<String> managedSpecifications;
+
+    private final List<String> implementedSpecifications;
 
     private final List<ImmutableContextState> contextStates;
 
-    public ImmutableFunctionalExtension(String id,String state, List<String> specifications, List<ImmutableContextState> states) {
+    public ImmutableFunctionalExtension(String id,String state,List<String> implementedSpecifications, List<String> managedSpecifications, List<ImmutableContextState> states) {
         this.id = id;
         this.state = state;
-        this.specifications = new ArrayList<>(specifications);
+        this.managedSpecifications = new ArrayList<>(managedSpecifications);
+        this.implementedSpecifications = new ArrayList<>(implementedSpecifications);
         this.contextStates = new ArrayList<>(states);
     }
 
@@ -27,8 +30,12 @@ public class ImmutableFunctionalExtension {
         return id;
     }
 
-    public List<String> getSpecifications() {
-        return new ArrayList<>(specifications) ;
+    public List<String> getManagedSpecifications() {
+        return new ArrayList<>(managedSpecifications) ;
+    }
+
+    public List<String> getImplementedSpecifications() {
+        return new ArrayList<>(implementedSpecifications) ;
     }
 
     public List<ImmutableContextState> getContextStates() {

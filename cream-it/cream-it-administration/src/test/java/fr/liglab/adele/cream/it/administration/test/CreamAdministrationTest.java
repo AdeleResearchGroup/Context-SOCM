@@ -337,6 +337,9 @@ public class CreamAdministrationTest extends ContextBaseTest {
 
         assertThat(contextService.getState()).isEqualTo("valid");
 
+        assertThat(contextService.getImplementedSpecifications().size()).isEqualTo(0);
+
+
     }
 
     private void checkContextServiceWithoutParam(ImmutableContextEntity contextService){
@@ -345,12 +348,25 @@ public class CreamAdministrationTest extends ContextBaseTest {
 
         assertThat(contextService.getState()).isEqualTo("valid");
 
+        assertThat(contextService.getImplementedSpecifications().size()).isEqualTo(1);
+        for (String specification : contextService.getImplementedSpecifications()){
+            assertThat(specification).isEqualTo(ContextServiceWithoutParameters.class.getName());
+        }
+
+
     }
 
 
     private void checkContextServiceWithParam(ImmutableContextEntity contextService){
         assertThat(contextService.getId()).isEqualTo(CONTEXT_ENTITY_ID);
         checkStates(contextService.getContextStates(), ContextServiceWithParameters.class);
+
+        assertThat(contextService.getState()).isEqualTo("valid");
+
+        assertThat(contextService.getImplementedSpecifications().size()).isEqualTo(1);
+        for (String specification : contextService.getImplementedSpecifications()){
+            assertThat(specification).isEqualTo(ContextServiceWithParameters.class.getName());
+        }
     }
 
 
@@ -359,8 +375,13 @@ public class CreamAdministrationTest extends ContextBaseTest {
 
         assertThat(extensionWithoutParams.getState()).isEqualTo("valid");
 
-        assertThat(extensionWithoutParams.getSpecifications().size()).isEqualTo(1);
-        for (String specification : extensionWithoutParams.getSpecifications()){
+        assertThat(extensionWithoutParams.getManagedSpecifications().size()).isEqualTo(1);
+        for (String specification : extensionWithoutParams.getManagedSpecifications()){
+            assertThat(specification).isEqualTo(ExtensionServiceWithoutParameters.class.getName());
+        }
+
+        assertThat(extensionWithoutParams.getImplementedSpecifications().size()).isEqualTo(1);
+        for (String specification : extensionWithoutParams.getImplementedSpecifications()){
             assertThat(specification).isEqualTo(ExtensionServiceWithoutParameters.class.getName());
         }
 
@@ -372,8 +393,13 @@ public class CreamAdministrationTest extends ContextBaseTest {
 
         assertThat(extensionWithParams.getState()).isEqualTo("valid");
 
-        assertThat(extensionWithParams.getSpecifications().size()).isEqualTo(1);
-        for (String specification : extensionWithParams.getSpecifications()){
+        assertThat(extensionWithParams.getManagedSpecifications().size()).isEqualTo(1);
+        for (String specification : extensionWithParams.getManagedSpecifications()){
+            assertThat(specification).isEqualTo(ExtensionServiceWithParameters.class.getName());
+        }
+
+        assertThat(extensionWithParams.getImplementedSpecifications().size()).isEqualTo(1);
+        for (String specification : extensionWithParams.getImplementedSpecifications()){
             assertThat(specification).isEqualTo(ExtensionServiceWithParameters.class.getName());
         }
 

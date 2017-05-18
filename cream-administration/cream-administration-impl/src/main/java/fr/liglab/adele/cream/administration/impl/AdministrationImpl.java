@@ -122,6 +122,7 @@ public class AdministrationImpl implements AdministrationService{
         String entityId = getContextEntityIdFromEntityHandlerDescription(entityHandlerDescription);
         List<ImmutableContextState> contextStates = getContextStatesFromEntityHandlerDescription(entityHandlerDescription);
         String entityState = getStateFromInstanceDescription(instanceDescription.getDescription());
+        List<String> implementedSpecs = getImplementedSpecificationsFromEntityHandlerDescription(entityHandlerDescription.getHandlerInfo());
 
         HandlerDescription functionalTrackerHandlerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
         List<ImmutableFunctionalExtension> functionalExtensions = new ArrayList<>();
@@ -129,7 +130,7 @@ public class AdministrationImpl implements AdministrationService{
             functionalExtensions.addAll(getExtensionFromTrackerHandler(functionalTrackerHandlerDescription));
         }
 
-        return new ImmutableContextEntity(entityId,entityState,contextStates,functionalExtensions);
+        return new ImmutableContextEntity(entityId,entityState,implementedSpecs,contextStates,functionalExtensions);
     }
 
     private List<ImmutableFunctionalExtension> getExtensionFromTrackerHandler(HandlerDescription description){
@@ -158,22 +159,28 @@ public class AdministrationImpl implements AdministrationService{
         String functionnalExtensionState = getStateFromInstanceDescription(functionalInstanceDescription);
         String functionnalExtensionId="";
         List<ImmutableContextState> contextStates = new ArrayList<>();
-        List<String> specs = new ArrayList<>();
+        List<String> managedSpecs = new ArrayList<>();
+        List<String> implementedSpecs = new ArrayList<>();
         for (Element handlerElement : handlerElements){
 
             if ((HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER).equals(handlerElement.getAttribute("name"))){
                 // Extract behaviorId
                 functionnalExtensionId = handlerElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString());
-                specs.addAll(ParseUtils.parseArraysAsList(handlerElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString()))) ;
+                managedSpecs.addAll(ParseUtils.parseArraysAsList(handlerElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString()))) ;
 
             }
             else if ((HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER).equals(handlerElement.getAttribute("name"))){
                 // Extract States
                 contextStates.addAll(getContextStatesFromHandlerElement(handlerElement));
+                implementedSpecs.addAll(getImplementedSpecificationsFromEntityHandlerDescription(handlerElement));
             }
         }
 
-        return new ImmutableFunctionalExtension(functionnalExtensionId,functionnalExtensionState,specs,contextStates);
+        return new ImmutableFunctionalExtension(functionnalExtensionId,functionnalExtensionState,implementedSpecs,managedSpecs,contextStates);
+    }
+
+    private List<String> getImplementedSpecificationsFromEntityHandlerDescription(Element instanceDescription){
+        return ParseUtils.parseArraysAsList(instanceDescription.getAttribute("context.specifications"));
     }
 
     private String getStateFromInstanceDescription(Element instanceDescription){
