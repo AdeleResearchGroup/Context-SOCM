@@ -24,6 +24,8 @@ public interface Creator {
 
 		String value() default NO_PARAMETER;
 
+		boolean remote() default false;
+
 		Class[] requirements() default {};
 	}
 

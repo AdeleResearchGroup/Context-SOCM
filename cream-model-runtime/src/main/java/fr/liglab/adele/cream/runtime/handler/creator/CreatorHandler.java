@@ -35,6 +35,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
     private final Map<String, ComponentCreator> creators 			= new HashMap<>();
 
+    private final Map<String, Boolean> remoteMap            = new HashMap<>();
 	private final Map<String, Set<String>> requirementMap 	= new HashMap<>();
 
     @ServiceProperty(name="provided", value="")
@@ -73,7 +74,8 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
             boolean isStatic	= creator.getAttribute("dynamic") == null || ! Boolean.valueOf(creator.getAttribute("dynamic"));
             String entity 		= creator.getAttribute("entity");
             String relation 	= creator.getAttribute("relation");
-			String requirements			= creator.getAttribute("requirements");
+            boolean remote      = creator.getAttribute("remote") != null && Boolean.valueOf(creator.getAttribute("remote"));
+			String requirements	= creator.getAttribute("requirements");
 
             if (isStatic && entity == null && relation == null) {
                 throw new ConfigurationException("Malformed Manifest : the creator entity or relation is not specified for field '" + fieldName + "' in class " + componentName);
@@ -95,6 +97,12 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
             if (!isStatic) {
                 dynamicFields.add(fieldName);
+            }
+
+            if (relation != null){
+                remoteMap.put(relation,remote);
+            } else {
+                remoteMap.put(entity,remote);
             }
 
 			if(requirements != null && !requirements.equals("[]")){
@@ -212,30 +220,23 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
     }
 
     @Override
-    public boolean isEnabled(String contextItem) {
-        if (creators.get(contextItem) == null) {
-            return false;
-        }
+    public boolean isRemote(String contextItem) {
+        return remoteMap.get(contextItem) != null && remoteMap.get(contextItem);
+    }
 
-        return creators.get(contextItem) != null ? creators.get(contextItem).isEnabled() : false;
+    @Override
+    public boolean isEnabled(String contextItem) {
+        return creators.get(contextItem) != null && creators.get(contextItem).isEnabled();
     }
 
     @Override
     public boolean enable(String contextItem) {
-        if (creators.get(contextItem) == null) {
-            return false;
-        }
-
-        return creators.get(contextItem).setEnabled(true);
+        return creators.get(contextItem) != null && creators.get(contextItem).setEnabled(true);
     }
 
     @Override
     public boolean disable(String contextItem) {
-        if (creators.get(contextItem) == null) {
-            return false;
-        }
-
-        return creators.get(contextItem).setEnabled(false);
+        return creators.get(contextItem) != null && creators.get(contextItem).setEnabled(false);
     }
 
     @Override

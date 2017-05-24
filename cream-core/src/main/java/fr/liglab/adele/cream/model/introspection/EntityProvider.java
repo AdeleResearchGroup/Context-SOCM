@@ -8,6 +8,8 @@ public interface EntityProvider {
 
     public Set<String> getProvidedEntities();
 
+    public boolean isRemote(String entity);
+
     public boolean isEnabled(String entity);
 
     public boolean enable(String entity);

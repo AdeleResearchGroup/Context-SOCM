@@ -8,6 +8,8 @@ public interface RelationProvider {
 
     public Set<String> getProvidedRelations();
 
+    public boolean isRemote(String relation);
+
     public boolean isEnabled(String relation);
 
     public boolean enable(String relation);
