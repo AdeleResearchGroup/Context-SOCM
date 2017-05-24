@@ -53,8 +53,8 @@ public class FunctionalExtensionContextSourceTest extends FunctionalExtensionBas
 
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance, "behavior1")).isNotNull();
-        functionalExtensionHelper.stopBehavior(instance, "behavior1");
+        Assertions.assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "behavior1")).isNotNull();
+        functionalExtensionHelper.stopFunctionalExtension(instance, "behavior1");
 
         assertThat(extractStateFilter(instance)).isEqualTo("${" + ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE) + "}");
     }

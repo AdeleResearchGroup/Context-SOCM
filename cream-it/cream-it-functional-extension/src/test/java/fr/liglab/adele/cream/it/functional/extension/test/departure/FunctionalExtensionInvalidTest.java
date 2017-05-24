@@ -25,8 +25,8 @@ public class FunctionalExtensionInvalidTest extends FunctionalExtensionBaseCommo
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
         /** Check if extension is invalid because requires not satisfy and context entity is valid */
-        assertThat(functionalExtensionHelper.getBehavior(instance, "extension")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "extension").getState()).isEqualTo(ComponentInstance.INVALID);
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "extension")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "extension").getState()).isEqualTo(ComponentInstance.INVALID);
         assertThat(instance.getState()).isEqualTo(ComponentInstance.VALID);
 
         ExtensionInvalidSpec extensionInvalidSpec = osgiHelper.waitForService(ExtensionInvalidSpec.class, null, ((long) 2000), false);
@@ -41,10 +41,10 @@ public class FunctionalExtensionInvalidTest extends FunctionalExtensionBaseCommo
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
         /** Check if extension is invalid because requires not satisfy and context entity is valid */
-        assertThat(functionalExtensionHelper.getBehavior(instance, "invalidExtension")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "invalidExtension").getState()).isEqualTo(ComponentInstance.INVALID);
-        assertThat(functionalExtensionHelper.getBehavior(instance, "validExtension")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "validExtension").getState()).isEqualTo(ComponentInstance.VALID);
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "invalidExtension")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "invalidExtension").getState()).isEqualTo(ComponentInstance.INVALID);
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "validExtension")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "validExtension").getState()).isEqualTo(ComponentInstance.VALID);
 
         assertThat(instance.getState()).isEqualTo(ComponentInstance.VALID);
 

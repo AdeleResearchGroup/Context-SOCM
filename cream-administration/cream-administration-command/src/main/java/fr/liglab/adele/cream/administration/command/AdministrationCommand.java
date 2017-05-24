@@ -91,9 +91,14 @@ public class AdministrationCommand {
                 System.out.println("\t-> Functional-Extensions : ");
                 for (ImmutableFunctionalExtension extension: entity.getExtensions()){
                     System.out.println("\t\t--Functional-Extension : " + extension.getId());
+                    System.out.println("\t\t\t+IsMandatory : "+extension.isMandatory());
+                    System.out.println("\t\t\t+Provides : " + extension.getManagedSpecifications());
+                    System.out.println("\t\t\t+IsInstantiate : "+extension.isInstantiate());
+                    if ("false".equals(extension.isInstantiate())){
+                        continue;
+                    }
                     System.out.println("\t\t\t+State : "+extension.getState());
                     System.out.println("\t\t\t+Implements : " + extension.getImplementedSpecifications());
-                    System.out.println("\t\t\t+Provides : " + extension.getManagedSpecifications());
                     System.out.println("\t\t\t+Manages : ");
                     for (ImmutableContextState contextState: extension.getContextStates()){
                         System.out.print("\t\t\t\tContext-State : " + contextState.getId() +" , value = " + contextState.getValue());

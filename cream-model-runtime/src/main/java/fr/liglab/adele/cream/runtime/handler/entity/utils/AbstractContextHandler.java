@@ -599,6 +599,10 @@ public abstract class AbstractContextHandler extends PrimitiveHandler implements
 
     @Override
     public void reconfigure(Dictionary configuration) {
+        Map<String,Object> config = (Map<String, Object>) configuration;
+        if (!config.containsKey(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY.toString())){
+            return;
+        }
         for (StateInterceptor interceptor : interceptors){
             interceptor.handleReconfiguration((Map<String,Object>) configuration);
         }

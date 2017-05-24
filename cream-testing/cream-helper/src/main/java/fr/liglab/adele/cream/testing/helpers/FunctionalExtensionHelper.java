@@ -21,66 +21,67 @@ public class FunctionalExtensionHelper {
         this.ipojoHelper = service;
     }
 
-    public void stopBehavior(ComponentInstance instance, String behaviorId) {
-        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
+    public void stopFunctionalExtension(ComponentInstance instance, String behaviorId) {
+        ComponentInstance behaviorInstance = getFunctionalExtension(instance, behaviorId);
         behaviorInstance.stop();
     }
 
 
-    public void disposeBehavior(ComponentInstance instance, String behaviorId) {
-        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
+    public void disposeFunctionalExtension(ComponentInstance instance, String functionalExtensionId) {
+        ComponentInstance behaviorInstance = getFunctionalExtension(instance, functionalExtensionId);
         behaviorInstance.dispose();
     }
 
     /**
-     * Start a behavior will put it in an invalid state because behaviorLifecycleHandler will be put in an invalid state after a start call.
-     * A necessary call to valid behvior must be done in order to valid the behvior.
+     * Start a functional Extension will put it in an invalid state because FunctionalExtensionLifeCycleHandler will be put in an invalid state after a start call.
+     * A necessary call to valid behvior must be done in order to valid the functional extension.
      *
      * @param instance
-     * @param behaviorId
+     * @param functionalExtensionId
      */
-    public void startBehavior(ComponentInstance instance, String behaviorId) {
-        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
+    public void startFunctionalExtension(ComponentInstance instance, String functionalExtensionId) {
+        ComponentInstance behaviorInstance = getFunctionalExtension(instance, functionalExtensionId);
         behaviorInstance.start();
 
     }
 
-    public void validBehavior(ComponentInstance instance, String behaviorId) {
-        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
+    public void validFunctionalExtension(ComponentInstance instance, String functionalExtensionId) {
+        ComponentInstance behaviorInstance = getFunctionalExtension(instance, functionalExtensionId);
         FunctionalExtensionInstanceManager manager = (FunctionalExtensionInstanceManager) behaviorInstance;
         manager.getBehaviorLifeCycleHandler().startBehavior();
     }
 
-    public void invalidBehavior(ComponentInstance instance, String behaviorId) {
-        ComponentInstance behaviorInstance = getBehavior(instance, behaviorId);
-        FunctionalExtensionInstanceManager manager = (FunctionalExtensionInstanceManager) behaviorInstance;
+    public void invalidFunctionalExtension(ComponentInstance instance, String functionalExtensionId) {
+        ComponentInstance functionalExtensionInstance = getFunctionalExtension(instance, functionalExtensionId);
+        FunctionalExtensionInstanceManager manager = (FunctionalExtensionInstanceManager) functionalExtensionInstance;
         manager.getBehaviorLifeCycleHandler().stopBehavior();
     }
 
 
-    public ComponentInstance getBehavior(ComponentInstance instance, String behaviorId) {
+    public ComponentInstance getFunctionalExtension(ComponentInstance instance, String behaviorId) {
         InstanceDescription instanceDescription = instance.getInstanceDescription();
         HandlerDescription managerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
         Element element = managerDescription.getHandlerInfo();
 
-        Element[] behaviorInstanceElement = element.getElements("instance");
-        String instanceName = null;
-        for (Element element1 : behaviorInstanceElement) {
-            Element[] handlerElement = element1.getElements("handler");
-            for (Element element2 : handlerElement) {
-                if ((HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER).equals(element2.getAttribute("name"))) {
-                    String id = element2.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString());
-                    if (id.equals(behaviorId)) {
-                        instanceName = element1.getAttribute("name");
-                        Architecture behaviorArchitecture = ipojoHelper.getArchitectureByName(instanceName);
-                        InstanceDescription behaviorInstanceDescription = behaviorArchitecture.getInstanceDescription();
-                        ComponentInstance behaviorInstance = behaviorInstanceDescription.getInstance();
-                        return behaviorInstance;
-                    }
-                }
+        Element[] functionalExtensionElements = element.getElements(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_INDIVIDUAL_ELEMENT_NAME.toString());
+        
+        for (Element functionalExtensionElement : functionalExtensionElements) {
+            String id = functionalExtensionElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
+
+            if(!behaviorId.equals(id)) {
+                continue;
+            }
+
+            Element[] instanceElements = functionalExtensionElement.getElements("instance");
+            for (Element instanceElement : instanceElements) {
+                    String instanceName = instanceElement.getAttribute("name");
+                    Architecture behaviorArchitecture = ipojoHelper.getArchitectureByName(instanceName);
+                    InstanceDescription behaviorInstanceDescription = behaviorArchitecture.getInstanceDescription();
+                    ComponentInstance behaviorInstance = behaviorInstanceDescription.getInstance();
+                    return behaviorInstance;
             }
         }
-        return null;
 
+        return null;
     }
 }

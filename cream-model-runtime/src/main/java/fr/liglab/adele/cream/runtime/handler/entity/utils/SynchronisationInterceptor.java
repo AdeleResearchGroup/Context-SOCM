@@ -255,7 +255,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
 
     @Override
     public void handleReconfiguration(Map<String,Object> newConfiguration) {
-        Map<String,Object> reconfiguration = (Map<String,Object>) newConfiguration.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY);
+        Map<String,Object> reconfiguration = (Map<String,Object>) newConfiguration.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY.toString());
 
         for (Map.Entry<String,Object> paramToReconfigure : reconfiguration.entrySet()){
             String stateId = paramToReconfigure.getKey();
@@ -267,8 +267,8 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
                 if (pullTasks.containsKey(stateField)) {
 
                     Map<String, Object> reconfigurationParameters = (Map<String, Object>) paramToReconfigure.getValue();
-                    Long newPeriod = (Long) reconfigurationParameters.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_PERIOD);
-                    TimeUnit newUnit = (TimeUnit) reconfigurationParameters.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_UNIT);
+                    Long newPeriod = (Long) reconfigurationParameters.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_PERIOD.toString());
+                    TimeUnit newUnit = (TimeUnit) reconfigurationParameters.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_UNIT.toString());
 
                     pullTasks.remove(stateField).stop();
 

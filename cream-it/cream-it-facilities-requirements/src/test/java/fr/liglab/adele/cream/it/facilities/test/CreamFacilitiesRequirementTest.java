@@ -57,14 +57,14 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance, "behavior1")).isNotNull();
+        Assertions.assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "behavior1")).isNotNull();
 
-        functionalExtensionHelper.invalidBehavior(instance, "behavior1");
+        functionalExtensionHelper.invalidFunctionalExtension(instance, "behavior1");
 
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        functionalExtensionHelper.validBehavior(instance, "behavior1");
+        functionalExtensionHelper.validFunctionalExtension(instance, "behavior1");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
 
@@ -87,14 +87,14 @@ public class CreamFacilitiesRequirementTest extends ContextBaseTest {
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        Assertions.assertThat(functionalExtensionHelper.getBehavior(instance, "behaviorHeritage")).isNotNull();
+        Assertions.assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "behaviorHeritage")).isNotNull();
 
-        functionalExtensionHelper.invalidBehavior(instance, "behaviorHeritage");
+        functionalExtensionHelper.invalidFunctionalExtension(instance, "behaviorHeritage");
 
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(1);
 
-        functionalExtensionHelper.validBehavior(instance, "behaviorHeritage");
+        functionalExtensionHelper.validFunctionalExtension(instance, "behaviorHeritage");
         assertThat(bindCounter.getUnbind()).isEqualTo(1);
         assertThat(bindCounter.getBind()).isEqualTo(2);
 

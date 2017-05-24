@@ -79,10 +79,10 @@ public class AdministrationImpl implements AdministrationService{
 
                 Map stateMap = new HashMap();
                 Map frequencyParam = new HashMap();
-                frequencyParam.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_UNIT, unit );
-                frequencyParam.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_PERIOD,frequency);
+                frequencyParam.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_UNIT.toString(), unit );
+                frequencyParam.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY_PERIOD.toString(),frequency);
                 stateMap.put(contextStateId,frequencyParam);
-                configuration.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY,stateMap);
+                configuration.put(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY.toString(),stateMap);
 
                 architecture.getInstanceDescription().getInstance().reconfigure(configuration);
             }
@@ -91,8 +91,33 @@ public class AdministrationImpl implements AdministrationService{
     }
 
     @Override
-    public void reconfigureContextEntityComposition(String contextEntityId, String functionnalExtensionId, String functionnalExtensionImplementation) {
-//TODO
+    public void reconfigureContextEntityComposition(String contextEntityId, String functionalExtensionId, String functionalExtensionImplementation) {
+        if (contextEntityId == null || functionalExtensionId == null || functionalExtensionImplementation == null){
+            LOG.warn("Cannot try to reconfigure, one of the parameter is false ");
+            return;
+        }
+
+        for (Architecture architecture : architectures){
+            InstanceDescription instanceDescription = architecture.getInstanceDescription();
+            HandlerDescription entityHandlerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER);
+
+            if (entityHandlerDescription == null){
+                continue;
+            }
+
+            String entityId = getContextEntityIdFromEntityHandlerDescription(entityHandlerDescription);
+            if (contextEntityId.equals(entityId)){
+                Hashtable configuration = new Hashtable();
+
+                Map compositionMap = new HashMap();
+
+                compositionMap.put(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString(), functionalExtensionId );
+                compositionMap.put(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),functionalExtensionImplementation);
+                configuration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString(),compositionMap);
+
+                architecture.getInstanceDescription().getInstance().reconfigure(configuration);
+            }
+        }
     }
 
     private Set<ImmutableContextEntity> convertArchitecturesToImmutableContextEntities(Collection<Architecture> architectures){
@@ -137,46 +162,61 @@ public class AdministrationImpl implements AdministrationService{
         List<ImmutableFunctionalExtension> functionalExtensions = new ArrayList<>();
         Element handlerTrackerElement = description.getHandlerInfo();
 
-        Element[] instanceElements = handlerTrackerElement.getElements("instance");
-        if (instanceElements == null ){
+        Element[] functionalExtensionElements = handlerTrackerElement.getElements(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_INDIVIDUAL_ELEMENT_NAME.toString());
+        if (functionalExtensionElements == null ){
             return functionalExtensions;
         }
 
-        for (Element element : instanceElements){
-            functionalExtensions.add(getExtensionFromFunctionalInstanceDescription(element));
+        for (Element functionalExtensionElement : functionalExtensionElements){
+            functionalExtensions.add(getExtensionFromFunctionalInstanceDescription(functionalExtensionElement));
         }
 
         return functionalExtensions;
     }
 
 
-    private ImmutableFunctionalExtension getExtensionFromFunctionalInstanceDescription(Element functionalInstanceDescription){
-        Element[] handlerElements = functionalInstanceDescription.getElements("handler");
-        if (handlerElements == null){
-            return null;
-        }
+    private ImmutableFunctionalExtension getExtensionFromFunctionalInstanceDescription(Element functionalExtensionElement){
+        String functionalExtensionId= functionalExtensionElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
 
-        String functionnalExtensionState = getStateFromInstanceDescription(functionalInstanceDescription);
-        String functionnalExtensionId="";
+        List<String> managedSpecs = ParseUtils.parseArraysAsList(functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString()));
+        String isMandatory = functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString());
+        List<String> alternativeConfigurations = ParseUtils.parseArraysAsList(functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ALTERNATIVE_CONFIGURATION.toString()));
+        String isInstantiate = functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_IS_INSTANTIATE.toString());
+
+        String functionnalExtensionState = "";
         List<ImmutableContextState> contextStates = new ArrayList<>();
-        List<String> managedSpecs = new ArrayList<>();
         List<String> implementedSpecs = new ArrayList<>();
-        for (Element handlerElement : handlerElements){
 
-            if ((HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER).equals(handlerElement.getAttribute("name"))){
-                // Extract behaviorId
-                functionnalExtensionId = handlerElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString());
-                managedSpecs.addAll(ParseUtils.parseArraysAsList(handlerElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString()))) ;
-
+        if ("true".equals(isInstantiate)){
+            Element[] extensionInstanceElements = functionalExtensionElement.getElements("instance");
+            if (extensionInstanceElements == null || extensionInstanceElements.length == 0){
+                throw new RuntimeException("isInstantiate Element is set to true but no instance element is provided");
             }
-            else if ((HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER).equals(handlerElement.getAttribute("name"))){
-                // Extract States
-                contextStates.addAll(getContextStatesFromHandlerElement(handlerElement));
-                implementedSpecs.addAll(getImplementedSpecificationsFromEntityHandlerDescription(handlerElement));
+
+            for (Element extensionInstanceElement : extensionInstanceElements){
+                functionnalExtensionState = getStateFromInstanceDescription(extensionInstanceElement);
+
+
+                Element[] handlerElements = extensionInstanceElement.getElements("handler");
+                if (handlerElements == null){
+                    return null;
+                }
+                for (Element handlerElement : handlerElements){
+
+                    if ((HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER).equals(handlerElement.getAttribute("name"))){
+                        // Extract States
+                        contextStates.addAll(getContextStatesFromHandlerElement(handlerElement));
+                        implementedSpecs.addAll(getImplementedSpecificationsFromEntityHandlerDescription(handlerElement));
+                    }
+                }
+
             }
         }
 
-        return new ImmutableFunctionalExtension(functionnalExtensionId,functionnalExtensionState,implementedSpecs,managedSpecs,contextStates);
+
+
+
+        return new ImmutableFunctionalExtension(functionalExtensionId,functionnalExtensionState,implementedSpecs,managedSpecs,alternativeConfigurations,contextStates,isInstantiate,isMandatory);
     }
 
     private List<String> getImplementedSpecificationsFromEntityHandlerDescription(Element instanceDescription){

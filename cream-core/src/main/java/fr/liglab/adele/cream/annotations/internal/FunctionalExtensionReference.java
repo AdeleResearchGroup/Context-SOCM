@@ -9,7 +9,6 @@ public enum FunctionalExtensionReference {
 
     SPECIFICATION_ATTRIBUTE_NAME("functional.extension.spec"),
 
-
     IMPLEMEMENTATION_ATTRIBUTE_NAME("implementation"),
 
     FIELD_ATTRIBUTE_NAME("field"),
@@ -20,13 +19,21 @@ public enum FunctionalExtensionReference {
 
     FUNCTIONAL_EXTENSION_ID_CONFIG("functional.extension.id"),
 
-    FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG("functional.extension.managed.specs");
+    FUNCTIONAL_EXTENSION_RECONFIGURATION("functional.extension.reconfiguration"),
+
+    FUNCTIONAL_EXTENSION_ALTERNATIVE_CONFIGURATION("alternative.configurations"),
+
+    FUNCTIONAL_EXTENSION_IS_INSTANTIATE("is.instantiate"),
+
+    FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG("managed.specification");
 
     /**
      * Constante used in filter
      */
     public final static String FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY = "functional.extension.factory.property";
+
     public final static String FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE = "functional.extension.factory";
+
     private final String property;
 
     FunctionalExtensionReference(String property) {
