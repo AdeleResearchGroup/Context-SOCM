@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 /**
  * Created by aygalinc on 02/06/16.
  */
+/** TODO : Synchronisation seems messy ...
+**/
 public class RequiredFunctionalExtension implements InvocationHandler, FunctionalExtensionStateListener, ContextSource {
 
     private static final String EXTENSION_CONTROLLER_FIELD = "extension.controller.";
