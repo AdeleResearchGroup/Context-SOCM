@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @ContextEntity(services = ContextServiceWithParameters.class)
-@FunctionalExtension(id = "extensionWithParam", contextServices = ExtensionServiceWithParameters.class, implementation = ExtensionProviderWithParameters.class)
+@FunctionalExtension(id = "extensionWithParam", contextServices = ExtensionServiceWithParameters.class, implementation = ExtenderWithParameters.class)
 public class EntityWithParameterOnContextServiceAndBehavior implements ContextServiceWithParameters{
 
 

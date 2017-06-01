@@ -1,5 +1,6 @@
 package fr.liglab.adele.cream.runtime.handler.functional.extension.tracker;
 
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
 import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
 import fr.liglab.adele.cream.runtime.handler.functional.extension.lifecycle.FunctionalExtensionStateListener;
 import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionFactory;
@@ -9,29 +10,34 @@ import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedService;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.ParseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by aygalinc on 02/06/16.
  */
+/** TODO : Synchronisation seems messy ...
+**/
 public class RequiredFunctionalExtension implements InvocationHandler, FunctionalExtensionStateListener, ContextSource {
 
     private static final String EXTENSION_CONTROLLER_FIELD = "extension.controller.";
 
     private static final Logger LOG = LoggerFactory.getLogger(RequiredFunctionalExtension.class);
 
+    private final String myStringSpecifications;
+
     private final String[] mySpecifications;
 
-    private final String myExtensionNameImpl;
+    private String myExtensionNameImpl;
 
     private final Hashtable myConfiguration = new Hashtable();
 
@@ -40,18 +46,31 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
     private final ProvidedServiceHandler myProvideServiceHandler;
 
     private final String myId;
+
     private final Object lock = new Object();
+
     private FunctionalExtensionInstanceManager myManager;
-    private FunctionalExtensionFactory myFactory;
+
+    private FunctionalExtensionFactory myCurrentFactory;
+
+    private final Map<String,FunctionalExtensionFactory> myAlternativeFactoryConfiguration = new ConcurrentHashMap<>();
+
     private ContextSource extensionContextSource;
+
     private ContextListener contextListener;
+
     private String[] propertiesToListen;
 
-    public RequiredFunctionalExtension(String id, String[] spec, String behaviorImpl, Dictionary config, FunctionalExtensionTrackerHandler parent, ProvidedServiceHandler providedServiceHandler) {
-        mySpecifications = spec;
+    private final boolean mandatory;
+
+    public RequiredFunctionalExtension(String id, String specs, String behaviorImpl, Dictionary config, FunctionalExtensionTrackerHandler parent, ProvidedServiceHandler providedServiceHandler,boolean mandatory) {
+        myStringSpecifications = specs;
+        mySpecifications = ParseUtils.parseArrays(specs);
         myExtensionNameImpl = behaviorImpl;
         myId = id;
         myProvideServiceHandler = providedServiceHandler;
+
+        this.mandatory = mandatory;
 
         /**
          * Extract Dictionnary properrties
@@ -66,7 +85,6 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
             }
         }
         myConfiguration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(), id);
-        myConfiguration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString(), spec);
         this.parent = parent;
 
     }
@@ -79,13 +97,52 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
     }
 
     public FunctionalExtensionFactory getFactory() {
-        return myFactory;
+        return myCurrentFactory;
     }
 
-    public void setFactory(Factory factory) {
-        if (factory instanceof FunctionalExtensionFactory) {
-            myFactory = (FunctionalExtensionFactory) factory;
+    public boolean tryToAddFactory(Factory factory,List<String> factorySpecifications,String factoryImplementation) {
+        if (! (factory instanceof FunctionalExtensionFactory)) {
+            return false;
         }
+
+        FunctionalExtensionFactory functionalExtensionFactory = (FunctionalExtensionFactory) factory;
+
+        if(! specificationMatch(factorySpecifications)){
+            return false;
+        }
+
+        myAlternativeFactoryConfiguration.put(factoryImplementation,functionalExtensionFactory);
+
+        if (! implementationMatch(factoryImplementation)){
+            return false;
+        }
+
+        myCurrentFactory = functionalExtensionFactory;
+
+        return true;
+    }
+
+    protected boolean implementationMatch( String factoryImplementation) {
+
+        return getImplName().equalsIgnoreCase(factoryImplementation);
+    }
+
+    protected boolean specificationMatch( List<String> factorySpecifications) {
+
+        boolean specMatch = true;
+
+
+
+        for (String spec : getSpecName()) {
+            if (!factorySpecifications.contains(spec)) {
+                specMatch = false;
+            }
+        }
+        return specMatch;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     public String[] getSpecName() {
@@ -100,19 +157,29 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         return myManager;
     }
 
-    public void unRef() {
-        myFactory = null;
+    public void factoryDeparture(Factory factory,String factoryImplementation) {
+
+        if (factory.equals(myCurrentFactory)){
+            myCurrentFactory = null;
+        }
+
+        myAlternativeFactoryConfiguration.remove(factoryImplementation);
+
         myManager = null;
     }
 
     public synchronized void addManager() {
-        if (myManager != null || myFactory == null) {
+        if (myCurrentFactory == null) {
+            LOG.warn("Try to add new functional extension manager but the factory of the functional extension is null");
+            return;
+        }else if (myManager != null ) {
+            LOG.warn("Try to add new functional extension manager but the extension currently have one");
             return;
         }
 
         try {
             synchronized (lock) {
-                myManager = (FunctionalExtensionInstanceManager) myFactory.createComponentInstance(myConfiguration, null);
+                myManager = (FunctionalExtensionInstanceManager) myCurrentFactory.createComponentInstance(myConfiguration, null);
                 myManager.getBehaviorLifeCycleHandler().registerBehaviorListener(this);
                 myManager.registerContextListenerToExtensionEntityHandler(parent.getBehaviorContextListener());
                 extensionContextSource = myManager.getExtensionContextSource();
@@ -163,15 +230,31 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
             myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
             myManager.unregisterContextListenerToExtensionEntityHandler(parent.getBehaviorContextListener());
             myManager.dispose();
+
+            //unref Manager
+            myManager = null;
         }
     }
 
     public synchronized void getExtensionDescription(Element elementToAttach) {
+        Element extensionElement = new Element(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_INDIVIDUAL_ELEMENT_NAME.toString(),"");
+        extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString(),myId));
+        extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString(),myStringSpecifications));
+        extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString(),String.valueOf(mandatory)));
+        extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(),myExtensionNameImpl));
+        extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ALTERNATIVE_CONFIGURATION.toString(), myAlternativeFactoryConfiguration.keySet().stream().collect(Collectors.joining(",", "{", "}"))));
+
+
         if (myManager != null) {
+            extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_IS_INSTANTIATE.toString(),"true"));
+
             InstanceDescription description = myManager.getInstanceDescription();
 
             Element behaviorDescription = description.getDescription();
-            elementToAttach.addElement(behaviorDescription);
+            extensionElement.addElement(behaviorDescription);
+            elementToAttach.addElement(extensionElement);
+        }else {
+            extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_IS_INSTANTIATE.toString(),"false"));
         }
     }
 
@@ -195,7 +278,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
     }
 
     @Override
-    public void functionalExtensionStateChange(int state, String id) {
+    public void functionalExtensionStateChange(int state) {
         if (state == ComponentInstance.VALID) {
             for (String spec : mySpecifications) {
                 myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD + myId + spec, true);
@@ -205,7 +288,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
                 myProvideServiceHandler.onSet(null, EXTENSION_CONTROLLER_FIELD + myId + spec, false);
             }
         }
-        parent.functionalExtensionStateChange(state, id);
+        parent.functionalExtensionStateChange(state);
     }
 
     @Override
@@ -264,6 +347,24 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         if (myManager != null) {
             myManager.reconfigure(configuration);
         }
+    }
+
+    public synchronized void tryFunctionalExtensionReconfiguration(String newFunctionalExtensionImplementation){
+        if ( newFunctionalExtensionImplementation == null){
+            LOG.warn("The reconfiguration cannot be done because functional implementation class is null" );
+            return;
+        }
+        myExtensionNameImpl = newFunctionalExtensionImplementation;
+        tryDispose();
+
+        myCurrentFactory = myAlternativeFactoryConfiguration.get(newFunctionalExtensionImplementation);
+
+        if (myCurrentFactory == null){
+            LOG.warn("The reconfiguration cannot be done because no alternative configuration correspon to the class" + newFunctionalExtensionImplementation);
+            return;
+        }
+
+        addManager();
     }
 
 }

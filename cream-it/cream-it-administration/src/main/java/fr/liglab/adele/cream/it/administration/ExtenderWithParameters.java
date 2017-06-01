@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @FunctionalExtender(contextServices = ExtensionServiceWithParameters.class)
-public class ExtensionProviderWithParameters implements ExtensionServiceWithParameters {
+public class ExtenderWithParameters implements ExtensionServiceWithParameters {
 
     @ContextEntity.State.Field(service = ExtensionServiceWithParameters.class, state = ExtensionServiceWithParameters.PARAM_1_DIRECTACCESS, directAccess = true, value = "true")
     public Boolean param1;

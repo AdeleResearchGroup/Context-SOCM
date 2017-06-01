@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 //Same level as provided handler, maybe to change ...
 @Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, namespace = HandlerReference.NAMESPACE, level = 3)
@@ -33,23 +32,11 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
 
     private final InstanceStateListener privateInstanceListener = new InstanceListenerImpl();
 
-    private String id;
-
-    private String[] managedSpecs;
-
     // TODO : some workaround method invocation, check if the parameter is a primitive type and not call the method if the argument is null,
     // When get the callback , issue can be found if the pojo own two method with the same name but different attributes(nbr or type), the pojometadata.getMethod() return
     // the first method with the good name...
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
-        //Do nothing
-        if (configuration.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString()) == null) {
-            throw new ConfigurationException(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG + "config parameter must be provided");
-        }
-
-        id = (String) configuration.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString());
-
-        managedSpecs = (String[]) configuration.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString());
 
         Element[] elements = metadata.getElements(HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, HandlerReference.NAMESPACE);
         if (elements == null || elements.length == 0) {
@@ -116,7 +103,7 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
 
     private void notifyListener(int state) {
         for (FunctionalExtensionStateListener functionalExtensionStateListener : stateListeners) {
-            functionalExtensionStateListener.functionalExtensionStateChange(state, id);
+            functionalExtensionStateListener.functionalExtensionStateChange(state);
         }
     }
 
@@ -176,10 +163,6 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
         @Override
         public Element getHandlerInfo() {
             Element element = super.getHandlerInfo();
-            element.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(), id));
-
-            String specifications = Arrays.asList(managedSpecs).stream().collect(Collectors.joining(",", "{", "}"));
-            element.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANAGED_SPECS_CONFIG.toString(), specifications));
             return element;
         }
     }

@@ -68,12 +68,15 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
             }
 
             for (Element individualBehaviorElement : behaviorIndividualElements) {
+                boolean mandatoryField = Boolean.parseBoolean(individualBehaviorElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString()));
+
                 RequiredFunctionalExtension requiredFunctionalExtension = new RequiredFunctionalExtension(individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString()),
-                        ParseUtils.parseArrays(individualBehaviorElement.getAttribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString())),
+                        individualBehaviorElement.getAttribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString()),
                         individualBehaviorElement.getAttribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString()),
                         configuration,
                         this,
-                        getProvideServiceHandler()
+                        getProvideServiceHandler(),
+                        mandatoryField
                 );
                 myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString()), requiredFunctionalExtension);
 
@@ -87,7 +90,6 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
 
                 }
 
-                boolean mandatoryField = Boolean.parseBoolean(individualBehaviorElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString()));
                 if (mandatoryField) {
                     mandatoryBehavior.add(individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString()));
                 }
@@ -243,8 +245,10 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
     @Bind(id = "behaviorF", specification = Factory.class, optional = true, proxy = false, aggregate = true, filter = "(" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY + "=" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE + ")")
     public synchronized void bindBehaviorFactory(Factory behaviorFactory, Map prop) {
         for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
-            if (match(entry.getValue(), prop)) {
-                entry.getValue().setFactory(behaviorFactory);
+            String impl = (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+            List<String> listOfSpec = getListOfFactoryProvideSpec(prop);
+
+            if (entry.getValue().tryToAddFactory(behaviorFactory, listOfSpec, impl)) {
                 entry.getValue().addManager();
                 if (getInstanceManager().getState() == ComponentInstance.VALID) {
                     entry.getValue().tryStartExtension();
@@ -253,29 +257,28 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
         }
     }
 
+
     @Unbind(id = "behaviorF")
     public synchronized void unbindBehaviorFactory(Factory behaviorFactory, Map prop) {
         for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
-            if (match(entry.getValue(), prop)) {
-                entry.getValue().unRef();
-            }
+            String impl = (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+
+            entry.getValue().factoryDeparture(behaviorFactory,impl);
+
         }
     }
 
-    protected boolean match(RequiredFunctionalExtension req, Map prop) {
+
+    protected List<String> getListOfFactoryProvideSpec(Map prop){
         String[] specs = (String[]) prop.get(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString());
-        String impl = (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
-        boolean specMatch = true;
-        List<String> listOfSpec = Arrays.asList(specs);
 
-        for (String spec : req.getSpecName()) {
-            if (!listOfSpec.contains(spec)) {
-                specMatch = false;
-            }
+
+        if (specs != null) {
+            return Arrays.asList(specs);
+        } else {
+            return Collections.emptyList();
         }
-        return specMatch && req.getImplName().equalsIgnoreCase(impl);
     }
-
     /**
      * Method Invocation Delegation, linked to context provided strategy
      */
@@ -345,17 +348,14 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
      */
 
     @Override
-    public void functionalExtensionStateChange(int state, String id) {
-        if (ComponentInstance.INVALID == state) {
-            if (mandatoryBehavior.contains(id)) {
-                setValidity(false);
-            }
-        }
-        if (ComponentInstance.VALID == state) {
+    public void functionalExtensionStateChange(int state) {
+
             if (checkRequiredBehavior()) {
                 setValidity(true);
+            }else {
+                setValidity(false);
             }
-        }
+
     }
 
     private boolean checkRequiredBehavior() {
@@ -434,6 +434,23 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
 
     @Override
     public void reconfigure(Dictionary configuration) {
+        Map<String,Object> config = (Map) configuration;
+        if(config.containsKey(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString())){
+            Map<String,String> functionalExtensionConfiguration = (Map<String, String>) config.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString());
+            String id = functionalExtensionConfiguration.get(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
+            if (id == null){
+                return;
+            }
+            String implem = functionalExtensionConfiguration.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+            RequiredFunctionalExtension functionalExtension = myRequiredBehaviorById.get(id);
+            if (functionalExtension != null ){
+                functionalExtension.tryFunctionalExtensionReconfiguration(implem);
+                 if (functionalExtension.isMandatory() || (getInstanceManager().getState() == ComponentInstance.VALID) ){
+                      functionalExtension.tryStartExtension();
+                  }
+            }
+        }
+
         for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
             entry.getValue().propagateReconfigure(configuration);
         }

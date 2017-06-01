@@ -12,18 +12,27 @@ public class ImmutableFunctionalExtension {
 
     private final String state;
 
+    private final String isInstantiate;
+
+    private final String isMandatory;
+
     private final List<String> managedSpecifications;
 
     private final List<String> implementedSpecifications;
 
+    private final List<String> alternativeConfigurations;
+
     private final List<ImmutableContextState> contextStates;
 
-    public ImmutableFunctionalExtension(String id,String state,List<String> implementedSpecifications, List<String> managedSpecifications, List<ImmutableContextState> states) {
+    public ImmutableFunctionalExtension(String id,String state,List<String> implementedSpecifications, List<String> managedSpecifications,List<String> alternativeConfigurations, List<ImmutableContextState> states,String isInstantiate,String isMandatory) {
         this.id = id;
         this.state = state;
         this.managedSpecifications = new ArrayList<>(managedSpecifications);
         this.implementedSpecifications = new ArrayList<>(implementedSpecifications);
         this.contextStates = new ArrayList<>(states);
+        this.isInstantiate = isInstantiate;
+        this.isMandatory = isMandatory;
+        this.alternativeConfigurations = alternativeConfigurations;
     }
 
     public String getId() {
@@ -45,4 +54,17 @@ public class ImmutableFunctionalExtension {
     public String getState() {
         return state;
     }
+
+    public String isInstantiate() {
+        return isInstantiate;
+    }
+
+    public String isMandatory() {
+        return isMandatory;
+    }
+
+    public List<String> getAlternativeConfigurations() {
+        return alternativeConfigurations;
+    }
+
 }

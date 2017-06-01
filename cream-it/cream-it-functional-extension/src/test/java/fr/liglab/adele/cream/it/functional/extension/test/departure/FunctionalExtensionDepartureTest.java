@@ -53,9 +53,9 @@ public class FunctionalExtensionDepartureTest extends FunctionalExtensionBaseCom
         assertThat(behavior).isNotNull();
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "Behavior1")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "Behavior1")).isNotNull();
 
-        functionalExtensionHelper.stopBehavior(instance, "Behavior1");
+        functionalExtensionHelper.stopFunctionalExtension(instance, "Behavior1");
 
         ExtensionSpec1 behavior2 = osgiHelper.getServiceObject(ExtensionSpec1.class);
         assertThat(behavior2).isNull();
@@ -81,14 +81,14 @@ public class FunctionalExtensionDepartureTest extends FunctionalExtensionBaseCom
         assertThat(behavior2).isNotNull();
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "Behavior1")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "Behavior2")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "Behavior1")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "Behavior2")).isNotNull();
         assertThat(serviceReference.getProperty(ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.PARAM_1_DIRECTACCESS))).isEqualTo(ExtensionSpec1.PARAM_1_INIT_VALUE);
 
         behavior = null;
         behavior2 = null;
 
-        functionalExtensionHelper.invalidBehavior(instance, "Behavior1");
+        functionalExtensionHelper.invalidFunctionalExtension(instance, "Behavior1");
         ExtensionSpec1 extensionSpec1Null = osgiHelper.getServiceObject(ExtensionSpec1.class);
         FunctionalExtension2 functionalExtension2NotNullSideEffect = osgiHelper.getServiceObject(FunctionalExtension2.class);
         assertThat(extensionSpec1Null).isNull();
@@ -103,7 +103,7 @@ public class FunctionalExtensionDepartureTest extends FunctionalExtensionBaseCom
 
         functionalExtension2NotNullSideEffect = null;
 
-        functionalExtensionHelper.invalidBehavior(instance, "Behavior2");
+        functionalExtensionHelper.invalidFunctionalExtension(instance, "Behavior2");
         FunctionalExtension2 functionalExtension2Null = osgiHelper.getServiceObject(FunctionalExtension2.class);
         assertThat(functionalExtension2Null).isNull();
 
@@ -120,7 +120,7 @@ public class FunctionalExtensionDepartureTest extends FunctionalExtensionBaseCom
         /**
          * Restart behavior 1
          */
-        functionalExtensionHelper.validBehavior(instance, "Behavior1");
+        functionalExtensionHelper.validFunctionalExtension(instance, "Behavior1");
         serviceReference = osgiHelper.getServiceReference(ContextService1.class);
         /**
          * Property Check
@@ -144,13 +144,13 @@ public class FunctionalExtensionDepartureTest extends FunctionalExtensionBaseCom
         assertThat(behavior2).isInstanceOf(ContextService1.class);
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "Behavior1")).isNotNull();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "Behavior2")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "Behavior1")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "Behavior2")).isNotNull();
 
         behavior = null;
         behavior2 = null;
 
-        functionalExtensionHelper.stopBehavior(instance, "Behavior1");
+        functionalExtensionHelper.stopFunctionalExtension(instance, "Behavior1");
         ExtensionSpec1 extensionSpec1Null = osgiHelper.getServiceObject(ExtensionSpec1.class);
         FunctionalExtension2 functionalExtension2NotNullSideEffect = osgiHelper.getServiceObject(FunctionalExtension2.class);
         ContextService1 contextServiceProxyAfterBehavior1Departure = osgiHelper.getServiceObject(ContextService1.class);
@@ -165,7 +165,7 @@ public class FunctionalExtensionDepartureTest extends FunctionalExtensionBaseCom
         contextServiceProxyAfterBehavior1Departure = null;
         extensionSpec1Null = null;
 
-        functionalExtensionHelper.stopBehavior(instance, "Behavior2");
+        functionalExtensionHelper.stopFunctionalExtension(instance, "Behavior2");
         FunctionalExtension2 functionalExtension2Null = osgiHelper.getServiceObject(FunctionalExtension2.class);
         ContextService1 contextServiceProxyAfterBehavior2Departure = osgiHelper.getServiceObject(ContextService1.class);
 
@@ -190,12 +190,12 @@ public class FunctionalExtensionDepartureTest extends FunctionalExtensionBaseCom
         assertThat(extensionToInject).isNotNull();
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
-        assertThat(functionalExtensionHelper.getBehavior(instance, "injectedBehavior")).isNotNull();
+        assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "injectedBehavior")).isNotNull();
 
         extensionToInject = null;
         serviceObj1 = null;
 
-        functionalExtensionHelper.stopBehavior(instance, "injectedBehavior");
+        functionalExtensionHelper.stopFunctionalExtension(instance, "injectedBehavior");
 
         serviceObj1 = osgiHelper.getServiceObject(ServiceContext.class);
         extensionToInject = osgiHelper.getServiceObject(ExtensionToInject.class);

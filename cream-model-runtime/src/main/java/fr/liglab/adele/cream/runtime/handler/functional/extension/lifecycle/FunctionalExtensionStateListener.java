@@ -5,5 +5,5 @@ package fr.liglab.adele.cream.runtime.handler.functional.extension.lifecycle;
  */
 public interface FunctionalExtensionStateListener {
 
-    public void functionalExtensionStateChange(int state, String extensionId);
+    public void functionalExtensionStateChange(int state);
 }
