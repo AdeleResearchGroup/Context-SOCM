@@ -105,6 +105,11 @@ public abstract class ComponentCreator {
      * Change the status of this creator
      */
     public boolean setEnabled(boolean enabled) {
+
+        if (enabled == this.enabled) {
+            return enabled;
+        }
+
         boolean wasEnabled = this.enabled;
         this.enabled = enabled;
 
