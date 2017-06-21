@@ -57,6 +57,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextServiceWithParam(contextEntity);
 
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityWithParameterOnContextServiceAndBehavior.class.getName());
+
             assertThat(contextEntity.getExtensions().size()).isEqualTo(1);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){
                 checkExtensionWithParam(functionalExtension);
@@ -77,6 +79,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextEntityWithNoContextService(contextEntity);
+
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityMultipleExtensions.class.getName());
 
             assertThat(contextEntity.getExtensions().size()).isEqualTo(2);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){
@@ -107,6 +111,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextEntityWithNoContextService(contextEntity);
 
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityOnlyExtension.class.getName());
+
             assertThat(contextEntity.getExtensions().size()).isEqualTo(1);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){
                 checkExtensionWithoutParam(functionalExtension);
@@ -126,6 +132,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextServiceWithParam(contextEntity);
+
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityParamOnCsNoParamOnExtension.class.getName());
 
             assertThat(contextEntity.getExtensions().size()).isEqualTo(1);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){

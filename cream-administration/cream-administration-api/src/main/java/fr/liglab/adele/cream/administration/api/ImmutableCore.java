@@ -14,10 +14,13 @@ public class ImmutableCore {
 
     private final List<String> implementedSpecifications;
 
-    public ImmutableCore(List<ImmutableRelation> relations, List<ImmutableContextState> contextStates, List<String> implementedSpecifications) {
+    private final String implementation;
+
+    public ImmutableCore(List<ImmutableRelation> relations, List<ImmutableContextState> contextStates, List<String> implementedSpecifications,String implementation) {
         this.relations = new ArrayList<>(relations);
         this.contextStates = new ArrayList<>(contextStates);
         this.implementedSpecifications = new ArrayList<>(implementedSpecifications);
+        this.implementation=implementation;
     }
 
     public List<ImmutableContextState> getContextStates() {
@@ -32,4 +35,7 @@ public class ImmutableCore {
         return new ArrayList<>(relations);
     }
 
+    public String getImplementation() {
+        return implementation;
+    }
 }

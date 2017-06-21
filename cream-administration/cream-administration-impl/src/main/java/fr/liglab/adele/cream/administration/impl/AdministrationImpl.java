@@ -157,6 +157,7 @@ public class AdministrationImpl implements AdministrationService{
         List<ImmutableContextState> contextStates = getContextStatesFromEntityHandlerDescription(entityHandlerDescription);
         String entityState = getStateFromInstanceDescription(instanceDescription.getDescription());
         List<String> implementedSpecs = getImplementedSpecificationsFromEntityHandlerDescription(entityHandlerDescription.getHandlerInfo());
+        String implementation = instanceDescription.getDescription().getAttribute("component.type");
 
         HandlerDescription functionalTrackerHandlerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
         List<ImmutableFunctionalExtension> functionalExtensions = new ArrayList<>();
@@ -165,7 +166,7 @@ public class AdministrationImpl implements AdministrationService{
         }
 
         List<ImmutableRelation> relations = getListOfRelationFromRequireHandlerDescription(instanceDescription.getHandlerDescription("org.apache.felix.ipojo:requires"));
-        ImmutableCore core = new ImmutableCore(relations,contextStates,implementedSpecs);
+        ImmutableCore core = new ImmutableCore(relations,contextStates,implementedSpecs,implementation);
 
         return new ImmutableContextEntity(entityId,entityState,core,functionalExtensions);
 
