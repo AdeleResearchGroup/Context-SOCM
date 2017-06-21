@@ -445,14 +445,10 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
             RequiredFunctionalExtension functionalExtension = myRequiredBehaviorById.get(id);
             if (functionalExtension != null ){
                 functionalExtension.tryFunctionalExtensionReconfiguration(implem);
+                 if (functionalExtension.isMandatory() || (getInstanceManager().getState() == ComponentInstance.VALID) ){
+                      functionalExtension.tryStartExtension();
+                  }
             }
-
-            if (functionalExtension.isMandatory()){
-                functionalExtension.tryStartExtension();
-            }else if (getInstanceManager().getState() == ComponentInstance.VALID) {
-                functionalExtension.tryStartExtension();
-            }
-
         }
 
         for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
