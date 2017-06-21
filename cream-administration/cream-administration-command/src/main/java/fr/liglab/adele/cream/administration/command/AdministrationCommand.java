@@ -1,10 +1,7 @@
 package fr.liglab.adele.cream.administration.command;
 
 
-import fr.liglab.adele.cream.administration.api.AdministrationService;
-import fr.liglab.adele.cream.administration.api.ImmutableContextEntity;
-import fr.liglab.adele.cream.administration.api.ImmutableContextState;
-import fr.liglab.adele.cream.administration.api.ImmutableFunctionalExtension;
+import fr.liglab.adele.cream.administration.api.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.service.command.Descriptor;
 import org.slf4j.Logger;
@@ -75,16 +72,21 @@ public class AdministrationCommand {
 
                 System.out.println("[--------------------------------------------------------------");
                 System.out.println("Context Entity : " + entity.getId());
-
+                ImmutableCore core = entity.getCore();
                 System.out.println("\t-> Core :");
                 System.out.println("\t\t+State : "+entity.getState());
-                System.out.println("\t\t+Implements : "+entity.getImplementedSpecifications());
+                System.out.println("\t\t+Implements : "+core.getImplementedSpecifications());
                 System.out.println("\t\t+Manages : ");
-                for (ImmutableContextState contextState: entity.getContextStates()){
+                for (ImmutableContextState contextState: core.getContextStates()){
                     System.out.print("\t\t\tContext-State : " + contextState.getId() +" , value = " + contextState.getValue());
                     if (contextState.getSynchroPeriod() !=null){
                         System.out.print(" , synchronisation period : [ " + contextState.getSynchroPeriod().getPeriod() + " , " + contextState.getSynchroPeriod().getUnit()+" ]" );
                     }
+                    System.out.println("");
+                }
+                for (ImmutableRelation relation: core.getRelations()){
+                    System.out.print("\t\t\tRelation : state : " + relation.getState() +" , source = " + relation.getSourcesId());
+
                     System.out.println("");
                 }
 
@@ -105,6 +107,10 @@ public class AdministrationCommand {
                         if (contextState.getSynchroPeriod() !=null){
                             System.out.print(" , synchronisation period : [ " + contextState.getSynchroPeriod().getPeriod() + " , " + contextState.getSynchroPeriod().getUnit()+" ]" );
                         }
+                        System.out.println("");
+                    }
+                    for (ImmutableRelation relation: extension.getRelations()){
+                        System.out.print("\t\t\t\tRelation : state : " + relation.getState() +" , source = " + relation.getSourcesId());
                         System.out.println("");
                     }
                 }
