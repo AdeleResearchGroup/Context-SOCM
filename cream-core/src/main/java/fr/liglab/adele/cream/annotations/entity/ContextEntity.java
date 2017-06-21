@@ -18,7 +18,7 @@ public @interface ContextEntity {
     /**
      * The list of provided context spec
      */
-    Class<?>[] services() default {};
+    Class<?>[] coreServices() default {};
 
     /**
      * This annotations declares a relation of the context entity

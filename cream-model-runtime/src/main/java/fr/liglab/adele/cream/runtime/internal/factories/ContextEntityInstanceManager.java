@@ -39,7 +39,7 @@ public class ContextEntityInstanceManager extends InstanceManager implements Cre
             Class clazz = getClazz();
             ContextEntity[] contextEntities = (ContextEntity[]) clazz.getAnnotationsByType(ContextEntity.class);
             for (ContextEntity entity : contextEntities) {
-                Class[] entityClass = entity.services();
+                Class[] entityClass = entity.coreServices();
                 Set<Class> classesFlatten = flattenClass(entityClass);
                 proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(classesFlatten, creamProxyFactory);
             }

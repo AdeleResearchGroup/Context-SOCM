@@ -4,7 +4,7 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
 import fr.liglab.adele.cream.annotations.functional.extension.InjectedFunctionalExtension;
 
-@ContextEntity(services = ServiceContextPrime.class)
+@ContextEntity(coreServices = ServiceContextPrime.class)
 @FunctionalExtension(id = "injectedBehavior", contextServices = ExtensionToInject.class, implementation = InjectedExtensionImpl.class)
 @FunctionalExtension(id = "injectedBehavior2", contextServices = ExtensionToInjectPrime.class, implementation = InjectedExtensionPrimeImpl.class)
 public class ContextServiceUsingMultipleInjectedBehavior implements ServiceContextPrime {
