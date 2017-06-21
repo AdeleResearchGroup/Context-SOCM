@@ -250,6 +250,7 @@ public class AdministrationImpl implements AdministrationService{
         String isMandatory = functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString());
         List<String> alternativeConfigurations = ParseUtils.parseArraysAsList(functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ALTERNATIVE_CONFIGURATION.toString()));
         String isInstantiate = functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_IS_INSTANTIATE.toString());
+        String selectedImplem = functionalExtensionElement.getAttribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
 
         String functionnalExtensionState = "";
         List<ImmutableContextState> contextStates = new ArrayList<>();
@@ -286,7 +287,7 @@ public class AdministrationImpl implements AdministrationService{
 
 
 
-        return new ImmutableFunctionalExtension(functionalExtensionId,functionnalExtensionState,implementedSpecs,managedSpecs,alternativeConfigurations,contextStates,isInstantiate,isMandatory,relations);
+        return new ImmutableFunctionalExtension(functionalExtensionId,functionnalExtensionState,implementedSpecs,managedSpecs,alternativeConfigurations,contextStates,isInstantiate,isMandatory,relations,selectedImplem);
     }
 
     private List<String> getImplementedSpecificationsFromEntityHandlerDescription(Element instanceDescription){

@@ -97,6 +97,8 @@ public abstract class  CreamAdministrationBaseTest  extends ContextBaseTest {
     protected void checkExtensionWithoutParam(ImmutableFunctionalExtension extensionWithoutParams){
         assertThat(extensionWithoutParams.getId()).isEqualTo("extensionWithoutParam");
 
+        assertThat(extensionWithoutParams.getSelectedImplementation()).isEqualTo(ExtenderWithoutParameter.class.getName());
+
         assertThat(extensionWithoutParams.getState()).isEqualTo("valid");
 
         assertThat(extensionWithoutParams.isInstantiate()).isEqualTo("true");
@@ -120,6 +122,8 @@ public abstract class  CreamAdministrationBaseTest  extends ContextBaseTest {
 
     protected void checkExtensionWithParam(ImmutableFunctionalExtension extensionWithParams){
         assertThat(extensionWithParams.getId()).isEqualTo("extensionWithParam");
+
+        assertThat(extensionWithParams.getSelectedImplementation()).isEqualTo(ExtenderWithParameters.class.getName());
 
         assertThat(extensionWithParams.isInstantiate()).isEqualTo("true");
 
