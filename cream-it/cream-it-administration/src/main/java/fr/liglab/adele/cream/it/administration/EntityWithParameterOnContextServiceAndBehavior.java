@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@ContextEntity(services = ContextServiceWithParameters.class)
+@ContextEntity(coreServices = ContextServiceWithParameters.class)
 @FunctionalExtension(id = "extensionWithParam", contextServices = ExtensionServiceWithParameters.class, implementation = ExtenderWithParameters.class)
 public class EntityWithParameterOnContextServiceAndBehavior implements ContextServiceWithParameters{
 

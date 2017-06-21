@@ -51,23 +51,27 @@ public abstract class  CreamAdministrationBaseTest  extends ContextBaseTest {
 
     protected void checkContextEntityWithNoContextService(ImmutableContextEntity contextService){
         assertThat(contextService.getId()).isEqualTo(CONTEXT_ENTITY_ID);
-        assertThat(contextService.getContextStates().size()).isEqualTo(0);
+        assertThat(contextService.getCore()).isNotNull();
+
+        assertThat(contextService.getCore().getContextStates().size()).isEqualTo(0);
 
         assertThat(contextService.getState()).isEqualTo("valid");
 
-        assertThat(contextService.getImplementedSpecifications().size()).isEqualTo(0);
+        assertThat(contextService.getCore().getImplementedSpecifications().size()).isEqualTo(0);
 
 
     }
 
     protected void checkContextServiceWithoutParam(ImmutableContextEntity contextService){
         assertThat(contextService.getId()).isEqualTo(CONTEXT_ENTITY_ID);
-        assertThat(contextService.getContextStates().size()).isEqualTo(0);
+        assertThat(contextService.getCore()).isNotNull();
+
+        assertThat(contextService.getCore().getContextStates().size()).isEqualTo(0);
 
         assertThat(contextService.getState()).isEqualTo("valid");
 
-        assertThat(contextService.getImplementedSpecifications().size()).isEqualTo(1);
-        for (String specification : contextService.getImplementedSpecifications()){
+        assertThat(contextService.getCore().getImplementedSpecifications().size()).isEqualTo(1);
+        for (String specification : contextService.getCore().getImplementedSpecifications()){
             assertThat(specification).isEqualTo(ContextServiceWithoutParameters.class.getName());
         }
 
@@ -77,12 +81,14 @@ public abstract class  CreamAdministrationBaseTest  extends ContextBaseTest {
 
     protected void checkContextServiceWithParam(ImmutableContextEntity contextService){
         assertThat(contextService.getId()).isEqualTo(CONTEXT_ENTITY_ID);
-        checkStates(contextService.getContextStates(), ContextServiceWithParameters.class);
+        assertThat(contextService.getCore()).isNotNull();
+
+        checkStates(contextService.getCore().getContextStates(), ContextServiceWithParameters.class);
 
         assertThat(contextService.getState()).isEqualTo("valid");
 
-        assertThat(contextService.getImplementedSpecifications().size()).isEqualTo(1);
-        for (String specification : contextService.getImplementedSpecifications()){
+        assertThat(contextService.getCore().getImplementedSpecifications().size()).isEqualTo(1);
+        for (String specification : contextService.getCore().getImplementedSpecifications()){
             assertThat(specification).isEqualTo(ContextServiceWithParameters.class.getName());
         }
     }
@@ -90,6 +96,8 @@ public abstract class  CreamAdministrationBaseTest  extends ContextBaseTest {
 
     protected void checkExtensionWithoutParam(ImmutableFunctionalExtension extensionWithoutParams){
         assertThat(extensionWithoutParams.getId()).isEqualTo("extensionWithoutParam");
+
+        assertThat(extensionWithoutParams.getSelectedImplementation()).isEqualTo(ExtenderWithoutParameter.class.getName());
 
         assertThat(extensionWithoutParams.getState()).isEqualTo("valid");
 
@@ -114,6 +122,8 @@ public abstract class  CreamAdministrationBaseTest  extends ContextBaseTest {
 
     protected void checkExtensionWithParam(ImmutableFunctionalExtension extensionWithParams){
         assertThat(extensionWithParams.getId()).isEqualTo("extensionWithParam");
+
+        assertThat(extensionWithParams.getSelectedImplementation()).isEqualTo(ExtenderWithParameters.class.getName());
 
         assertThat(extensionWithParams.isInstantiate()).isEqualTo("true");
 

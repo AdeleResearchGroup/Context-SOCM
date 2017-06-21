@@ -3,6 +3,7 @@ package fr.liglab.adele.cream.it.administration.test.monitoring;
 import fr.liglab.adele.cream.administration.api.AdministrationService;
 import fr.liglab.adele.cream.administration.api.ImmutableContextEntity;
 import fr.liglab.adele.cream.administration.api.ImmutableFunctionalExtension;
+import fr.liglab.adele.cream.administration.api.ImmutableRelation;
 import fr.liglab.adele.cream.it.administration.*;
 import fr.liglab.adele.cream.it.administration.test.CreamAdministrationBaseTest;
 import org.apache.felix.ipojo.ConfigurationException;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +21,28 @@ import static org.fest.assertions.Fail.fail;
 
 @ExamReactorStrategy(PerMethod.class)
 public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTest {
+
+
+    @Test
+    public void testDependencies() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
+        AdministrationService adminService  =  osgiHelper.waitForService(AdministrationService.class,null,1000);
+
+        contextHelper.getContextEntityHelper().createContextEntity(EntityWithoutExtension.class.getName(), "ServiceProvider", null);
+        ipojoHelper.createComponentInstance(RegularIPojoServiceProvider.class.getName());
+        createContextEntity(EntityWithDependencies.class);
+
+        ImmutableContextEntity contextEntity = adminService.getContextEntity(CONTEXT_ENTITY_ID);
+
+        List<ImmutableRelation> relations = contextEntity.getCore().getRelations();
+        assertThat(relations).isNotNull();
+        assertThat(relations.size()).isEqualTo(1);
+        for (ImmutableRelation relation : relations){
+            assertThat(relation.getSourcesId().size()).isEqualTo(1);
+            for (String sourceID : relation.getSourcesId()){
+                assertThat(sourceID).isEqualTo("ServiceProvider");
+            }
+        }
+    }
 
     @Test
     public void testAdministrationEntityWithParameterOnContextServiceAndBehavior() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
@@ -32,6 +56,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextServiceWithParam(contextEntity);
+
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityWithParameterOnContextServiceAndBehavior.class.getName());
 
             assertThat(contextEntity.getExtensions().size()).isEqualTo(1);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){
@@ -53,6 +79,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextEntityWithNoContextService(contextEntity);
+
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityMultipleExtensions.class.getName());
 
             assertThat(contextEntity.getExtensions().size()).isEqualTo(2);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){
@@ -83,6 +111,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextEntityWithNoContextService(contextEntity);
 
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityOnlyExtension.class.getName());
+
             assertThat(contextEntity.getExtensions().size()).isEqualTo(1);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){
                 checkExtensionWithoutParam(functionalExtension);
@@ -102,6 +132,8 @@ public class CreamAdministrationMonitoringTest extends CreamAdministrationBaseTe
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : contextEntities){
             checkContextServiceWithParam(contextEntity);
+
+            assertThat(contextEntity.getCore().getImplementation()).isEqualTo(EntityParamOnCsNoParamOnExtension.class.getName());
 
             assertThat(contextEntity.getExtensions().size()).isEqualTo(1);
             for (ImmutableFunctionalExtension functionalExtension:contextEntity.getExtensions()){

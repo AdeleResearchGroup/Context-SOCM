@@ -10,33 +10,25 @@ public class ImmutableContextEntity {
 
     private final String id;
 
-    private final List<ImmutableContextState> contextStates;
+   private final ImmutableCore core;
 
     private final List<ImmutableFunctionalExtension> extensions;
 
-    private final List<String> implementedSpecifications;
-
     private final String state;
 
-    public ImmutableContextEntity(String id,String state,List<String> implementedSpecifications ,List<ImmutableContextState> states, List<ImmutableFunctionalExtension> extensions) {
+    public ImmutableContextEntity(String id,String state,ImmutableCore core, List<ImmutableFunctionalExtension> extensions) {
         this.id = id;
         this.state = state;
-        this.contextStates = new ArrayList<>(states);
         this.extensions = new ArrayList<>(extensions);
-        this.implementedSpecifications = new ArrayList<>(implementedSpecifications);
-
+        this.core = core;
     }
 
     public List<ImmutableFunctionalExtension> getExtensions() {
         return new ArrayList<>(extensions);
     }
 
-    public List<ImmutableContextState> getContextStates() {
-        return new ArrayList<>(contextStates);
-    }
-
-    public List<String> getImplementedSpecifications() {
-        return new ArrayList<>(implementedSpecifications);
+    public ImmutableCore getCore() {
+        return core;
     }
 
     public String getId() {

@@ -37,7 +37,7 @@ public class CreamAdministrationReconfigurationTest extends CreamAdministrationB
 
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : contextEntities){
-            for(ImmutableContextState state : contextEntity.getContextStates()){
+            for(ImmutableContextState state : contextEntity.getCore().getContextStates()){
                 String stateId = state.getId();
                 if(ContextEntity.State.id(ContextServiceWithParameters.class,"directAccessParam").equals(stateId)){
                     assertThat(state.getSynchroPeriod()).isNull();
@@ -73,7 +73,7 @@ public class CreamAdministrationReconfigurationTest extends CreamAdministrationB
 
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : contextEntitiesReconfigured){
-            for(ImmutableContextState state : contextEntity.getContextStates()){
+            for(ImmutableContextState state : contextEntity.getCore().getContextStates()){
                 String stateId = state.getId();
                 if(ContextEntity.State.id(ContextServiceWithParameters.class,"directAccessParam").equals(stateId)){
                     assertThat(state.getSynchroPeriod()).isNull();
@@ -109,7 +109,7 @@ public class CreamAdministrationReconfigurationTest extends CreamAdministrationB
 
         assertThat(contextEntities.size()).isEqualTo(1);
         for (ImmutableContextEntity contextEntity : reconfiguredExtensionContextEntities){
-            for(ImmutableContextState state : contextEntity.getContextStates()){
+            for(ImmutableContextState state : contextEntity.getCore().getContextStates()){
                 String stateId = state.getId();
                 if(ContextEntity.State.id(ContextServiceWithParameters.class,"directAccessParam").equals(stateId)){
                     assertThat(state.getSynchroPeriod()).isNull();

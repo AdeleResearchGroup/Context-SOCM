@@ -45,12 +45,12 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
         setRootMetadata(component);
         
         /*
-         * Verify the annotated class implements all the context services specified in the annotation
+         * Verify the annotated class implements all the context coreServices specified in the annotation
          */
         ClassNode clazz = getAnnotatedClass();
         boolean implemented = true;
 
-        for (Class<?> service : annotation.services()) {
+        for (Class<?> service : annotation.coreServices()) {
 
             if (!clazz.interfaces.contains(Type.getInternalName(service))) {
                 error("Class " + clazz.name + " is not an implementation of context service " + service);
@@ -60,23 +60,23 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
         }
 
         if (!implemented) {
-            error("Cannot ensure that the class " + classname + " is the implementation of the specified context services");
+            error("Cannot ensure that the class " + classname + " is the implementation of the specified context coreServices");
         }
         
         /*
-         * Add the specified context services as provided specifications of the IPOJO component
+         * Add the specified context coreServices as provided specifications of the IPOJO component
          */
-        String specifications = Arrays.asList(annotation.services()).stream().map(service -> service.getName()).collect(Collectors.joining(",", "{", "}"));
+        String specifications = Arrays.asList(annotation.coreServices()).stream().map(service -> service.getName()).collect(Collectors.joining(",", "{", "}"));
 
 
-        if (annotation.services().length > 0) {
+        if (annotation.coreServices().length > 0) {
             Element provides = new Element(ProvideReferenceHandler.PROVIDES.toString(), "");
             Attribute attribute = new Attribute(ProvideReferenceHandler.SPECIFICATIONS.toString(), specifications);
 
             provides.addAttribute(attribute);
 
         /*
-         * Add a static property to the component specifying all the context services implemented by the entity
+         * Add a static property to the component specifying all the context coreServices implemented by the entity
          */
             Element property = new Element(ProvideReferenceHandler.PROPERTY.toString(), "");
 

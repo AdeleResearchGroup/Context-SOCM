@@ -1,14 +1,12 @@
 package fr.liglab.adele.cream.administration.impl;
 
-import fr.liglab.adele.cream.administration.api.AdministrationService;
-import fr.liglab.adele.cream.administration.api.ImmutableContextEntity;
-import fr.liglab.adele.cream.administration.api.ImmutableContextState;
-import fr.liglab.adele.cream.administration.api.ImmutableFunctionalExtension;
+import fr.liglab.adele.cream.administration.api.*;
 import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.annotations.internal.ReservedCreamValueReference;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.architecture.Architecture;
+import org.apache.felix.ipojo.architecture.ComponentTypeDescription;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
 import org.apache.felix.ipojo.metadata.Element;
@@ -17,11 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 
-@Component
-@Instantiate
+@Component(immediate = true)
+@Instantiate(name = "fr.liglab.adele.cream.administration.impl.AdministrationImpl-0")
 @Provides(specifications = AdministrationService.class)
 public class AdministrationImpl implements AdministrationService{
 
@@ -30,17 +29,27 @@ public class AdministrationImpl implements AdministrationService{
      */
     private static final Logger LOG = LoggerFactory.getLogger(AdministrationImpl.class);
 
-    @Requires(id = "archi",specification = Architecture.class)
+    private final Map<String,Architecture>  instanceNameToArchitecture = new ConcurrentHashMap<>();
+
+    @Requires(id = "archi",specification = Architecture.class,optional = true)
     List<Architecture> architectures;
 
-    @Validate
-    public void valid(){
+    @Bind(id = "archi")
+    public void bindArchitecture(Architecture architecture){
+        instanceNameToArchitecture.put(architecture.getInstanceDescription().getName(),architecture);
+    }
 
+
+    @Unbind(id = "archi")
+    public void unbindArchitecture(Architecture architecture){
+        String name = architecture.getInstanceDescription().getName();
+
+        instanceNameToArchitecture.remove(name);
     }
 
     @Invalidate
-    public void invalid(){
-
+    public void stop(){
+        instanceNameToArchitecture.clear();
     }
 
     @Override
@@ -148,6 +157,7 @@ public class AdministrationImpl implements AdministrationService{
         List<ImmutableContextState> contextStates = getContextStatesFromEntityHandlerDescription(entityHandlerDescription);
         String entityState = getStateFromInstanceDescription(instanceDescription.getDescription());
         List<String> implementedSpecs = getImplementedSpecificationsFromEntityHandlerDescription(entityHandlerDescription.getHandlerInfo());
+        String implementation = instanceDescription.getDescription().getAttribute("component.type");
 
         HandlerDescription functionalTrackerHandlerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
         List<ImmutableFunctionalExtension> functionalExtensions = new ArrayList<>();
@@ -155,10 +165,69 @@ public class AdministrationImpl implements AdministrationService{
             functionalExtensions.addAll(getExtensionFromTrackerHandler(functionalTrackerHandlerDescription));
         }
 
-        return new ImmutableContextEntity(entityId,entityState,implementedSpecs,contextStates,functionalExtensions);
+        List<ImmutableRelation> relations = getListOfRelationFromRequireHandlerDescription(instanceDescription.getHandlerDescription("org.apache.felix.ipojo:requires"));
+        ImmutableCore core = new ImmutableCore(relations,contextStates,implementedSpecs,implementation);
+
+        return new ImmutableContextEntity(entityId,entityState,core,functionalExtensions);
+
     }
 
-    private List<ImmutableFunctionalExtension> getExtensionFromTrackerHandler(HandlerDescription description){
+    private List<ImmutableRelation> getListOfRelationFromRequireHandlerDescription(HandlerDescription requireHandlerDescription){
+
+        if (requireHandlerDescription == null){
+            return new ArrayList<>();
+        }
+
+        return getListOfRelationFromRequireHandlerElement(requireHandlerDescription.getHandlerInfo());
+
+    }
+
+    private List<ImmutableRelation> getListOfRelationFromRequireHandlerElement(Element requireHandlerElement) {
+        List<ImmutableRelation> relations = new ArrayList<>();
+        Element[] requiresElements = requireHandlerElement.getElements("requires");
+
+        if (requiresElements == null){
+            return relations;
+        }
+
+        for (Element requires :requiresElements){
+            String state = requires.getAttribute("state");
+
+            Element[] usesElements = requires.getElements("selected");
+
+            if (usesElements == null){
+                continue;
+            }
+
+            List<String> sourcesId = new ArrayList<>();
+
+            for (Element uses : usesElements){
+                String instanceName = uses.getAttribute("instance.name");
+                if (instanceName == null){
+                    continue;
+                }
+
+                Architecture sourceArchi = instanceNameToArchitecture.get(instanceName);
+                if (sourceArchi == null){
+                    continue;
+                }
+                InstanceDescription instanceDescription = sourceArchi.getInstanceDescription();
+                HandlerDescription entityHandlerDescription = instanceDescription.getHandlerDescription(HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER);
+                if (entityHandlerDescription == null){
+                    return null;
+                }
+                sourcesId.add(getContextEntityIdFromEntityHandlerDescription(entityHandlerDescription));
+            }
+
+            if (sourcesId.isEmpty()){
+                continue;
+            }
+            relations.add(new ImmutableRelation(sourcesId,state));
+        }
+        return relations;
+    }
+
+        private List<ImmutableFunctionalExtension> getExtensionFromTrackerHandler(HandlerDescription description){
         List<ImmutableFunctionalExtension> functionalExtensions = new ArrayList<>();
         Element handlerTrackerElement = description.getHandlerInfo();
 
@@ -182,11 +251,12 @@ public class AdministrationImpl implements AdministrationService{
         String isMandatory = functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString());
         List<String> alternativeConfigurations = ParseUtils.parseArraysAsList(functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ALTERNATIVE_CONFIGURATION.toString()));
         String isInstantiate = functionalExtensionElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_IS_INSTANTIATE.toString());
+        String selectedImplem = functionalExtensionElement.getAttribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
 
         String functionnalExtensionState = "";
         List<ImmutableContextState> contextStates = new ArrayList<>();
         List<String> implementedSpecs = new ArrayList<>();
-
+        List<ImmutableRelation> relations = new ArrayList<>();
         if ("true".equals(isInstantiate)){
             Element[] extensionInstanceElements = functionalExtensionElement.getElements("instance");
             if (extensionInstanceElements == null || extensionInstanceElements.length == 0){
@@ -207,6 +277,8 @@ public class AdministrationImpl implements AdministrationService{
                         // Extract States
                         contextStates.addAll(getContextStatesFromHandlerElement(handlerElement));
                         implementedSpecs.addAll(getImplementedSpecificationsFromEntityHandlerDescription(handlerElement));
+                    }else if ("org.apache.felix.ipojo:requires".equals(handlerElement.getAttribute("name"))){
+                        relations = getListOfRelationFromRequireHandlerElement(handlerElement);
                     }
                 }
 
@@ -216,7 +288,7 @@ public class AdministrationImpl implements AdministrationService{
 
 
 
-        return new ImmutableFunctionalExtension(functionalExtensionId,functionnalExtensionState,implementedSpecs,managedSpecs,alternativeConfigurations,contextStates,isInstantiate,isMandatory);
+        return new ImmutableFunctionalExtension(functionalExtensionId,functionnalExtensionState,implementedSpecs,managedSpecs,alternativeConfigurations,contextStates,isInstantiate,isMandatory,relations,selectedImplem);
     }
 
     private List<String> getImplementedSpecificationsFromEntityHandlerDescription(Element instanceDescription){

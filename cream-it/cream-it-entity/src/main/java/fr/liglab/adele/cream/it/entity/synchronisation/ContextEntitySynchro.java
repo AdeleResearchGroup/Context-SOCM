@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@ContextEntity(services = ServiceSynchroSpec.class)
+@ContextEntity(coreServices = ServiceSynchroSpec.class)
 public class ContextEntitySynchro implements ServiceSynchroSpec {
 
     @ContextEntity.State.Field(service = ServiceSynchroSpec.class, state = ServiceSynchroSpec.PARAM_1_DIRECTACCESS, directAccess = true, value = "true")

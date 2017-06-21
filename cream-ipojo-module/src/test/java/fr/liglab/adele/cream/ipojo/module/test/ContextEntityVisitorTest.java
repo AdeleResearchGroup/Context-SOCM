@@ -42,7 +42,7 @@ public class ContextEntityVisitorTest extends UtilityProcessorTest {
 
     }
 
-    @ContextEntity(services = {FakeServiceClass.class})
+    @ContextEntity(coreServices = {FakeServiceClass.class})
     private class Component implements FakeServiceClass {
     }
 

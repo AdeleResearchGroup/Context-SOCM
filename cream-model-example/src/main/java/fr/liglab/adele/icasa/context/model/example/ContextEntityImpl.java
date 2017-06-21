@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 
-@ContextEntity(services = ContextEntityDescription.class)
+@ContextEntity(coreServices = ContextEntityDescription.class)
 @FunctionalExtension(id = "localisableBehavior", contextServices = BehaviorService.class, implementation = BehaviorImpl.class)
 @FunctionalExtension(id = "behaviorBis", contextServices = BehaviorServiceBis.class, implementation = BehaviorImplBis.class)
 public class ContextEntityImpl implements ContextEntityDescription {

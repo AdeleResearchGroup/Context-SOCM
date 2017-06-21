@@ -3,7 +3,7 @@ package fr.liglab.adele.cream.it.functional.extension.changeOn;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
 
-@ContextEntity(services = ServiceOfContext.class)
+@ContextEntity(coreServices = ServiceOfContext.class)
 @FunctionalExtension(contextServices = ExtensionSpec.class, implementation = ExtenderImpl.class, id = "changOnBehavior")
 public class ContextEntityWithBehaviorChangeOn implements ServiceOfContext {
 
