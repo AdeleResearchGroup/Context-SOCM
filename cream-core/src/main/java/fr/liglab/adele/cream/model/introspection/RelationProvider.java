@@ -1,30 +1,32 @@
 package fr.liglab.adele.cream.model.introspection;
 
+import fr.liglab.adele.cream.annotations.provider.OriginEnum;
+
 import java.util.Set;
 
 public interface RelationProvider {
 
-    public String getName();
+    String getName();
 
-    public Set<String> getProvidedRelations();
+    Set<String> getProvidedRelations();
 
-    public boolean isRemote(String relation);
+    OriginEnum getOrigin(String relation);
 
-    public boolean isEnabled(String relation);
+    boolean isEnabled(String relation);
 
-    public boolean enable(String relation);
+    boolean enable(String relation);
 
-    public boolean disable(String relation);
+    boolean disable(String relation);
 
-    public Set<String> getInstances(String relation, boolean includePending);
+    Set<String> getInstances(String relation, boolean includePending);
 
-    public boolean deleteInstances(String relation, boolean onlyPending);
+    boolean deleteInstances(String relation, boolean onlyPending);
 
-    public Set<String> getPotentiallyProvidedRelationServices(String relation);
+    Set<String> getPotentiallyProvidedRelationServices(String relation);
 
-    public Set<String> getPotentiallyProvidedRelationServices();
+    Set<String> getPotentiallyProvidedRelationServices();
 
-    public Set<String> getPotentiallyRequiredServices(String relation);
+    Set<String> getPotentiallyRequiredServices(String relation);
 
-    public Set<String> getPotentiallyRequiredServices();
+    Set<String> getPotentiallyRequiredServices();
 }

@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.runtime.handler.creator;
 
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.annotations.provider.Creator;
+import fr.liglab.adele.cream.annotations.provider.OriginEnum;
 import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.cream.model.introspection.EntityProvider;
@@ -35,7 +36,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
     private final Map<String, ComponentCreator> creators 			= new HashMap<>();
 
-    private final Map<String, Boolean> remoteMap            = new HashMap<>();
+    private final Map<String, OriginEnum> originMap         = new HashMap<>();
 	private final Map<String, Set<String>> requirementMap 	= new HashMap<>();
 
     @ServiceProperty(name="provided", value="")
@@ -74,7 +75,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
             boolean isStatic	= creator.getAttribute("dynamic") == null || ! Boolean.valueOf(creator.getAttribute("dynamic"));
             String entity 		= creator.getAttribute("entity");
             String relation 	= creator.getAttribute("relation");
-            boolean remote      = creator.getAttribute("remote") != null && Boolean.valueOf(creator.getAttribute("remote"));
+            OriginEnum origin   = OriginEnum.valueOf(creator.getAttribute("origin"));
 			String requirements	= creator.getAttribute("requirements");
 
             if (isStatic && entity == null && relation == null) {
@@ -100,9 +101,9 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
             }
 
             if (relation != null){
-                remoteMap.put(relation,remote);
+                originMap.put(relation,origin);
             } else {
-                remoteMap.put(entity,remote);
+                originMap.put(entity,origin);
             }
 
 			if(requirements != null && !requirements.equals("[]")){
@@ -220,8 +221,8 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
     }
 
     @Override
-    public boolean isRemote(String contextItem) {
-        return remoteMap.get(contextItem) != null && remoteMap.get(contextItem);
+    public OriginEnum getOrigin(String contextItem) {
+        return originMap.get(contextItem);
     }
 
     @Override

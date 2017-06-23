@@ -24,7 +24,7 @@ public interface Creator {
 
 		String value() default NO_PARAMETER;
 
-		boolean remote() default false;
+		OriginEnum origin() default OriginEnum.internal;
 
 		Class[] requirements() default {};
 	}
@@ -38,6 +38,10 @@ public interface Creator {
      */
     @Target(ElementType.FIELD)
     public @interface Dynamic {
+
+        OriginEnum origin() default OriginEnum.internal;
+
+        Class[] requirements() default {};
     }
 
     /**
