@@ -8,18 +8,15 @@ import org.ow2.chameleon.testing.helpers.OSGiHelper;
  */
 public class ContextHelper {
 
-    private final OSGiHelper osGiHelper;
-    private final IPOJOHelper ipojoHelper;
+
 
     private final ContextEntityHelper contextEntityHelper;
 
     private final FunctionalExtensionHelper functionalExtensionHelper;
 
     public ContextHelper(OSGiHelper osGiHelper, IPOJOHelper ipojoHelper) {
-        this.osGiHelper = osGiHelper;
-        this.ipojoHelper = ipojoHelper;
         functionalExtensionHelper = new FunctionalExtensionHelper(ipojoHelper);
-        contextEntityHelper = new ContextEntityHelper(osGiHelper, ipojoHelper);
+        contextEntityHelper = new ContextEntityHelper(osGiHelper);
     }
 
     public ContextEntityHelper getContextEntityHelper() {

@@ -37,6 +37,11 @@ public abstract class ContextBaseTest extends BaseTest {
 
     protected ContextHelper contextHelper;
 
+    private static final String CREAM_MVN_NAMESPACE =  "fr.liglab.adele.cream";
+
+    private static final String JACKSON_CORE_MVN_NAMESPACE =  "com.fasterxml.jackson.core";
+
+    @Override
     public Option[] defaultConfiguration() throws IOException {
         Option[] options = super.defaultConfiguration();
         options = OptionUtils.combine(options, wisdomBundle());
@@ -69,22 +74,22 @@ public abstract class ContextBaseTest extends BaseTest {
 
     protected Option creamBundles() {
         return composite(
-                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.model.runtime").versionAsInProject(),
-                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.core").versionAsInProject(),
-                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.helpers").versionAsInProject()
+                mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("cream.model.runtime").versionAsInProject(),
+                mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("cream.core").versionAsInProject(),
+                mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("cream.helpers").versionAsInProject()
         );
     }
 
     protected Option creamRuntimeFacilitiesBundles() {
         return composite(
-                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.runtime.facilities").versionAsInProject()
+                mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("cream.runtime.facilities").versionAsInProject()
         );
     }
 
     protected Option creamAdministrationBundles() {
         return composite(
-                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.administration.api").versionAsInProject(),
-                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("cream.administration.impl").versionAsInProject()
+                mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("cream.administration.api").versionAsInProject(),
+                mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("cream.administration.impl").versionAsInProject()
         );
     }
 
@@ -104,14 +109,14 @@ public abstract class ContextBaseTest extends BaseTest {
     protected Option wisdomBundle() {
         return composite(
                 mavenBundle().groupId("org.wisdom-framework").artifactId("wisdom-executors").versionAsInProject(),
-                mavenBundle().groupId("fr.liglab.adele.cream").artifactId("wisdom.fake.bundle").versionAsInProject(),
+                mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("wisdom.fake.bundle").versionAsInProject(),
                 mavenBundle().groupId("org.wisdom-framework").artifactId("wisdom-api").versionAsInProject(),
                 mavenBundle().groupId("commons-io").artifactId("commons-io").versionAsInProject(),
                 mavenBundle().groupId("com.google.guava").artifactId("guava").versionAsInProject(),
                 mavenBundle().groupId("joda-time").artifactId("joda-time").versionAsInProject(),
-                mavenBundle().groupId("com.fasterxml.jackson.core").artifactId("jackson-databind").versionAsInProject(),
-                mavenBundle().groupId("com.fasterxml.jackson.core").artifactId("jackson-core").versionAsInProject(),
-                mavenBundle().groupId("com.fasterxml.jackson.core").artifactId("jackson-annotations").versionAsInProject(),
+                mavenBundle().groupId(JACKSON_CORE_MVN_NAMESPACE).artifactId("jackson-databind").versionAsInProject(),
+                mavenBundle().groupId(JACKSON_CORE_MVN_NAMESPACE).artifactId("jackson-core").versionAsInProject(),
+                mavenBundle().groupId(JACKSON_CORE_MVN_NAMESPACE).artifactId("jackson-annotations").versionAsInProject(),
                 mavenBundle().groupId("com.fasterxml.jackson.dataformat").artifactId("jackson-dataformat-xml").versionAsInProject(),
                 mavenBundle().groupId("com.fasterxml.jackson.module").artifactId("jackson-module-jaxb-annotations").versionAsInProject(),
                 mavenBundle().groupId("javax.validation").artifactId("validation-api").versionAsInProject(),
