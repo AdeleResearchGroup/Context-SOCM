@@ -13,11 +13,9 @@ import java.util.Map;
 public class ContextEntityHelper {
 
     private final OSGiHelper osgiHelper;
-    private final IPOJOHelper ipojoHelper;
 
-    public ContextEntityHelper(OSGiHelper osgi, IPOJOHelper service) {
+    public ContextEntityHelper(OSGiHelper osgi) {
         this.osgiHelper = osgi;
-        this.ipojoHelper = service;
     }
 
     public Factory getContextEntityFactory(String factoryName) {
@@ -29,7 +27,7 @@ public class ContextEntityHelper {
     }
 
     public Factory getContextEntityFactory(String factoryName, long timeout, boolean fail) {
-        return (Factory) this.osgiHelper.waitForService(Factory.class, "(factory.name=" + factoryName + ")", timeout, fail);
+        return this.osgiHelper.waitForService(Factory.class, "(factory.name=" + factoryName + ")", timeout, fail);
     }
 
     public ComponentInstance createContextEntity(String contextEntityType, String contextEntityId, Map<String, Object> contextEntityInitParameters) throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {

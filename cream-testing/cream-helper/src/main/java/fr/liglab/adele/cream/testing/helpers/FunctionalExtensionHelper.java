@@ -64,7 +64,7 @@ public class FunctionalExtensionHelper {
         Element element = managerDescription.getHandlerInfo();
 
         Element[] functionalExtensionElements = element.getElements(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_INDIVIDUAL_ELEMENT_NAME.toString());
-        
+
         for (Element functionalExtensionElement : functionalExtensionElements) {
             String id = functionalExtensionElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
 
@@ -74,11 +74,11 @@ public class FunctionalExtensionHelper {
 
             Element[] instanceElements = functionalExtensionElement.getElements("instance");
             for (Element instanceElement : instanceElements) {
-                    String instanceName = instanceElement.getAttribute("name");
-                    Architecture behaviorArchitecture = ipojoHelper.getArchitectureByName(instanceName);
-                    InstanceDescription behaviorInstanceDescription = behaviorArchitecture.getInstanceDescription();
-                    ComponentInstance behaviorInstance = behaviorInstanceDescription.getInstance();
-                    return behaviorInstance;
+                String instanceName = instanceElement.getAttribute("name");
+                Architecture behaviorArchitecture = ipojoHelper.getArchitectureByName(instanceName);
+                InstanceDescription behaviorInstanceDescription = behaviorArchitecture.getInstanceDescription();
+                return behaviorInstanceDescription.getInstance();
+
             }
         }
 
