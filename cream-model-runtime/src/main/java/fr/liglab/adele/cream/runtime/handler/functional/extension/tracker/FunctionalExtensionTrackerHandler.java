@@ -434,10 +434,14 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
 
     @Override
     public void reconfigure(Dictionary configuration) {
-        Map<String,Object> config = (Map) configuration;
+        
+    	@SuppressWarnings("unchecked") Map<String,Object> config = (Map<String,Object>) configuration;
         if(config.containsKey(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString())){
-            Map<String,String> functionalExtensionConfiguration = (Map<String, String>) config.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString());
-            String id = functionalExtensionConfiguration.get(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
+            
+        	@SuppressWarnings("unchecked")Map<String,String> functionalExtensionConfiguration = 
+        			(Map<String, String>) config.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString());
+            
+        	String id = functionalExtensionConfiguration.get(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
             if (id == null){
                 return;
             }

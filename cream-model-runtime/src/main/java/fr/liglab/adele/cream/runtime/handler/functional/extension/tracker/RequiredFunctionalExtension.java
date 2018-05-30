@@ -39,7 +39,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
 
     private String myExtensionNameImpl;
 
-    private final Hashtable myConfiguration = new Hashtable();
+    private final Hashtable<Object,Object> myConfiguration = new Hashtable<>();
 
     private final FunctionalExtensionTrackerHandler parent;
 
@@ -57,13 +57,12 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
 
     private ContextSource extensionContextSource;
 
-    private ContextListener contextListener;
+    private Map<ContextListener,String[]> contextListeners = new ConcurrentHashMap<>();
 
-    private String[] propertiesToListen;
 
     private final boolean mandatory;
 
-    public RequiredFunctionalExtension(String id, String specs, String behaviorImpl, Dictionary config, FunctionalExtensionTrackerHandler parent, ProvidedServiceHandler providedServiceHandler,boolean mandatory) {
+    public RequiredFunctionalExtension(String id, String specs, String behaviorImpl, Dictionary<?,?> config, FunctionalExtensionTrackerHandler parent, ProvidedServiceHandler providedServiceHandler,boolean mandatory) {
         myStringSpecifications = specs;
         mySpecifications = ParseUtils.parseArrays(specs);
         myExtensionNameImpl = behaviorImpl;
@@ -73,17 +72,18 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         this.mandatory = mandatory;
 
         /**
-         * Extract Dictionnary properrties
+         * Extract Dictionary properties
          */
-        Enumeration enumeration = config.keys();
+        Enumeration<?> enumeration = config.keys();
         config.size();
         while (enumeration.hasMoreElements()) {
-            Object key = enumeration.nextElement();
+            Object key	 = enumeration.nextElement();
             Object value = config.get(key);
             if (!("instance.name".equals(key))) {
                 myConfiguration.put(key, value);
             }
         }
+        
         myConfiguration.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_ID_CONFIG.toString(), id);
         this.parent = parent;
 
@@ -183,9 +183,10 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
                 myManager.getBehaviorLifeCycleHandler().registerBehaviorListener(this);
                 myManager.registerContextListenerToExtensionEntityHandler(parent.getBehaviorContextListener());
                 extensionContextSource = myManager.getExtensionContextSource();
-                if (contextListener != null) {
-                    extensionContextSource.registerContextListener(contextListener, propertiesToListen);
-                }
+                
+                for (Map.Entry<ContextListener,String[]> listenerEntry : contextListeners.entrySet()) {
+                	 extensionContextSource.registerContextListener(listenerEntry.getKey(), listenerEntry.getValue());
+				}
             }
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error(UnacceptableConfiguration.class.getName(), unacceptableConfiguration);
@@ -300,7 +301,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
     }
 
     @Override
-    public Dictionary getContext() {
+    public Dictionary<?,?> getContext() {
         if (myManager != null && myManager.isStarted() && extensionContextSource != null) {
             return extensionContextSource.getContext();
         }
@@ -310,8 +311,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
     @Override
     public void registerContextListener(ContextListener listener, String[] properties) {
         synchronized (lock) {
-            contextListener = listener;
-            propertiesToListen = properties;
+        	contextListeners.put(listener, properties);
             if (extensionContextSource != null) {
                 extensionContextSource.registerContextListener(listener, properties);
             }
@@ -323,8 +323,8 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         synchronized (lock) {
             if (extensionContextSource != null) {
                 extensionContextSource.unregisterContextListener(listener);
-                if (listener != null && listener.equals(contextListener)) {
-                    contextListener = null;
+                if (listener != null ) {
+                    contextListeners.remove(listener);
                 }
             }
         }
@@ -343,7 +343,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
         }
     }
 
-    public void propagateReconfigure(Dictionary configuration){
+    public void propagateReconfigure(Dictionary<?,?> configuration){
         if (myManager != null) {
             myManager.reconfigure(configuration);
         }
