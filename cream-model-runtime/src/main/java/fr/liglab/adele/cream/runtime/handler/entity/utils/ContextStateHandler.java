@@ -545,7 +545,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             	trigger();
             } 
             
-            if (period > 0 && taskHandle != null) {
+            if (period > 0 && taskHandle == null) {
                 taskHandle = getScheduler().scheduleAtFixedRate(this::trigger, period, period, unit);
             }
         }
