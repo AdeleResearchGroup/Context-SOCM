@@ -1,30 +1,43 @@
 package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
 
+import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.apache.felix.ipojo.metadata.Element;
 
-import java.util.Map;
+import java.util.Dictionary;
 
 /**
- * This is the base class for all interceptors that are charged to handle the instrumenttaion
+ * This is the base class for all interceptors that are charged to handle the instrumentation
  * of context state fields.
  *
  * @author vega
  */
 public interface StateInterceptor extends FieldInterceptor {
 
+	/**
+	 * Configures the interceptor from the iPOJO metadata
+	 */
+    public void configure(Element state, Dictionary<String,Object> configuration) throws ConfigurationException;
+    
     /**
      * Notifies the interceptor that the iPOJO instance has been activated
      */
-    void validate();
+    public void validate();
 
     /**
      * Notifies the interceptor that the iPOJO instance has been invalidated.
      */
-    void invalidate();
+    public void invalidate();
 
-    void addInterceptorDescription(Element stateElement);
+    /**
+     * Notifies the interceptor of reconfiguration of the iPOJO instance  
+     */
+    public void reconfigure(Dictionary<String,Object> configuration);
 
-    void handleReconfiguration(Map<String,Object> newConfiguration);
+    /**
+     * Adds information regarding this interceptor to the description of the state
+     */
+    public void getInterceptorInfo(String stateId, Element stateDescription);
+
 }

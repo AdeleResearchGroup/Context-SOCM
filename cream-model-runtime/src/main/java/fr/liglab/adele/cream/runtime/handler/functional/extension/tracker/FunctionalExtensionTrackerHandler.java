@@ -93,7 +93,7 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
                 if (mandatoryField) {
                     mandatoryBehavior.add(individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString()));
                 }
-                behaviorSpecs.add(individualBehaviorElement.getAttribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString()));
+                behaviorSpecs.addAll(Arrays.asList(ParseUtils.parseArrays(individualBehaviorElement.getAttribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString()))));
                 for (Map.Entry<ContextListener, String[]> listenerEntry : listeners.entrySet()) {
                     requiredFunctionalExtension.registerContextListener(listenerEntry.getKey(), listenerEntry.getValue());
                 }

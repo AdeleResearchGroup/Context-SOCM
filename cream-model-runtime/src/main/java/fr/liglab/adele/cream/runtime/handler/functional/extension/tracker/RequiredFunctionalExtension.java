@@ -230,10 +230,16 @@ public class RequiredFunctionalExtension implements InvocationHandler, Functiona
             parent.unregisterContextEntityContextListener(myManager.getBehaviorLifeCycleHandler());
             myManager.getBehaviorLifeCycleHandler().unregisterBehaviorListener(parent);
             myManager.unregisterContextListenerToExtensionEntityHandler(parent.getBehaviorContextListener());
+            
+            for (ContextListener listener : contextListeners.keySet()) {
+            	extensionContextSource.unregisterContextListener(listener);
+			}
+
             myManager.dispose();
 
             //unref Manager
             myManager = null;
+            extensionContextSource = null;
         }
     }
 

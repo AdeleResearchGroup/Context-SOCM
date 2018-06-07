@@ -2,8 +2,8 @@ package fr.liglab.adele.cream.runtime.handler.entity;
 
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.model.ContextEntity;
-import fr.liglab.adele.cream.runtime.handler.entity.utils.AbstractContextHandler;
-import fr.liglab.adele.cream.runtime.handler.entity.utils.StateInterceptor;
+import fr.liglab.adele.cream.runtime.handler.entity.utils.ContextStateHandler;
+
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -15,28 +15,107 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 
 @Handler(name = HandlerReference.ENTITY_HANDLER, namespace = HandlerReference.NAMESPACE)
 @Provides(specifications = ContextEntity.class)
-public class EntityHandler extends AbstractContextHandler implements ContextEntity, ContextSource {
+public class EntityHandler extends ContextStateHandler implements ContextEntity, ContextSource {
 
     /**
      * The Wisdom Scheduler used to handle periodic tasks
      */
-    @Requires(id = "scheduler", proxy = false)
+    @Requires(id = "scheduler", proxy = false, optional = false)
     public ManagedScheduledExecutorService scheduler;
-    /**
-     * The provider handler of my associated iPOJO component instance
-     */
-    private ProvidedServiceHandler providerHandler;
+   
+    @Override
+    protected ManagedScheduledExecutorService getScheduler() {
+        return scheduler;
+    }
+
+    @Override
+    public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
+        super.configure(element, dictionary, HandlerReference.NAMESPACE, HandlerReference.ENTITY_HANDLER);
+    }
+
+    
     /**
      * service controller to align life-cycle of the generic ContextEntity service with
      * the life-cycle of the domain-specific context spec of the entity
      */
     @ServiceController(value = false, specification = ContextEntity.class)
     private boolean instanceIsActive;
+
+    /**
+     * The provider handler of my associated iPOJO component instance
+     */
+    private ProvidedServiceHandler providerHandler;
+
+    /**
+     * Propagate a state value change to the published properties of the context spec
+     */
+    private void propagate(String stateId, Object value, boolean isUpdate) {
+
+        if (providerHandler == null)
+            return;
+
+        Hashtable<String, Object> property = new Hashtable<>();
+        property.put(stateId, value);
+
+        if (value != null && isUpdate) {
+            providerHandler.reconfigure(property);
+        }
+        else if (value != null && !isUpdate) {
+            providerHandler.addProperties(property);
+        }
+        else if (value == null) {
+            providerHandler.removeProperties(property);
+
+        }
+    }
+
+    /**
+     * Updates the value of a state property, propagating the change to the published service properties
+     */
+    @Override
+    protected boolean update(String stateId, Object value) {
+
+    	Object oldValue	= getValue(stateId);
+    	boolean updated = super.update(stateId,value);
+
+    	if (updated) {
+            propagate(stateId, value, oldValue != null);
+    	}
+    	
+    	return updated;
+    }
+
+    @Override
+    public synchronized void start() {
+    	super.start();
+    	
+        providerHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+        
+    	for (Map.Entry<String,Object> state : stateValues.entrySet()) {
+    		propagate(state.getKey(),state.getValue(),false);
+		}
+
+    }
+
+    @Override
+    public synchronized void stop() {
+        providerHandler = null;
+        super.stop();
+    }
+
+    @Override
+    public synchronized void stateChanged(int state) {
+
+    	instanceIsActive = state == InstanceManager.VALID;
+
+        super.stateChanged(state);
+    }
+
 
     /**
      * Given an iPOJO instance with the entity handler attached, return the associated context entity
@@ -64,128 +143,5 @@ public class EntityHandler extends AbstractContextHandler implements ContextEnti
         return getContextEntity(pojo.getComponentInstance());
     }
 
-    @Override
-    protected boolean isInstanceActive() {
-        return instanceIsActive;
-    }
-
-    @Override
-    protected ManagedScheduledExecutorService getScheduler() {
-        return scheduler;
-    }
-
-    /**
-     * Updates the value of a state property, propagating the change to the published service properties
-     */
-    @Override
-    public void update(String stateId, Object value) {
-
-        if (stateId == null && !stateIds.contains(stateId)) {
-            return;
-        }
-
-        Object oldValue = stateValues.get(stateId);
-        boolean bothNull = oldValue == null && value == null;
-        boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
-        boolean noChange = bothNull || equals;
-
-
-        if (noChange) {
-            return;
-        }
-
-        if (value != null) {
-            stateValues.put(stateId, value);
-        } else {
-            stateValues.remove(stateId);
-        }
-
-        propagate(stateId, value, oldValue != null);
-    }
-
-    /**
-     * Propagate a state value change to the published properties of the context spec
-     */
-    private void propagate(String stateId, Object value, boolean isUpdate) {
-
-        if (providerHandler == null)
-            return;
-
-        if (getInstanceManager().getState() <= InstanceManager.INVALID)
-            return;
-
-        Hashtable<String, Object> property = new Hashtable<>();
-        property.put(stateId, value);
-
-        if (value != null && isUpdate) {
-            providerHandler.reconfigure(property);
-        }
-        if (value != null && !isUpdate) {
-            providerHandler.addProperties(property);
-        } else if (value == null) {
-            providerHandler.removeProperties(property);
-
-        }
-        notifyContextListener(stateId, value);
-    }
-
-    private void propagate(Dictionary<String, Object> properties) {
-        if (providerHandler == null)
-            return;
-
-        providerHandler.addProperties(properties);
-
-        Enumeration<String> states = properties.keys();
-        while (states.hasMoreElements()) {
-            String state = states.nextElement();
-            notifyContextListener(state, properties.get(state));
-        }
-
-    }
-
-    @Override
-    public synchronized void stateChanged(int state) {
-
-        if (state == InstanceManager.VALID) {
-            instanceIsActive = true;
-
-            propagate(new Hashtable<>(stateValues));
-
-            /*
-             * restart state handlers
-             */
-            for (StateInterceptor interceptor : interceptors) {
-                interceptor.validate();
-            }
-        }
-
-        if (state == InstanceManager.INVALID) {
-            instanceIsActive = false;
-
-            /*
-             * stop state handlers
-             */
-            for (StateInterceptor interceptor : interceptors) {
-                interceptor.invalidate();
-            }
-
-        }
-    }
-
-    @Override
-    public synchronized void start() {
-        providerHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
-    }
-
-    @Override
-    public synchronized void stop() {
-        super.stop();
-        providerHandler = null;
-    }
-
-    @Override
-    public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
-        super.configure(element, dictionary, HandlerReference.NAMESPACE, HandlerReference.ENTITY_HANDLER);
-    }
 
 }

@@ -12,11 +12,13 @@ public interface ContextEntity {
 
     public Set<String> getServices();
 
-    public String getId();
+    public Object getValue(String state);
 
-    public Object getStateValue(String property);
+    public default String getId() {
+    	return (String) getValue(CONTEXT_ENTITY_ID);
+    }
 
     public Set<String> getStates();
 
-    public Map<String, Object> dumpState();
+    public Map<String, Object> getValues();
 }
