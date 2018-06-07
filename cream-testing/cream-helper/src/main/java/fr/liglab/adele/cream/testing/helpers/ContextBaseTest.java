@@ -30,6 +30,7 @@ import org.ops4j.pax.exam.util.PathUtils;
 import org.ow2.chameleon.testing.helpers.BaseTest;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import static org.ops4j.pax.exam.CoreOptions.*;
 
@@ -43,6 +44,7 @@ public abstract class ContextBaseTest extends BaseTest {
 
     @Override
     public Option[] defaultConfiguration() throws IOException {
+    	
         Option[] options = super.defaultConfiguration();
         options = OptionUtils.combine(options, wisdomBundle());
         options = OptionUtils.combine(options, creamBundles());
@@ -51,6 +53,11 @@ public abstract class ContextBaseTest extends BaseTest {
         options = OptionUtils.combine(options, systemProperty("logback.configurationFile")
                 .value("file:" + PathUtils.getBaseDir() + "/src/test/resources/logger.xml"));
         options = OptionUtils.combine(options, log());
+        
+        if (isWindowsOS()) {
+        	options = OptionUtils.combine(options, logWindows());
+        }
+        
         if (deployCreamRuntimeFacilities()) {
             options = OptionUtils.combine(options, creamRuntimeFacilitiesBundles());
         }
@@ -62,6 +69,9 @@ public abstract class ContextBaseTest extends BaseTest {
         return options;
     }
 
+    protected Option logWindows() {
+    	return mavenBundle("org.fusesource.jansi", "jansi").versionAsInProject();
+    }
 
     protected CompositeOption log() {
         return new DefaultCompositeOption(
@@ -72,6 +82,12 @@ public abstract class ContextBaseTest extends BaseTest {
         );
     }
 
+    protected boolean isWindowsOS() {
+    	return System.getProperty( "os.name" ).toLowerCase(Locale.US).indexOf("windows") > -1;
+    }
+
+
+    
     protected Option creamBundles() {
         return composite(
                 mavenBundle().groupId(CREAM_MVN_NAMESPACE).artifactId("cream.model.runtime").versionAsInProject(),

@@ -38,7 +38,6 @@ public class EntityServiceTest extends EntityBaseCommonConfig {
     public void testSimpleContextService() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         createContextEntity();
         ContextService1 serviceObj1 = osgiHelper.getServiceObject(ContextService1.class);
-
         assertThat(serviceObj1).isNotNull();
         assertThat(serviceObj1.returnFalse()).isFalse();
     }

@@ -226,6 +226,25 @@
         </dependencies>
     </dependencyManagement>
 
+	<profiles>
+		<profile>
+			<id>WindowsSpecific</id>
+			<activation>
+				<os><family>Windows</family></os>
+			</activation>
+			<dependencyManagement>
+				<dependencies>
+					<!--LOG-->
+					<dependency>
+					    <groupId>org.fusesource.jansi</groupId>
+					    <artifactId>jansi</artifactId>
+					    <version>1.8</version>
+					</dependency>			
+				</dependencies>
+			</dependencyManagement>
+		</profile>
+	</profiles>
+	
     <build>
         <pluginManagement>
             <plugins>

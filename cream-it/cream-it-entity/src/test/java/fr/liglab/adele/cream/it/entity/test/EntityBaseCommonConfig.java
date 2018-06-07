@@ -21,7 +21,7 @@ public abstract class EntityBaseCommonConfig extends ContextBaseTest {
         } else {
             return Arrays.asList(
                     "fr.liglab.adele.cream.it.entity.synchronisation",
-                    "fr.liglab.adele.cream.it.entity.coreServices"
+                    "fr.liglab.adele.cream.it.entity.services"
                     //By convention spec package are exported by the base test but FAILED on windows....
             );
         }
@@ -33,4 +33,6 @@ public abstract class EntityBaseCommonConfig extends ContextBaseTest {
     public boolean deployTestBundle() {
         return true;
     }
+    
+
 }

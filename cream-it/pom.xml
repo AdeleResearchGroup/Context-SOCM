@@ -246,6 +246,22 @@
 
     </dependencies>
 
+	<profiles>
+		<profile>
+			<id>WindowsSpecific</id>
+			<activation>
+				<os><family>Windows</family></os>
+			</activation>
+			<dependencies>
+				<!--LOG-->
+				<dependency>
+				    <groupId>org.fusesource.jansi</groupId>
+				    <artifactId>jansi</artifactId>
+				    <scope>test</scope>
+				</dependency>			
+			</dependencies>
+		</profile>
+	</profiles>
 
     <build>
         <plugins>
