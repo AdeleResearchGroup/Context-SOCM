@@ -30,7 +30,6 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
      */
     private final Map<String, String> fieldToState = new HashMap<>();
 
-
     protected AbstractStateInterceptor(ContextStateHandler stateHandler) {
         this.stateHandler = stateHandler;
     }
@@ -66,13 +65,6 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
         stateHandler.getInstanceManager().register(fieldMetadata, this);
     }
     
-    protected boolean isConfigured(String state) {
-    	return states.contains(state);
-    }
-
-    protected String getStateForField(String field) {
-    	return fieldToState.get(field);
-    }
 
     @Override
     public void reconfigure(Dictionary<String,Object> configuration) {
@@ -80,12 +72,12 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
 
     @Override
     public Object onGet(Object pojo, String fieldName, Object value) {
-        return stateHandler.getValue(fieldToState.get(fieldName));
+        return stateHandler.getValue(getStateForField(fieldName));
     }
 
     @Override
     public void onSet(Object pojo, String fieldName, Object value) {
-    	stateHandler.update(fieldToState.get(fieldName), value);
+    	stateHandler.update(getStateForField(fieldName),value);
     }
 
     @Override
@@ -94,6 +86,14 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
 
     @Override
     public void invalidate() {
+    }
+
+    protected boolean isConfigured(String state) {
+    	return states.contains(state);
+    }
+
+    protected String getStateForField(String field) {
+    	return fieldToState.get(field);
     }
 
 }

@@ -193,8 +193,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
     private void pull(Object pojo, String state) {
     	Function<Object, Object> pullFunction = pullFunctions.get(state);
         if (pullFunction != null) {
-            Object pulledValue = pullFunction.apply(pojo);
-            stateHandler.update(state, pulledValue);
+        	stateHandler.update(state, pullFunction.apply(pojo));
         }
     }
 
@@ -211,9 +210,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
     }
 
     private void push(Object pojo, String state, Object value) {
-    	if (value != null) {
-    		stateHandler.update(state,value);
-    	}
+   		stateHandler.update(state,value);
     }
     
     @Override

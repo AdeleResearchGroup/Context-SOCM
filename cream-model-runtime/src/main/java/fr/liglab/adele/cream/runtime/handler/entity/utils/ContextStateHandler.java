@@ -53,10 +53,16 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      * The list of interceptors in charge of handling each state field
      */
     protected final Set<StateInterceptor> interceptors = new HashSet<>();
+    
     /**
      * The current values of the state properties
      */
     protected final Map<String, Object> stateValues = new ConcurrentHashMap<>();
+
+    /**
+     * The initial configured values of the state properties
+     */
+    protected final Map<String, Object> configuredValues = new HashMap<>();
 
     /**
      * Get The scheduler
@@ -77,10 +83,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void configure(Element element, Dictionary rawConfiguration, String handlerNameSpace, String handlerName) throws ConfigurationException {
 
-
-        InstanceManager instanceManager = getInstanceManager();
-        String componentName = instanceManager.getInstanceName();
-
         Dictionary<String, Object> configuration = (Dictionary<String, Object>) rawConfiguration;
 
         /*
@@ -88,7 +90,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
          * state specification of the entity ( basically a set of state variable)
          */
         for (Class<?> service : getInstanceManager().getClazz().getInterfaces()) {
-            extractDefinedStatesForService(service);
 
             /**
              * keeps only exposed context spec
@@ -96,6 +97,9 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             if (service.isAnnotationPresent(ContextService.class)) {
                 services.add(service.getName());
             }
+
+            stateIds.addAll(getDeclaredStates(service));
+
         }
 
 		/*
@@ -143,41 +147,13 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
                 }
 
     			/*
-    			 * If there is no specified value, but a default was specified for the field, use it
+    			 * Get the initial configured value of the state
     			 */
-                Object configuredValue = getStateConfiguredValue(stateId, configuration);
-                if (configuredValue == null) {
-
-                    String defaultValue = state.getAttribute("value");
-                    boolean hasDefaultValue = !fr.liglab.adele.cream.annotations.entity.ContextEntity.State.Field.NO_VALUE.equals(defaultValue);
-                    if (hasDefaultValue) {
-                        configuredValue = defaultValue;
-                        setStateConfiguredValue(stateId, defaultValue, configuration);
-                    }
+                Object configuredValue = getConfiguredValue(stateId, configuration, state);
+                if (configuredValue != null) {
+                	configuredValues.put(stateId,configuredValue);
                 }
-
-                /*
-                 * validate configured values are correctly typed for the field
-                 */
-                String stateField = state.getAttribute("field");
-                FieldMetadata fieldMetadata = getPojoMetadata().getField(stateField);
-                boolean isValid = configuredValue == null || hasValidType(instanceManager, fieldMetadata, configuredValue);
-
-				/*
-				 * If the configured value doesn't have the right type, but it is an String, try to cast it
-				 */
-                if ((!isValid) && configuredValue != null && (configuredValue instanceof String)) {
-                    Object cast = cast(instanceManager, fieldMetadata, (String) configuredValue);
-                    if (cast != null) {
-                        configuredValue = cast;
-                        isValid = true;
-                        setStateConfiguredValue(stateId, configuredValue, configuration);
-                    }
-                }
-
-                if (!isValid) {
-                    throw new ConfigurationException("The configured value for state " + stateId + " doesn't match the type of the field :" + configuredValue);
-                }
+                
             }
         }
 
@@ -188,7 +164,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         unimplemented.removeAll(implementedStates);
 
         if (!unimplemented.isEmpty()) {
-            throw new ConfigurationException("States " + unimplemented + " are defined in the context service, but never implemented in " + componentName);
+            throw new ConfigurationException("States " + unimplemented + " are defined in the context service, but never implemented in " + getInstanceManager().getInstanceName());
         }
 
     	/*
@@ -197,19 +173,14 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         if (configuration.get(CONTEXT_ENTITY_ID) == null) {
             throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
         }
+        
         stateIds.add(CONTEXT_ENTITY_ID);
-        update(CONTEXT_ENTITY_ID, configuration.get(CONTEXT_ENTITY_ID));
+        configuredValues.put(CONTEXT_ENTITY_ID,configuration.get(CONTEXT_ENTITY_ID));
 
         /*
          * Initialize the state map with the configured values
          */
-        for (String configuredState : getConfiguredStates(configuration)) {
-            if (stateIds.contains(configuredState)) {
-                update(configuredState, getStateConfiguredValue(configuredState, configuration));
-            } else {
-                debug("Configured state " + configuredState + " will be ignored, it is not defined in the context spec of " + componentName);
-            }
-        }
+        reset();
     }
 
     @Override
@@ -223,6 +194,13 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         }
     }
 
+    private void reset() {
+    	
+    	for (String state : stateIds) {
+       		update(state,configuredValues.get(state));
+		}
+    }
+
     /**
      * HandlerLifecycle
      */
@@ -233,11 +211,12 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
     @Override
     public synchronized void stop() {
+    	reset();
     }
 
-    public synchronized void stateChanged(int state) {
+    public synchronized void stateChanged(int componentState) {
 
-        if (state == InstanceManager.VALID) {
+        if (componentState == InstanceManager.VALID) {
   
             /*
              * restart state handlers
@@ -245,16 +224,30 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             for (StateInterceptor interceptor : interceptors) {
                 interceptor.validate();
             }
+            
+            for (Map.Entry<String,Object> state : stateValues.entrySet()) {
+				notifyContextListeners(state.getKey(),null,state.getValue());
+			}
+
+            
         }
 
-        if (state == InstanceManager.INVALID) {
-              /*
+        if (componentState == InstanceManager.INVALID) {
+        	
+
+            /*
              * stop state handlers
              */
             for (StateInterceptor interceptor : interceptors) {
                 interceptor.invalidate();
             }
+            
+            
+            for (Map.Entry<String,Object> state : stateValues.entrySet()) {
+				notifyContextListeners(state.getKey(),state.getValue(),null);
+			}
         }
+        
     }
 
     /**
@@ -263,20 +256,19 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      * @param stateId
      * @param value
      */
-    protected boolean update(String stateId, Object value) {
+    protected void update(String stateId, Object value) {
 
         if (stateId == null && !stateIds.contains(stateId)) {
-            return false;
+            return;
         }
 
         Object oldValue = stateValues.get(stateId);
+        
         boolean bothNull = oldValue == null && value == null;
         boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
-        boolean noChange = bothNull || equals;
 
-
-        if (noChange) {
-            return false;
+        if (bothNull || equals) {
+            return;
         }
 
         if (value != null) {
@@ -285,52 +277,57 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             stateValues.remove(stateId);
         }
 
-        if (CONTEXT_ENTITY_ID.equals(stateId)) {
-            return true;
+        if (getInstanceManager().getState() == ComponentInstance.VALID) {
+            notifyContextListeners(stateId, oldValue, value);
         }
-
-        notifyContextListener(stateId, value);
-        return true;
     }
 
     /**
      * Get the definition of the states associated to a given context service
      */
-    private void extractDefinedStatesForService(Class<?> service) {
+    private List<String> getDeclaredStates(Class<?> service) {
+
+        List<String> result = new ArrayList<>();
 
     	/*
-    	 * consider only context spec
+    	 * consider only states defined in context services
     	 */
-        if (!service.isAnnotationPresent(ContextService.class)) {
-            return;
-        }
+        if (service.isAnnotationPresent(ContextService.class)) {
+        	
+        	String contextServiceName = service.getAnnotation(ContextService.class).value();
+        	
+        	if (contextServiceName.equals(ContextService.DEFAULT_VALUE)) {
+        		contextServiceName = service.getSimpleName().toLowerCase();
+        	}
 
-        String contextServiceName = service.getAnnotation(ContextService.class).value();
-        if (contextServiceName.equals(ContextService.DEFAULT_VALUE)) {
-            contextServiceName = service.getSimpleName().toLowerCase();
+        
+	    	/*
+	    	 * look for all states defined in the context service interface.
+	    	 *
+	    	 * The states of a service are defined by static, String fields marked with the annotation State.
+	    	 * The value of the field is the name of the state.
+	    	 *
+	    	 */
+	        for (Field field : service.getDeclaredFields()) {
+	            if (Modifier.isStatic(field.getModifiers()) && field.getType().equals(String.class) && field.isAnnotationPresent(State.class)) {
+	                try {
+	                    String stateName = String.class.cast(field.get(null));
+	                    result.add(contextServiceName + "." + stateName);
+	                } catch (IllegalArgumentException | IllegalAccessException ignored) {
+	                    LOG.info("Ignored exception", ignored);
+	                }
+	            }
+	        }
         }
-
-    	/*
-    	 * look for all states defined in the context service interface.
-    	 *
-    	 * The states of a service are defined by static, String fields marked with the annotation State.
-    	 * The value of the field is the name of the state.
-    	 *
-    	 */
-        for (Field field : service.getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers()) && field.getType().equals(String.class) && field.isAnnotationPresent(State.class)) {
-                try {
-                    String stateName = String.class.cast(field.get(null));
-                    stateIds.add(contextServiceName + "." + stateName);
-                } catch (IllegalArgumentException | IllegalAccessException ignored) {
-                    LOG.info("Ignored exception", ignored);
-                }
-
-            }
-        }
+        
+        /*
+         * Add inherited states
+         */
         for (Class<?> inheritedService : service.getInterfaces()) {
-            extractDefinedStatesForService(inheritedService);
+            result.addAll(getDeclaredStates(inheritedService));
         }
+        
+        return result;
     }
 
     /**
@@ -410,9 +407,10 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     }
 
     /**
-     * Notify All the context listener
+     * Notify All the context listeners of a state change
      */
-    protected void notifyContextListener(String property, Object value) {
+    protected void notifyContextListeners(String property, Object oldValue, Object value) {
+    	
         for (Map.Entry<ContextListener, List<String>> listener : contextSourceListeners.entrySet()) {
             if (listener.getValue() == null || listener.getValue().contains(property)) {
                 listener.getKey().update(this, property, value);
@@ -536,7 +534,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         /**
          * Start executing the action periodically
          */
-        public synchronized void start() {
+        public void start() {
 
 			/*
 			 * Handle non periodic tasks, as a single shot activation when started
@@ -545,8 +543,10 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             	trigger();
             } 
             
-            if (period > 0 && taskHandle == null) {
-                taskHandle = getScheduler().scheduleAtFixedRate(this::trigger, period, period, unit);
+            synchronized(this) {
+                if (period > 0 && taskHandle == null) {
+                    taskHandle = getScheduler().scheduleAtFixedRate(this::trigger, period, period, unit);
+                }
             }
         }
 
@@ -598,56 +598,62 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         return elements != null ? elements : EMPTY_OPTIONAL;
     }
 
-    /**
-     * Get the list of configured states of the instance
-     */
-    protected static final Set<String> getConfiguredStates(Dictionary<String, ?> configuration) {
-        @SuppressWarnings("unchecked")
-        Map<String, Object> stateConfiguration = (Map<String, Object>) configuration.get("context.entity.init");
 
-        if (stateConfiguration == null)
-            return Collections.emptySet();
+    private Object getConfiguredValue(String state, Dictionary<String,Object> configuration, Element stateDeclaration) throws ConfigurationException {
+    	
+        Map<String, Object> stateConfiguration	= (Map<String,Object>) configuration.get("context.entity.init");
+        Object configuredValue  				= stateConfiguration != null ? stateConfiguration.get(state) : null;
 
-        return stateConfiguration.keySet();
-    }
+        if (configuredValue == null) {
 
-    /**
-     * Get the value of a state defined in the instance configuration
-     */
-    protected static final Object getStateConfiguredValue(String stateId, Dictionary<String, ?> configuration) {
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> stateConfiguration = (Map<String, Object>) configuration.get("context.entity.init");
-
-        if (stateConfiguration == null)
-            return null;
-
-        return stateConfiguration.get(stateId);
-    }
-
-    /**
-     * Set the value of a state  in the instance configuration
-     */
-    protected static final void setStateConfiguredValue(String stateId, Object value, Dictionary<String, Object> configuration) {
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> stateConfiguration = (Map<String, Object>) configuration.get("context.entity.init");
-
-        if (stateConfiguration == null) {
-            stateConfiguration = new HashMap<>();
-            configuration.put("context.entity.init", stateConfiguration);
+            String defaultValue = stateDeclaration.getAttribute("value");
+            boolean hasDefaultValue = !fr.liglab.adele.cream.annotations.entity.ContextEntity.State.Field.NO_VALUE.equals(defaultValue);
+            
+            if (hasDefaultValue) {
+                configuredValue = defaultValue;
+            }
         }
 
-        stateConfiguration.put(stateId, value);
-    }
+        /*
+         * validate configured values are correctly typed for the field
+         */
+        String stateField = stateDeclaration.getAttribute("field");
+        FieldMetadata fieldMetadata = getPojoMetadata().getField(stateField);
+        
+        boolean isValid = configuredValue == null || isInstance(fieldMetadata,configuredValue);
 
+		/*
+		 * If the configured value doesn't have the right type, but it is an String, try to cast it
+		 */
+        if ((!isValid) && configuredValue != null && (configuredValue instanceof String)) {
+            Object cast = cast(fieldMetadata, (String) configuredValue);
+            if (cast != null) {
+                configuredValue = cast;
+                isValid = true;
+            }
+        }
+
+        if (!isValid) {
+            throw new ConfigurationException("The configured value for state " + state + " doesn't match the type of the field :" + configuredValue);
+        }
+    	
+        return configuredValue;
+    }
+    
+
+    /**
+     * The type of a field of the component
+     */
+    protected final Class<?> type(FieldMetadata field) throws ConfigurationException {
+    	 return Property.computeType(field.getFieldType(), getInstanceManager().getGlobalContext());
+    }
+    
     /**
      * Cast a string value to the type of the specified field
      */
-    protected static final Object cast(InstanceManager component, FieldMetadata field, String value) {
+    protected final Object cast(FieldMetadata field, String value) {
         try {
-            Class<?> type = Property.computeType(field.getFieldType(), component.getGlobalContext());
-            return Property.create(type, value);
+            return Property.create(type(field), value);
         } catch (ConfigurationException ignored) {
             LOG.info("Ignored exception ", ignored);
             return null;
@@ -657,10 +663,9 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     /**
      * Verify the type of the specified value matches the type of field
      */
-    protected static final boolean hasValidType(InstanceManager component, FieldMetadata field, Object value) {
+    protected final boolean isInstance(FieldMetadata field, Object value) {
         try {
-            Class<?> type = boxed(Property.computeType(field.getFieldType(), component.getGlobalContext()));
-            return type.isInstance(value);
+            return boxed(type(field)).isInstance(value);
         } catch (ConfigurationException ignored) {
             LOG.info("Ignored exception ", ignored);
             return false;

@@ -7,7 +7,6 @@ import fr.liglab.adele.cream.runtime.handler.entity.utils.ContextStateHandler;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.ContextSource;
-
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.metadata.Element;

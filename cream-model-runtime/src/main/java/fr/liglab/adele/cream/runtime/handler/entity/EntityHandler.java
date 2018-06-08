@@ -14,6 +14,7 @@ import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
@@ -46,6 +47,18 @@ public class EntityHandler extends ContextStateHandler implements ContextEntity,
     @ServiceController(value = false, specification = ContextEntity.class)
     private boolean instanceIsActive;
 
+    @Override
+    protected void notifyContextListeners(String property, Object oldValue, Object value) {
+    	
+    	super.notifyContextListeners(property, oldValue, value);
+
+    	/*
+    	 * propagate value to provided handler
+    	 */
+        propagate(property, oldValue, value);
+    }
+
+
     /**
      * The provider handler of my associated iPOJO component instance
      */
@@ -54,58 +67,40 @@ public class EntityHandler extends ContextStateHandler implements ContextEntity,
     /**
      * Propagate a state value change to the published properties of the context spec
      */
-    private void propagate(String stateId, Object value, boolean isUpdate) {
+    private void propagate(String state, Object oldValue, Object value) {
 
         if (providerHandler == null)
             return;
 
         Hashtable<String, Object> property = new Hashtable<>();
-        property.put(stateId, value);
+        property.put(state, value != null ? value : "TO_BE_REMOVED" );
 
-        if (value != null && isUpdate) {
-            providerHandler.reconfigure(property);
+        if (value == null) {
+            providerHandler.removeProperties(property);
         }
-        else if (value != null && !isUpdate) {
+ 
+        if (value != null) {
             providerHandler.addProperties(property);
         }
-        else if (value == null) {
-            providerHandler.removeProperties(property);
-
-        }
+         
     }
 
-    /**
-     * Updates the value of a state property, propagating the change to the published service properties
-     */
-    @Override
-    protected boolean update(String stateId, Object value) {
-
-    	Object oldValue	= getValue(stateId);
-    	boolean updated = super.update(stateId,value);
-
-    	if (updated) {
-            propagate(stateId, value, oldValue != null);
-    	}
-    	
-    	return updated;
-    }
+    
 
     @Override
     public synchronized void start() {
-    	super.start();
     	
-        providerHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+    	providerHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+    	super.start();
         
-    	for (Map.Entry<String,Object> state : stateValues.entrySet()) {
-    		propagate(state.getKey(),state.getValue(),false);
-		}
-
     }
 
     @Override
     public synchronized void stop() {
+
+    	super.stop();
         providerHandler = null;
-        super.stop();
+
     }
 
     @Override
