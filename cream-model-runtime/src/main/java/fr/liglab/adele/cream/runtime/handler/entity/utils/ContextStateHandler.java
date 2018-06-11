@@ -37,7 +37,7 @@ import fr.liglab.adele.cream.model.ContextEntity;
  * 
  * Created by aygalinc on 19/07/16.
  */
-public abstract class ContextStateHandler extends PrimitiveHandler implements ContextEntity, ContextSource {
+public abstract class ContextStateHandler extends PrimitiveHandler implements ContextSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextStateHandler.class);
 
@@ -170,12 +170,12 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     	/*
          * Check the context entity id was specified
          */
-        if (configuration.get(CONTEXT_ENTITY_ID) == null) {
+        if (configuration.get(ContextEntity.CONTEXT_ENTITY_ID) == null) {
             throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
         }
         
-        stateIds.add(CONTEXT_ENTITY_ID);
-        configuredValues.put(CONTEXT_ENTITY_ID,configuration.get(CONTEXT_ENTITY_ID));
+        stateIds.add(ContextEntity.CONTEXT_ENTITY_ID);
+        configuredValues.put(ContextEntity.CONTEXT_ENTITY_ID,configuration.get(ContextEntity.CONTEXT_ENTITY_ID));
 
         /*
          * Initialize the state map with the configured values
@@ -320,31 +320,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     }
 
     /**
-     * Context Entity Implementation
-     */
-
-    @Override
-    public Set<String> getServices() {
-        return services;
-    }
-
-
-    @Override
-    public Set<String> getStates() {
-        return new HashSet<>(stateIds);
-    }
-
-    @Override
-    public Object getValue(String state) {
-        return state != null ? stateValues.get(state) : null;
-    }
-
-    @Override
-    public Map<String, Object> getValues() {
-        return new HashMap<>(stateValues);
-    }
-
-    /**
      * Context Source Implementation.
      * 
      * Implementation must be very defensive because this method can be called even if the instance manager
@@ -437,22 +412,22 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
         @Override
         public Set<String> getServices() {
-            return ContextStateHandler.this.getServices();
+            return services;
+        }
+
+       @Override
+        public Set<String> getStates() {
+            return new HashSet<>(stateIds);
         }
 
         @Override
-        public Set<String> getStates() {
-            return ContextStateHandler.this.getStates();
+        public Object getValue(String state) {
+            return state != null ? stateValues.get(state) : null;
         }
 
         @Override
         public Map<String, Object> getValues() {
-            return ContextStateHandler.this.getValues();
-        }
-
-        @Override
-        public Object getValue(String getStateValue) {
-            return ContextStateHandler.this.getValue(getStateValue);
+            return new HashMap<>(stateValues);
         }
 
        @Override
