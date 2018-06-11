@@ -2,7 +2,7 @@ package fr.liglab.adele.cream.runtime.internal.factories;
 
 import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
-import fr.liglab.adele.cream.runtime.handler.entity.behavior.BehaviorEntityHandler;
+import fr.liglab.adele.cream.runtime.handler.entity.FunctionalExtensionStateHandler;
 import fr.liglab.adele.cream.runtime.handler.functional.extension.lifecycle.FunctionalExtensionLifecyleHandler;
 import fr.liglab.adele.cream.utils.*;
 import org.apache.felix.ipojo.*;
@@ -54,7 +54,7 @@ public class FunctionalExtensionInstanceManager extends InstanceManager implemen
     }
 
     public void registerContextListenerToExtensionEntityHandler(ContextListener listener) {
-        BehaviorEntityHandler entityHandler = (BehaviorEntityHandler) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
+        FunctionalExtensionStateHandler entityHandler = (FunctionalExtensionStateHandler) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
         if (entityHandler == null) {
             return;
         }
@@ -62,7 +62,7 @@ public class FunctionalExtensionInstanceManager extends InstanceManager implemen
     }
 
     public void unregisterContextListenerToExtensionEntityHandler(ContextListener listener) {
-        BehaviorEntityHandler entityHandler = (BehaviorEntityHandler) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
+        FunctionalExtensionStateHandler entityHandler = (FunctionalExtensionStateHandler) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
         if (entityHandler == null) {
             return;
         }

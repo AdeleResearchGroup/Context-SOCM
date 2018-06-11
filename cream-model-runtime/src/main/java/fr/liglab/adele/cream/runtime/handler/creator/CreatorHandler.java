@@ -7,7 +7,7 @@ import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.cream.model.introspection.EntityProvider;
 import fr.liglab.adele.cream.model.introspection.RelationProvider;
-import fr.liglab.adele.cream.runtime.handler.entity.EntityHandler;
+import fr.liglab.adele.cream.runtime.handler.entity.EntityStateHandler;
 import fr.liglab.adele.cream.runtime.model.impl.RelationImpl;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
@@ -410,7 +410,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
         @Override
         public String create(Object source, Object target) {
             if ((source instanceof Pojo) && (target instanceof Pojo)) {
-                return create(EntityHandler.getContextEntity((Pojo) source).getId(), EntityHandler.getContextEntity((Pojo) target).getId());
+                return create(EntityStateHandler.getContextEntity((Pojo) source).getId(), EntityStateHandler.getContextEntity((Pojo) target).getId());
             }
 
             throw new IllegalArgumentException(ERROR_MESSAGE);
@@ -419,7 +419,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
         @Override
         public String create(Object source, String targetId) {
             if ((source instanceof Pojo) && (targetId != null)) {
-                return create(EntityHandler.getContextEntity((Pojo) source).getId(), targetId);
+                return create(EntityStateHandler.getContextEntity((Pojo) source).getId(), targetId);
             }
 
             throw new IllegalArgumentException(ERROR_MESSAGE);
@@ -428,7 +428,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
         @Override
         public String create(String sourceId, Object target) {
             if ((sourceId != null) && (target instanceof Pojo)) {
-                return create(sourceId, EntityHandler.getContextEntity((Pojo) target).getId());
+                return create(sourceId, EntityStateHandler.getContextEntity((Pojo) target).getId());
             }
 
             throw new IllegalArgumentException(ERROR_MESSAGE);
@@ -478,7 +478,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
         @Override
         public List<Relation> getInstancesRelatedTo(Object source) {
             if (source instanceof Pojo) {
-                return getInstancesRelatedTo(EntityHandler.getContextEntity((Pojo) source).getId());
+                return getInstancesRelatedTo(EntityStateHandler.getContextEntity((Pojo) source).getId());
             }
 
             throw new IllegalArgumentException("source object is not a context entity");
@@ -497,21 +497,21 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
         @Override
         public void delete(Object source, Object target) {
             if ((source instanceof Pojo) && (target instanceof Pojo)) {
-                delete(EntityHandler.getContextEntity((Pojo) source).getId(), EntityHandler.getContextEntity((Pojo) target).getId());
+                delete(EntityStateHandler.getContextEntity((Pojo) source).getId(), EntityStateHandler.getContextEntity((Pojo) target).getId());
             }
         }
 
         @Override
         public void delete(Object source, String targetId) {
             if ((source instanceof Pojo) && (targetId != null)) {
-                delete(EntityHandler.getContextEntity((Pojo) source).getId(), targetId);
+                delete(EntityStateHandler.getContextEntity((Pojo) source).getId(), targetId);
             }
         }
 
         @Override
         public void delete(String sourceId, Object target) {
             if ((sourceId != null) && (target instanceof Pojo)) {
-                delete(sourceId, EntityHandler.getContextEntity((Pojo) target).getId());
+                delete(sourceId, EntityStateHandler.getContextEntity((Pojo) target).getId());
             }
         }
 

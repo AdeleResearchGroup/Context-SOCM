@@ -225,11 +225,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
                 interceptor.validate();
             }
             
-            for (Map.Entry<String,Object> state : stateValues.entrySet()) {
-				notifyContextListeners(state.getKey(),null,state.getValue());
-			}
-
-            
         }
 
         if (componentState == InstanceManager.INVALID) {
@@ -242,10 +237,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
                 interceptor.invalidate();
             }
             
-            
-            for (Map.Entry<String,Object> state : stateValues.entrySet()) {
-				notifyContextListeners(state.getKey(),state.getValue(),null);
-			}
         }
         
     }
@@ -277,9 +268,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             stateValues.remove(stateId);
         }
 
-        if (getInstanceManager().getState() == ComponentInstance.VALID) {
-            notifyContextListeners(stateId, oldValue, value);
-        }
+        notifyContextListeners(stateId, oldValue, value);
     }
 
     /**

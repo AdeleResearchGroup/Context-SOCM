@@ -1,7 +1,6 @@
-package fr.liglab.adele.cream.runtime.handler.entity.behavior;
+package fr.liglab.adele.cream.runtime.handler.entity;
 
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
-import fr.liglab.adele.cream.model.ContextEntity;
 
 import fr.liglab.adele.cream.runtime.handler.entity.utils.ContextStateHandler;
 
@@ -16,7 +15,7 @@ import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import java.util.Dictionary;
 
 @Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER, namespace = HandlerReference.NAMESPACE)
-public class BehaviorEntityHandler extends ContextStateHandler implements ContextEntity, ContextSource {
+public class FunctionalExtensionStateHandler extends ContextStateHandler implements ContextSource {
 
     /**
      * The Wisdom Scheduler used to handle periodic tasks

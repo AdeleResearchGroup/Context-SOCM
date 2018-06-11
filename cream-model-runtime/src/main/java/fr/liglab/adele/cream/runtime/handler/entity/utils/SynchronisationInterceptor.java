@@ -163,7 +163,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
     @Override
     public void reconfigure(Dictionary<String,Object> configuration) {
     	     	
-    	if (configuration.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY.toString()) != null) {
+    	if (configuration.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY.toString()) == null) {
             return;
         }
 
