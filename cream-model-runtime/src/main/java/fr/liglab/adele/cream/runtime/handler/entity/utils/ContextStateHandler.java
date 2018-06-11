@@ -37,7 +37,7 @@ import fr.liglab.adele.cream.model.ContextEntity;
  * 
  * Created by aygalinc on 19/07/16.
  */
-public abstract class ContextStateHandler extends PrimitiveHandler implements ContextSource {
+public abstract class ContextStateHandler extends PrimitiveHandler implements ContextSource, ContextEntity {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextStateHandler.class);
 
@@ -242,10 +242,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     }
 
     /**
-     * Updates the value of a state property, propagating the change to the published service properties
-     *
-     * @param stateId
-     * @param value
+     * Updates the value of a state property, notifying the context listeners
      */
     protected void update(String stateId, Object value) {
 
@@ -271,6 +268,26 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         notifyContextListeners(stateId, oldValue, value);
     }
 
+    @Override
+    public Set<String> getServices() {
+        return services;
+    }
+
+   @Override
+    public Set<String> getStates() {
+        return new HashSet<>(stateIds);
+    }
+
+    @Override
+    public Object getValue(String state) {
+        return state != null ? stateValues.get(state) : null;
+    }
+
+    @Override
+    public Map<String, Object> getValues() {
+        return new HashMap<>(stateValues);
+    }
+    
     /**
      * Get the definition of the states associated to a given context service
      */
@@ -328,13 +345,12 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
     @Override
     public Object getProperty(String property) {
-        return stateValues.get(property);
+        return getValue(property);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Dictionary getContext() {
-        return new Hashtable<>(stateValues);
+        return new Hashtable<>(getValues());
     }
 
     @Override
@@ -402,7 +418,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      * The description of the handler.
      * <p>
      * This class exposes the generic interface ContextEntity to allow external code to introspect the
-     * component instance and obtain the current state values.
+     * component instance description and obtain the current state values.
      */
     public class EntityHandlerDescription extends HandlerDescription implements ContextEntity {
 
@@ -410,25 +426,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             super(ContextStateHandler.this);
         }
 
-        @Override
-        public Set<String> getServices() {
-            return services;
-        }
-
-       @Override
-        public Set<String> getStates() {
-            return new HashSet<>(stateIds);
-        }
-
-        @Override
-        public Object getValue(String state) {
-            return state != null ? stateValues.get(state) : null;
-        }
-
-        @Override
-        public Map<String, Object> getValues() {
-            return new HashMap<>(stateValues);
-        }
 
        @Override
         public Element getHandlerInfo() {
@@ -459,6 +456,30 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
             return handlerInfo;
         }
+
+
+		@Override
+		public Set<String> getServices() {
+			return ContextStateHandler.this.getServices();
+		}
+	
+	
+		@Override
+		public Object getValue(String state) {
+			return ContextStateHandler.this.getValue(state);
+		}
+	
+	
+		@Override
+		public Set<String> getStates() {
+			return ContextStateHandler.this.getStates();
+		}
+	
+	
+		@Override
+		public Map<String, Object> getValues() {
+			return ContextStateHandler.this.getValues();
+		}
     }
 
     /**

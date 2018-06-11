@@ -72,7 +72,7 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
 
     @Override
     public Object onGet(Object pojo, String fieldName, Object value) {
-        return stateHandler.getValue(getStateForField(fieldName));
+        return stateHandler.getProperty(getStateForField(fieldName));
     }
 
     @Override
