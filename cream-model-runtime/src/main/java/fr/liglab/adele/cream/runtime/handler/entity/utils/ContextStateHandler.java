@@ -37,7 +37,7 @@ import fr.liglab.adele.cream.model.ContextEntity;
  * 
  * Created by aygalinc on 19/07/16.
  */
-public abstract class ContextStateHandler extends PrimitiveHandler implements ContextSource, ContextEntity {
+public abstract class ContextStateHandler extends PrimitiveHandler implements ContextSource, ContextEntity, InstanceStateListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextStateHandler.class);
 
@@ -45,10 +45,12 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      * The list of exposed context spec
      */
     protected final Set<String> services = new HashSet<>();
+    
     /**
      * The list of states defined in the implemented context spec
      */
     protected final Set<String> stateIds = new HashSet<>();
+    
     /**
      * The list of interceptors in charge of handling each state field
      */
@@ -75,7 +77,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      * This handler implements ContextSource to allow state variables to be used in
      * dependency filters.
      */
-    private final Map<ContextListener, List<String>> contextSourceListeners = new HashMap<>();
+    protected final Map<ContextListener, List<String>> contextSourceListeners = new HashMap<>();
  
     /**
      * Handler Configuration
@@ -139,12 +141,10 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 				/*
 				 * Add field and method interceptors according to the specified policy
 				 */
-                boolean directAccess = Boolean.parseBoolean(state.getAttribute("directAccess"));
-                if (!directAccess) {
-                    synchronisationInterceptor.configure(state,configuration);
-                } else {
-                    directAccessInterceptor.configure(state,configuration);
-                }
+                boolean directAccess 			= Boolean.parseBoolean(state.getAttribute("directAccess"));
+                StateInterceptor interceptor	= directAccess ? directAccessInterceptor : synchronisationInterceptor;
+                
+                interceptor.configure(state,configuration);
 
     			/*
     			 * Get the initial configured value of the state
@@ -181,6 +181,11 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
          * Initialize the state map with the configured values
          */
         reset();
+        
+        /*
+         * Track state changes of the attached instance
+         */
+        getInstanceManager().addInstanceStateListener(this);
     }
 
     @Override
@@ -192,13 +197,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         for (StateInterceptor interceptor : interceptors) {
             interceptor.reconfigure(configuration);
         }
-    }
-
-    private void reset() {
-    	
-    	for (String state : stateIds) {
-       		update(state,configuredValues.get(state));
-		}
     }
 
     /**
@@ -214,31 +212,25 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     	reset();
     }
 
-    public synchronized void stateChanged(int componentState) {
+	@Override
+	public void stateChanged(ComponentInstance instance, int componentState) {
 
         if (componentState == InstanceManager.VALID) {
-  
-            /*
-             * restart state handlers
-             */
             for (StateInterceptor interceptor : interceptors) {
                 interceptor.validate();
             }
-            
         }
 
         if (componentState == InstanceManager.INVALID) {
-        	
-
-            /*
-             * stop state handlers
-             */
             for (StateInterceptor interceptor : interceptors) {
                 interceptor.invalidate();
             }
-            
         }
-        
+
+        if (componentState == InstanceManager.DISPOSED) {
+        	contextSourceListeners.clear();
+        }
+
     }
 
     /**
@@ -268,12 +260,24 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         notifyContextListeners(stateId, oldValue, value);
     }
 
+    /**
+     * Resets the value of the state to the configured values at instance creation
+     */
+    private void reset() {
+    	for (String state : stateIds) {
+       		update(state,configuredValues.get(state));
+		}
+    }
+
+    /*
+     * Context Entity implementation 
+     */
     @Override
     public Set<String> getServices() {
         return services;
     }
 
-   @Override
+    @Override
     public Set<String> getStates() {
         return new HashSet<>(stateIds);
     }
@@ -287,6 +291,69 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     public Map<String, Object> getValues() {
         return new HashMap<>(stateValues);
     }
+
+    /*
+     * Context Source Implementation.
+     * 
+     * Implementation must be very defensive because this method can be called even if the instance manager
+     * is not yet attached
+     */
+
+    @Override
+    public Object getProperty(String property) {
+    	return property != null ? stateValues.get(property) : null;
+    }
+
+    @Override
+    public Dictionary getContext() {
+        return new Hashtable<>(stateValues);
+    }
+
+    @Override
+    public void registerContextListener(ContextListener listener, String[] properties) {
+
+    	boolean isRegistered 				= contextSourceListeners.containsKey(listener);
+    	List<String> registeredProperties 	= contextSourceListeners.get(listener);
+    	
+    	if (isRegistered && registeredProperties != null && properties != null) {
+    		registeredProperties.addAll(Arrays.asList(properties));
+    	}
+
+    	if (isRegistered && registeredProperties != null && properties == null) {
+    		registeredProperties = null;
+    		contextSourceListeners.put(listener,registeredProperties);
+    	}
+
+    	if (! isRegistered) {
+    		registeredProperties = properties != null ? Arrays.asList(properties) : null;
+    		contextSourceListeners.put(listener,registeredProperties);
+    	}
+    	
+    	for (Map.Entry<String,Object> state : stateValues.entrySet()) {
+			if (registeredProperties == null || registeredProperties.contains(state.getKey())) {
+				listener.update(this, state.getKey(), state.getValue());
+			}
+		}
+    	
+    }
+
+    @Override
+    public synchronized void unregisterContextListener(ContextListener listener) {
+        contextSourceListeners.remove(listener);
+    }
+
+    /**
+     * Notify All the context listeners of a state change
+     */
+    protected void notifyContextListeners(String property, Object oldValue, Object value) {
+    	
+        for (Map.Entry<ContextListener, List<String>> listener : contextSourceListeners.entrySet()) {
+            if (listener.getValue() == null || listener.getValue().contains(property)) {
+                listener.getKey().update(this, property, value);
+            }
+        }
+    }
+
     
     /**
      * Get the definition of the states associated to a given context service
@@ -336,68 +403,6 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
         return result;
     }
 
-    /**
-     * Context Source Implementation.
-     * 
-     * Implementation must be very defensive because this method can be called even if the instance manager
-     * is not yet attached
-     */
-
-    @Override
-    public Object getProperty(String property) {
-        return getValue(property);
-    }
-
-    @Override
-    public Dictionary getContext() {
-        return new Hashtable<>(getValues());
-    }
-
-    @Override
-    public void registerContextListener(ContextListener listener, String[] properties) {
-
-    	boolean isRegistered 				= contextSourceListeners.containsKey(listener);
-    	List<String> registeredProperties 	= contextSourceListeners.get(listener);
-    	
-    	if (isRegistered && registeredProperties != null && properties != null) {
-    		registeredProperties.addAll(Arrays.asList(properties));
-    	}
-
-    	if (isRegistered && registeredProperties != null && properties == null) {
-    		registeredProperties = null;
-    		contextSourceListeners.put(listener,registeredProperties);
-    	}
-
-    	if (! isRegistered) {
-    		registeredProperties = properties != null ? Arrays.asList(properties) : null;
-    		contextSourceListeners.put(listener,registeredProperties);
-    	}
-    	
-    	for (Map.Entry<String,Object> state : stateValues.entrySet()) {
-			if (registeredProperties == null || registeredProperties.contains(state.getKey())) {
-				listener.update(this, state.getKey(), state.getValue());
-			}
-		}
-    	
-    }
-
-    @Override
-    public synchronized void unregisterContextListener(ContextListener listener) {
-        contextSourceListeners.remove(listener);
-    }
-
-    /**
-     * Notify All the context listeners of a state change
-     */
-    protected void notifyContextListeners(String property, Object oldValue, Object value) {
-    	
-        for (Map.Entry<ContextListener, List<String>> listener : contextSourceListeners.entrySet()) {
-            if (listener.getValue() == null || listener.getValue().contains(property)) {
-                listener.getKey().update(this, property, value);
-            }
-        }
-    }
-
     @Override
     public HandlerDescription getDescription() {
         return new EntityHandlerDescription();
@@ -429,17 +434,18 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
        @Override
         public Element getHandlerInfo() {
+    	   
             Element handlerInfo = super.getHandlerInfo();
            
-            String specifications = getServices().stream().collect(Collectors.joining(",", "{", "}"));
+            String specifications = services.stream().collect(Collectors.joining(",", "{", "}"));
             handlerInfo.addAttribute(new Attribute("context.specifications",specifications));
 
-            for ( String stateId : getStates()) {
+            for ( String stateId : stateIds) {
             	
                 Element stateElement = new Element("state", null);
                 stateElement.addAttribute(new Attribute("id", stateId));
                 
-                Map<String,Object> val = getValues();
+                Map<String,Object> val = stateValues;
                 
                 if (val.containsKey(stateId)){
                     stateElement.addAttribute(new Attribute("value", val.get(stateId).toString()));

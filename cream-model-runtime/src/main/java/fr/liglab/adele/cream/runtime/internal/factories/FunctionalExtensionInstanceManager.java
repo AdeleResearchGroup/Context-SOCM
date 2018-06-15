@@ -17,8 +17,6 @@ import java.util.*;
  */
 public class FunctionalExtensionInstanceManager extends InstanceManager implements CreamGenerator {
 
-    private static final String LIFECYCLE_HANDLER = HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER;
-
     private final CreamProxyFactory creamProxyFactory = new CreamProxyFactory(this.getClass().getClassLoader(), this);
 
     private Map<Method, GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
@@ -40,35 +38,6 @@ public class FunctionalExtensionInstanceManager extends InstanceManager implemen
         return new CustomInvocationHandler(pojo, this, new NotFoundStrategy(), new ArrayList<>());
     }
 
-    public FunctionalExtensionLifecyleHandler getBehaviorLifeCycleHandler() {
-        return (FunctionalExtensionLifecyleHandler) getHandler(LIFECYCLE_HANDLER);
-    }
-
-    public ContextSource getExtensionContextSource() {
-        Handler handler = getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
-        if (handler instanceof ContextSource) {
-            return (ContextSource) handler;
-        } else {
-            return null;
-        }
-    }
-
-    public void registerContextListenerToExtensionEntityHandler(ContextListener listener) {
-        FunctionalExtensionStateHandler entityHandler = (FunctionalExtensionStateHandler) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
-        if (entityHandler == null) {
-            return;
-        }
-        entityHandler.registerContextListener(listener, null);
-    }
-
-    public void unregisterContextListenerToExtensionEntityHandler(ContextListener listener) {
-        FunctionalExtensionStateHandler entityHandler = (FunctionalExtensionStateHandler) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
-        if (entityHandler == null) {
-            return;
-        }
-        entityHandler.unregisterContextListener(listener);
-    }
-    
     @Override
     public Map<Method, GeneratedDelegatorProxy> getProxyDelegationMap() {
         if (proxyDelegatorMap.isEmpty()) {

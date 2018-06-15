@@ -2,6 +2,7 @@ package fr.liglab.adele.cream.testing.helpers;
 
 import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import fr.liglab.adele.cream.runtime.handler.functional.extension.lifecycle.FunctionalExtensionLifecyleHandler;
 import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionInstanceManager;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.architecture.Architecture;
@@ -48,13 +49,13 @@ public class FunctionalExtensionHelper {
     public void validFunctionalExtension(ComponentInstance instance, String functionalExtensionId) {
         ComponentInstance behaviorInstance = getFunctionalExtension(instance, functionalExtensionId);
         FunctionalExtensionInstanceManager manager = (FunctionalExtensionInstanceManager) behaviorInstance;
-        manager.getBehaviorLifeCycleHandler().startBehavior();
+        FunctionalExtensionLifecyleHandler.forInstance(manager).setValidity(true);
     }
 
     public void invalidFunctionalExtension(ComponentInstance instance, String functionalExtensionId) {
         ComponentInstance functionalExtensionInstance = getFunctionalExtension(instance, functionalExtensionId);
         FunctionalExtensionInstanceManager manager = (FunctionalExtensionInstanceManager) functionalExtensionInstance;
-        manager.getBehaviorLifeCycleHandler().stopBehavior();
+        FunctionalExtensionLifecyleHandler.forInstance(manager).setValidity(false);
     }
 
 

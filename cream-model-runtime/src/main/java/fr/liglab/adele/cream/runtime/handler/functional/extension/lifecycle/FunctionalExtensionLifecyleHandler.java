@@ -1,40 +1,40 @@
 package fr.liglab.adele.cream.runtime.handler.functional.extension.lifecycle;
 
-import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
-import fr.liglab.adele.cream.annotations.internal.HandlerReference;
-import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.annotations.Handler;
-import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.metadata.Attribute;
-import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.parser.MethodMetadata;
-import org.apache.felix.ipojo.parser.PojoMetadata;
-import org.apache.felix.ipojo.util.Callback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-//Same level as provided handler, maybe to change ...
-@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, namespace = HandlerReference.NAMESPACE, level = 3)
-public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler implements ContextListener {
+import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.annotations.Handler;
+import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.MethodMetadata;
+import org.apache.felix.ipojo.util.Callback;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import fr.liglab.adele.cream.runtime.handler.entity.EntityStateHandler;
+import fr.liglab.adele.cream.runtime.handler.functional.extension.tracker.FunctionalExtensionHandler;
+
+
+@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, namespace = HandlerReference.NAMESPACE)
+public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler implements ContextListener, InstanceStateListener, FunctionalExtensionHandler {
+
+	private static final String QUALIFIED_ID = HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER;
+
+    public static FunctionalExtensionLifecyleHandler forInstance(InstanceManager instance) {
+        return instance != null ? (FunctionalExtensionLifecyleHandler) instance.getHandler(QUALIFIED_ID) : null;
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionalExtensionLifecyleHandler.class);
 
-    private final Object myLock = new Object();
+    private ContextSource source;
 
-    private final List<FunctionalExtensionStateListener> stateListeners = new ArrayList<>();
+    private final Map<String,Callback> stateCallbacks = new HashMap<>();
 
-    private final Map<Callback, String> listenerCallBack = new HashMap<>();
+    private final Set<String> statesToListen = new HashSet<>();
 
-    private final Set<String> propertyToListen = new HashSet<>();
-
-    private final InstanceStateListener privateInstanceListener = new InstanceListenerImpl();
-
-    // TODO : some workaround method invocation, check if the parameter is a primitive type and not call the method if the argument is null,
-    // When get the callback , issue can be found if the pojo own two method with the same name but different attributes(nbr or type), the pojometadata.getMethod() return
-    // the first method with the good name...
+    
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
@@ -43,141 +43,130 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
             return;
         }
 
-        PojoMetadata pojoMetadata = getPojoMetadata();
         for (Element element : elements) {
             Element[] propertyElement = element.getElements();
 
             for (Element property : propertyElement) {
                 String stateId = property.getAttribute("id");
                 String methodCallbackId = property.getAttribute("method");
-                MethodMetadata methodMetadata = pojoMetadata.getMethod(methodCallbackId);
+                
+                MethodMetadata methodMetadata = select(methodCallbackId);
 
                 if (methodMetadata == null) {
-                    throw new ConfigurationException(" method metadata is null for method " + methodCallbackId);
+                    throw new ConfigurationException(" invalid callback (wrong number of arguments)" + methodCallbackId);
                 }
 
                 Callback methodCallBack = new Callback(methodMetadata, getInstanceManager());
-                listenerCallBack.put(methodCallBack, stateId);
-                propertyToListen.add(stateId);
+                stateCallbacks.put(stateId,methodCallBack);
+                statesToListen.add(stateId);
             }
         }
+        
+        getInstanceManager().addInstanceStateListener(this);
 
     }
 
     @Override
-    public synchronized void stop() {
-        getInstanceManager().removeInstanceStateListener(privateInstanceListener);
-    }
+    public void attachCore(InstanceManager core) {
+    	source = EntityStateHandler.forInstance(core);
+    	source.registerContextListener(this,statesToListen.toArray(new String[statesToListen.size()]));
+    } 
 
-    @Override
-    public synchronized void start() {
-        setValidity(false);
-        getInstanceManager().addInstanceStateListener(privateInstanceListener);
-    }
+	@Override
+	public void stateChanged(ComponentInstance extension, int extensiontState) {
+		if (extensiontState == ComponentInstance.DISPOSED) {
+			if (source != null) {
+				source.unregisterContextListener(this);
+				source = null;
+			}
+		}
+	}
 
+	@Override
+	public void start() {
+	}
 
-    public synchronized void registerBehaviorListener(FunctionalExtensionStateListener listener) {
-        stateListeners.add(listener);
-    }
-
-    public synchronized void unregisterBehaviorListener(FunctionalExtensionStateListener listener) {
-        stateListeners.remove(listener);
-    }
-
-
-    public void stopBehavior() {
-        synchronized (myLock) {
-            if (this.getValidity()) {
-                setValidity(false);
-            }
-        }
-    }
-
-    public void startBehavior() {
-        synchronized (myLock) {
-            if (!this.getValidity()) {
-                setValidity(true);
-            }
-        }
-    }
-
-    private void notifyListener(int state) {
-        for (FunctionalExtensionStateListener functionalExtensionStateListener : stateListeners) {
-            functionalExtensionStateListener.functionalExtensionStateChange(state);
-        }
-    }
-
-    @Override
-    public HandlerDescription getDescription() {
-        return new BehaviorLifecycleHandlerDescription(this);
-    }
+	@Override
+	public void stop() {
+	}
 
     @Override
     public void update(ContextSource source, String property, Object value) {
-        if (getInstanceManager().getState() != ComponentInstance.VALID) {
+       
+    	if (getInstanceManager().getState() != ComponentInstance.VALID) {
             return;
         }
-        if (!listenerCallBack.containsValue(property)) {
+        
+    	Callback callback = stateCallbacks.get(property);
+    	
+    	if (callback == null) {
             return;
         }
-        Object[] args = new Object[]{value};
+    	
+    	String[] parameters = callback.getArguments();
+        Object[] args 		= parameters.length == 0 ? null : new Object[] { value != null ? value : NULL_VALUE(parameters[0])};
 
-        for (Map.Entry<Callback, String> callback : listenerCallBack.entrySet()) {
-            try {
-                if (callback.getValue().equals(property)) {
-                    callback.getKey().call(args);
-                }
-            } catch (NoSuchMethodException e) {
-                LOG.error("Error occurs during callback invocation of property : " + property + " cause by ", e);
-            } catch (IllegalAccessException e) {
-                LOG.error("Error occurs during callback invocation of property : " + property + " cause by ", e);
-            } catch (InvocationTargetException e) {
-                LOG.error("Error occurs during callback invocation of property : " + property + " cause by ", e);
-            }
+        try {
+        	callback.call(args);
+        } catch (NoSuchMethodException e) {
+            LOG.error("Error occurs during callback invocation of property : " + property + " cause by ", e);
+        } catch (IllegalAccessException e) {
+            LOG.error("Error occurs during callback invocation of property : " + property + " cause by ", e);
+        } catch (InvocationTargetException e) {
+            LOG.error("Error occurs during callback invocation of property : " + property + " cause by ", e);
         }
     }
 
+    private final Object NULL_VALUE(String typeName) {
+    	
+		try {
 
-    public Set<String> getPropertiesToListen() {
-        return propertyToListen;
-    }
+			Class<?> type = getInstanceManager().getGlobalContext().getBundle().loadClass(typeName);
+			
+	    	if (!type.isPrimitive()) {
+	    		return null;
+	    	}
+	    	
+	    	if (Boolean.TYPE.equals(type))		{ return Boolean.FALSE;}
+	    	if (Character.TYPE.equals(type))	{ return Character.valueOf('\u0000');}
+	    	if (Byte.TYPE.equals(type))			{ return Byte.valueOf((byte)0);}
+	    	if (Short.TYPE.equals(type))		{ return Short.valueOf((short)0);}
+	    	if (Integer.TYPE.equals(type))		{ return Integer.valueOf(0);}
+	    	if (Long.TYPE.equals(type))			{ return Long.valueOf(0L);}
+	    	if (Float.TYPE.equals(type))		{ return Float.valueOf(0.0f);}
+	    	if (Double.TYPE.equals(type))		{ return Double.valueOf(0.0d);}
 
-    @Override
-    public void stateChanged(int state) {
-        if (state != ComponentInstance.VALID) {
-            notifyListener(state);
-        }
-    }
+	    	/*
+	    	 * void type
+	    	 */
+	    	return null;
 
-    private class BehaviorLifecycleHandlerDescription extends HandlerDescription {
-
-        /**
-         * Creates a handler description.
-         *
-         * @param handler the handler.
-         */
-        public BehaviorLifecycleHandlerDescription(org.apache.felix.ipojo.Handler handler) {
-            super(handler);
-        }
-
-        @Override
-        public Element getHandlerInfo() {
-            Element element = super.getHandlerInfo();
-            return element;
-        }
-    }
-
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+    }	
+   
     /**
-     * Ensure that all handler state method are called before notify the behavior tracker manager to expose behavior as a service if the componentbecome valid
+     * Selects the callback to invoke when there are many methods with the same name and different signatures
      */
-    private class InstanceListenerImpl implements InstanceStateListener {
-
-
-        @Override
-        public void stateChanged(ComponentInstance instance, int newState) {
-            if (newState == ComponentInstance.VALID) {
-                notifyListener(newState);
-            }
-        }
+    protected MethodMetadata select(String methodName) {
+    	
+    	MethodMetadata[] candidates = getPojoMetadata().getMethods(methodName);
+    	MethodMetadata bestMatch 	= null;
+    	for (MethodMetadata candidate : candidates) {
+			
+    		if (candidate.getMethodArguments().length > 1) {
+    			continue;
+			}
+    		
+    		if (bestMatch == null || bestMatch.getMethodArguments().length  < candidate.getMethodArguments().length) {
+    			bestMatch = candidate;
+    		}
+		}
+    	
+    	return bestMatch;
     }
+    
+    
+
 }

@@ -1,51 +1,42 @@
 package fr.liglab.adele.cream.runtime.handler.functional.extension.tracker;
 
-import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+import java.util.*;
+
 import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
-import fr.liglab.adele.cream.runtime.handler.functional.extension.lifecycle.FunctionalExtensionStateListener;
+
+import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionFactory;
+import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionInstanceManager;
+
 import fr.liglab.adele.cream.utils.SuccessorStrategy;
+
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Unbind;
+
 import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.handlers.providedservice.ProvidedService;
-import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
+
+
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
-import org.apache.felix.ipojo.parser.ParseUtils;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
+/**
+ * This handler synchronizes the life-cycle of a context entity with its extensions (tracking factories as needed, and allowing dynamic
+ * reconfiguration)
+ * 
+ * It is also in charge of method delegation and proxy creation to handle service consumer requests.
+ * 
+ *
+ */
+@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER, namespace = HandlerReference.NAMESPACE)
+public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implements InvocationHandler, InstanceStateListener {
 
-@Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER, namespace = HandlerReference.NAMESPACE, level = 1)
-public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implements InvocationHandler, FunctionalExtensionStateListener, ContextSource {
+    private final List<RequiredFunctionalExtension> extensions = new ArrayList<>();
 
-    private static final String[] NO_SPEC = {};
-
-    private static final String CONTEXT_ENTITY_CONTROLLER_FIELD_NAME = " context.entity.controller.";
-
-    private final Map<String, RequiredFunctionalExtension> myRequiredBehaviorById = new HashMap<>();
-
-    private final Set<String> stateVariable = new ConcurrentSkipListSet<>();
-
-    private final Set<String> mandatoryBehavior = new HashSet<>();
-
-    private final ContextListener behaviorContextListener = new BehaviorEntityListener();
-
-    private final Map<ContextListener, String[]> listeners = new ConcurrentHashMap<>();
-
-    private final List<String> behaviorSpecs = new ArrayList<>();
-
-    private Element metadata;
-
-    public ContextListener getBehaviorContextListener() {
-        return behaviorContextListener;
-    }
 
     /**
      * Configure part
@@ -60,6 +51,8 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
             throw new ConfigurationException("FunctionalExtension Elements are null ");
         }
 
+        boolean hassMandatoryExtensions = false;
+
         for (Element element : behaviorElements) {
             Element[] behaviorIndividualElements = element.getElements(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_INDIVIDUAL_ELEMENT_NAME.toString(), "");
 
@@ -67,174 +60,134 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
                 throw new ConfigurationException("FunctionalExtension Individual Element is null ");
             }
 
+             
             for (Element individualBehaviorElement : behaviorIndividualElements) {
-                boolean mandatoryField = Boolean.parseBoolean(individualBehaviorElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString()));
+                
+            	String id 				= individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
+            	boolean isMandatory 	= Boolean.parseBoolean(individualBehaviorElement.getAttribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_MANDATORY_ATTRIBUTE_NAME.toString()));
+            	String specifications	= individualBehaviorElement.getAttribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString());
+            	String implementation	= individualBehaviorElement.getAttribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString()); 
+                
+            	RequiredFunctionalExtension requiredFunctionalExtension = new RequiredFunctionalExtension(id,specifications,implementation,
+                        															configuration,this,isMandatory);
+                
+                extensions.add(requiredFunctionalExtension);
 
-                RequiredFunctionalExtension requiredFunctionalExtension = new RequiredFunctionalExtension(individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString()),
-                        individualBehaviorElement.getAttribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString()),
-                        individualBehaviorElement.getAttribute(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString()),
-                        configuration,
-                        this,
-                        getProvideServiceHandler(),
-                        mandatoryField
-                );
-                myRequiredBehaviorById.put(individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString()), requiredFunctionalExtension);
-
+                hassMandatoryExtensions = hassMandatoryExtensions || isMandatory;
+                
                 String fieldAttribute = individualBehaviorElement.getAttribute(FunctionalExtensionReference.FIELD_ATTRIBUTE_NAME.toString());
                 FieldMetadata fieldMetadata = null;
                 if (fieldAttribute != null) {
                     fieldMetadata = getPojoMetadata().getField(fieldAttribute);
                 }
                 if (fieldMetadata != null) {
-                    getInstanceManager().register(fieldMetadata, requiredFunctionalExtension.getExtensionInterceptor());
+                    getInstanceManager().register(fieldMetadata,requiredFunctionalExtension);
 
                 }
 
-                if (mandatoryField) {
-                    mandatoryBehavior.add(individualBehaviorElement.getAttribute(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString()));
-                }
-                behaviorSpecs.addAll(Arrays.asList(ParseUtils.parseArrays(individualBehaviorElement.getAttribute(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString()))));
-                for (Map.Entry<ContextListener, String[]> listenerEntry : listeners.entrySet()) {
-                    requiredFunctionalExtension.registerContextListener(listenerEntry.getKey(), listenerEntry.getValue());
-                }
             }
         }
 
 
-        if (!mandatoryBehavior.isEmpty()) {
-            setValidity(false);
-        }
+        setValidity(!hassMandatoryExtensions);
+        
+        getInstanceManager().addInstanceStateListener(this);
 
-        this.metadata = metadata;
     }
-
-    private void createControllerForContextEntity(Element metadata, List<String> behaviorSpecs) {
-        ProvidedService providedService = getContextEntityProvidedService(metadata);
-        if (providedService == null) {
-            error("provided service is null, must not be happen ");
-            return;
-        }
-        int i = 0;
-        for (String spec : getContextEntitySpec(metadata)) {
-            if (!behaviorSpecs.contains(spec)) {
-                providedService.setController(CONTEXT_ENTITY_CONTROLLER_FIELD_NAME + i, true, spec);
-                i++;
-            }
-        }
-    }
-
-    private ProvidedService getContextEntityProvidedService(Element metadata) {
-        String[] contextEntitySpecs = getContextEntitySpec(metadata);
-        ProvidedServiceHandler providedServiceHandler = getProvideServiceHandler();
-        ProvidedService[] providedServices = providedServiceHandler.getProvidedServices();
-        for (ProvidedService providedService : providedServices) {
-            String[] serviceSpecifications = providedService.getServiceSpecifications();
-            if (compare(contextEntitySpecs, serviceSpecifications)) {
-                return providedService;
-            }
-        }
-        return null;
-    }
-
-    private String[] getContextEntitySpec(Element metadata) {
-        Element[] providesElements = metadata.getElements("provides");
-        for (Element provides : providesElements) {
-            Element[] propertyElements = provides.getElements("property");
-            for (Element property : propertyElements) {
-                String name = property.getAttribute("name");
-                if (ContextEntity.ENTITY_CONTEXT_SERVICES.equals(name)) {
-                    return ParseUtils.parseArrays(provides.getAttribute("specifications"));
-                }
-            }
-        }
-        return NO_SPEC;
-    }
-
-    private boolean compare(String[] contextEntitySpecs, String[] providedServiceSpecs) {
-        for (String contextEntitySpec : contextEntitySpecs) {
-            boolean find = false;
-            for (String providedServiceSpec : providedServiceSpecs) {
-                if (contextEntitySpec.equals(providedServiceSpec)) {
-                    find = true;
-                    continue;
-                }
-            }
-            if (!find) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Lifecycle
-     */
 
     @Override
-    public synchronized void stop() {
-        for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
-            entry.getValue().tryDispose();
+    public void reconfigure(Dictionary configuration) {
+        for (RequiredFunctionalExtension extension : extensions) {
+            extension.reconfigure(configuration);
         }
-        myRequiredBehaviorById.clear();
     }
 
+    
     @Override
     public synchronized void start() {
-        /**Due to service controller issue we must create a controller Always on true for contextEntitySpec**/
-        createControllerForContextEntity(metadata, behaviorSpecs);
-
-        /**
-         * set allProvided service in order to create all the service controller link to behavior
-         */
-        ProvidedService providedService = getContextEntityProvidedService(metadata);
-        for (Map.Entry<String, RequiredFunctionalExtension> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()) {
-            requiredBehaviorEntry.getValue().setProvidedService(providedService);
+    	
+    	for (RequiredFunctionalExtension extension : extensions) {
+                extension.start();
         }
 
-        for (String mandatoryBehaviorId : mandatoryBehavior) {
-            myRequiredBehaviorById.get(mandatoryBehaviorId).tryStartExtension();
-        }
     }
 
-    /**
-     * Issue : behavior must be deactivate before instance become Invalid ...
-     */
     @Override
-    public synchronized void stateChanged(int newState) {
-        if (newState == ComponentInstance.VALID) {
-            for (Map.Entry<String, RequiredFunctionalExtension> behavior : myRequiredBehaviorById.entrySet()) {
-                behavior.getValue().tryStartExtension();
+    public void stop() {
+	
+    	for (RequiredFunctionalExtension extension : extensions) {
+            extension.stop();
+        }
+    }
+
+    public void dispose() {
+    	
+		for (RequiredFunctionalExtension extension : extensions) {
+            extension.dispose();
+        }
+        
+        extensions.clear();
+    }
+
+    @Override
+	public void stateChanged(ComponentInstance instance, int state) {
+		
+		if (state == ComponentInstance.DISPOSED) {
+			dispose();
+		}
+
+	}
+
+	public void attachExtension(RequiredFunctionalExtension extension, FunctionalExtensionInstanceManager extensionInstance) {
+		
+		for (org.apache.felix.ipojo.Handler handler : extensionInstance.getRegisteredHandlers()) {
+			if (handler instanceof FunctionalExtensionHandler) {
+				((FunctionalExtensionHandler) handler).attachCore(getInstanceManager());
+			}
+		}
+
+		for (org.apache.felix.ipojo.Handler handler : getInstanceManager().getRegisteredHandlers()) {
+			if (handler instanceof ExtensibleEntityHandler) {
+				((ExtensibleEntityHandler) handler).attachExtension(extensionInstance,extension.getSpecifications());
+			}
+		}
+
+	}
+
+	public void detachExtension(RequiredFunctionalExtension extension, FunctionalExtensionInstanceManager extensionInstance) {
+
+		for (org.apache.felix.ipojo.Handler handler : getInstanceManager().getRegisteredHandlers()) {
+			if (handler instanceof ExtensibleEntityHandler) {
+				((ExtensibleEntityHandler) handler).detachExtension(extensionInstance,extension.getSpecifications());
+			}
+		}
+		
+	}
+   
+    public void extensionStateChanged(RequiredFunctionalExtension extension, FunctionalExtensionInstanceManager extensionInstance, int extensionState) {
+    	
+        if (extension.isMandatory()) {
+        	
+        	boolean allMandatoryValid = true;
+        	
+            for (RequiredFunctionalExtension mandatory : extensions) {
+            	if (mandatory.isMandatory() && !mandatory.isValid()) {
+            		allMandatoryValid = false;
+            	}
             }
+
+            setValidity(allMandatoryValid);
         }
 
-        if (newState == ComponentInstance.INVALID) {
-            for (Map.Entry<String, RequiredFunctionalExtension> behavior : myRequiredBehaviorById.entrySet()) {
-                behavior.getValue().tryInvalid();
-            }
-        }
-    }
-
-    /**
-     * Method used in changeOn process, behavior lifecyle handler are registered as context listener of ContextEntity Handler
-     */
-
-    public void registerContextEntityContextListener(ContextListener contextListener, String[] properties) {
-        ContextSource handler = (ContextSource) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.ENTITY_HANDLER);
-        if (handler != null) {
-            handler.registerContextListener(contextListener, properties);
-        }
-    }
-
-    public void unregisterContextEntityContextListener(ContextListener contextListener) {
-        ContextSource handler = (ContextSource) getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.ENTITY_HANDLER);
-        if (handler != null) {
-            handler.unregisterContextListener(contextListener);
-        }
-    }
-
-
-    private ProvidedServiceHandler getProvideServiceHandler() {
-        return (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+    	/*
+    	 * Propagate extension's state change to other interested handlers
+    	 */
+		for (org.apache.felix.ipojo.Handler handler : getInstanceManager().getRegisteredHandlers()) {
+			if (handler instanceof ExtensibleEntityHandler) {
+				((ExtensibleEntityHandler) handler).extensionStateChanged(extensionInstance,extension.getSpecifications(),extensionState);
+			}
+		}
+        
     }
 
 
@@ -242,129 +195,57 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
      * FunctionalExtension factory tracking part
      */
 
-    @Bind(id = "behaviorF", specification = Factory.class, optional = true, proxy = false, aggregate = true, filter = "(" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY + "=" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE + ")")
-    public synchronized void bindBehaviorFactory(Factory behaviorFactory, Map prop) {
-        for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
-            String impl = (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
-            List<String> listOfSpec = getListOfFactoryProvideSpec(prop);
-
-            if (entry.getValue().tryToAddFactory(behaviorFactory, listOfSpec, impl)) {
-                entry.getValue().addManager();
-                if (getInstanceManager().getState() == ComponentInstance.VALID) {
-                    entry.getValue().tryStartExtension();
-                }
+    @Bind(id = "extension", specification = Factory.class, optional = true, proxy = false, aggregate = true, filter = "(" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY + "=" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE + ")")
+    public synchronized void bindExtensionFactory(Factory factory, Map prop) {
+        
+    	if (! (factory instanceof FunctionalExtensionFactory)) {
+    		return;
+    	}
+    	
+    	for (RequiredFunctionalExtension extension : extensions) {
+            
+    		String implementation 	= (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+            String[] specifications = (String[]) prop.get(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString());
+            
+            if (Arrays.asList(specifications).containsAll(extension.getSpecifications())) {
+            	extension.bindExtensionFactory(implementation,(FunctionalExtensionFactory) factory);
             }
         }
     }
 
 
-    @Unbind(id = "behaviorF")
-    public synchronized void unbindBehaviorFactory(Factory behaviorFactory, Map prop) {
-        for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
-            String impl = (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+    @Unbind(id = "extension")
+    public synchronized void unbindExtensionFactory(Factory factory, Map prop) {
+    	
+    	if (! (factory instanceof FunctionalExtensionFactory)) {
+    		return;
+    	}
 
-            entry.getValue().factoryDeparture(behaviorFactory,impl);
+        for (RequiredFunctionalExtension extension : extensions) {
+
+        	String implementation = (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+            
+            if (extension.isExtensionFactoryBound(implementation)) {
+            	extension.unbindExtensionFactory(implementation, (FunctionalExtensionFactory) factory);
+            }
 
         }
     }
 
-
-    protected List<String> getListOfFactoryProvideSpec(Map prop){
-        String[] specs = (String[]) prop.get(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString());
-
-
-        if (specs != null) {
-            return Arrays.asList(specs);
-        } else {
-            return Collections.emptyList();
-        }
-    }
     /**
      * Method Invocation Delegation, linked to context provided strategy
      */
 
-
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        for (Map.Entry<String, RequiredFunctionalExtension> behaviorEntry : myRequiredBehaviorById.entrySet()) {
-            Object returnObj = behaviorEntry.getValue().invoke(proxy, method, args);
+        for (RequiredFunctionalExtension extension : extensions) {
+            Object returnObj = extension.invoke(proxy, method, args);
             if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)) {
                 continue;
             }
             return returnObj;
         }
         return SuccessorStrategy.NO_FOUND_CODE;
-    }
-
-
-    /**
-     * Context Source Implementation, facade for requires handler, this method can be called before configure so a listener list must be keept !
-     */
-
-    @Override
-    public Object getProperty(String property) {
-        for (Map.Entry<String, RequiredFunctionalExtension> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()) {
-            Object prop = requiredBehaviorEntry.getValue().getProperty(property);
-            if (prop != null) {
-                return prop;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public Dictionary getContext() {
-        Map hashMap = new HashMap<>();
-        for (Map.Entry<String, RequiredFunctionalExtension> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()) {
-            hashMap.putAll((Map) requiredBehaviorEntry.getValue().getContext());
-        }
-        return new Hashtable<>(hashMap);
-    }
-
-    @Override
-    public void registerContextListener(ContextListener listener, String[] properties) {
-        listeners.put(listener, properties);
-        for (Map.Entry<String, RequiredFunctionalExtension> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()) {
-            requiredBehaviorEntry.getValue().registerContextListener(listener, properties);
-        }
-
-    }
-
-    @Override
-    public void unregisterContextListener(ContextListener listener) {
-        for (Map.Entry<String, RequiredFunctionalExtension> requiredBehaviorEntry : myRequiredBehaviorById.entrySet()) {
-            requiredBehaviorEntry.getValue().unregisterContextListener(listener);
-        }
-
-        listeners.remove(listener);
-    }
-
-    /**
-     * Context Listener Implem
-     */
-
-    /**
-     * FunctionalExtension State Listener Implementation
-     */
-
-    @Override
-    public void functionalExtensionStateChange(int state) {
-
-            if (checkRequiredBehavior()) {
-                setValidity(true);
-            }else {
-                setValidity(false);
-            }
-
-    }
-
-    private boolean checkRequiredBehavior() {
-        for (String mandatoryBehaviorId : mandatoryBehavior) {
-            if (!myRequiredBehaviorById.get(mandatoryBehaviorId).isValid()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -376,45 +257,6 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
         return new BehaviorHandlerDescription();
     }
 
-    /**
-     * TODO : maybe some value are not pushed in case of behavior is started and component not, maybe try to cache this value,
-     * or when component start perform an update of all value.
-     */
-    private class BehaviorEntityListener implements ContextListener {
-        @Override
-        public synchronized void update(ContextSource contextSource, String s, Object o) {
-
-            ProvidedServiceHandler providerHandler = getProvideServiceHandler();
-            if (providerHandler == null) {
-                return;
-            }
-
-            if (getInstanceManager().getState() != ComponentInstance.VALID) {
-                return;
-            }
-
-
-            if (o == null) {
-                Map<String, Object> propertyToRemove = new HashMap<>();
-                propertyToRemove.put(s, "");
-                if (stateVariable.contains(s)) {
-                    stateVariable.remove(s);
-                    getProvideServiceHandler().removeProperties(new Hashtable<>(propertyToRemove));
-                }
-                return;
-            }
-
-            Map<String, Object> property = new HashMap<>();
-            property.put(s, o);
-            if (stateVariable.contains(s)) {
-                providerHandler.reconfigure(new Hashtable<>(property));
-            } else {
-                stateVariable.add(s);
-                providerHandler.addProperties(new Hashtable<>(property));
-            }
-
-        }
-    }
 
     public class BehaviorHandlerDescription extends HandlerDescription {
 
@@ -425,39 +267,14 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
         @Override
         public Element getHandlerInfo() {
             Element element = super.getHandlerInfo();
-            for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
-                entry.getValue().getExtensionDescription(element);
+            
+            for (RequiredFunctionalExtension extension : extensions) {
+                extension.getDescription(element);
             }
+            
             return element;
         }
     }
 
-    @Override
-    public void reconfigure(Dictionary configuration) {
-        
-    	@SuppressWarnings("unchecked") Map<String,Object> config = (Map<String,Object>) configuration;
-        if(config.containsKey(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString())){
-            
-        	@SuppressWarnings("unchecked")Map<String,String> functionalExtensionConfiguration = 
-        			(Map<String, String>) config.get(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_RECONFIGURATION.toString());
-            
-        	String id = functionalExtensionConfiguration.get(FunctionalExtensionReference.ID_ATTRIBUTE_NAME.toString());
-            if (id == null){
-                return;
-            }
-            String implem = functionalExtensionConfiguration.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
-            RequiredFunctionalExtension functionalExtension = myRequiredBehaviorById.get(id);
-            if (functionalExtension != null ){
-                functionalExtension.tryFunctionalExtensionReconfiguration(implem);
-                 if (functionalExtension.isMandatory() || (getInstanceManager().getState() == ComponentInstance.VALID) ){
-                      functionalExtension.tryStartExtension();
-                  }
-            }
-        }
-
-        for (Map.Entry<String, RequiredFunctionalExtension> entry : myRequiredBehaviorById.entrySet()) {
-            entry.getValue().propagateReconfigure(configuration);
-        }
-    }
 
 }

@@ -173,8 +173,11 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
         	
             String stateId = paramToReconfigure.getKey();
             
-            ContextStateHandler.PeriodicTask pullTask = pullTasks.get(stateId);
+            if (! isConfigured(stateId)) {
+            	continue;
+            }
             
+            ContextStateHandler.PeriodicTask pullTask = pullTasks.get(stateId);
             if (pullTask == null) {
                 LOG.warn("Cannot reconfigure state :" + paramToReconfigure.getKey() + " cause : no pull function available");
                 continue;
