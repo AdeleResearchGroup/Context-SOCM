@@ -74,7 +74,7 @@
         <maven-compiler-plugin>3.5.1</maven-compiler-plugin>
         <maven-surefire-plugin>2.19.1</maven-surefire-plugin>
         <maven-javadoc-plugin>2.10.4</maven-javadoc-plugin>
-        <webdavPluginVersion>2.2</webdavPluginVersion>
+        <wagon-ssh-plugin>3.0.0</wagon-ssh-plugin>
  
 
         <!-- Sonar -->
@@ -396,8 +396,8 @@
        <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav-jackrabbit</artifactId>
-                <version>${webdavPluginVersion}</version>
+                <artifactId>wagon-ssh</artifactId>
+                <version>${wagon-ssh-plugin}</version>
             </extension>
        </extensions>
  
@@ -415,9 +415,9 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>socm-deploy-cloudbees-snapshot</id>
-            <name>iCasa Cloudbees Snapshot Private Repository</name>
-            <url>dav:https://repository-icasa.forge.cloudbees.com/socm</url>
+            <id>adele-icasa-socm</id>
+            <name>iCasa SOCM Private Repository</name>
+            <url>http://adele.imag.fr/repository/icasa/socm</url>
         </snapshotRepository>
     </distributionManagement>
 
