@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Component(immediate = true)
 @Instantiate
@@ -24,7 +25,7 @@ public class AdministrationCommand {
      * Defines the functions (commands).
      */
     @ServiceProperty(name = "osgi.command.function", value = "{}")
-    String[] m_function = new String[]{"contextEntities","contextEntity"};
+    String[] m_function = new String[]{"contextEntities","contextEntity","reconfigureSynchronisationFrequency","reconfigureFunctionalExtension","creamAdminHelp"};
 
     private static final Logger LOG = LoggerFactory.getLogger(AdministrationCommand.class);
 
@@ -51,7 +52,7 @@ public class AdministrationCommand {
         }
     }
 
-    @Descriptor("Get a description of a particular context entity")
+    @Descriptor("Get a description of a given context entity")
     public void contextEntity(@Descriptor("contextEntity") String... handleId) {
         try {
             if (handleId == null || handleId.length == 0){
@@ -127,4 +128,88 @@ public class AdministrationCommand {
         }
     }
 
+    @Descriptor("Reconfigure a functional extension for a given context entity")
+    public void reconfigureFunctionalExtension(@Descriptor("reconfigureFunctionalExtension") String... handleId) {
+        try {
+
+            if (handleId == null || handleId.length != 3){
+                System.out.println("Error : you must provide three parameter {contextEntityId}, {functionalExtensionId} and {FunctionalExtensionNewClassname}");
+                return;
+            }
+
+            administrationService.reconfigureContextEntityComposition(handleId[0],handleId[1],handleId[2]);
+
+        }catch (Exception e){
+            LOG.error("exception occurs during command execution",e);
+        }
+    }
+
+    @Descriptor("Reconfigure the synchronisation frequency of a given state variable of a given context entity")
+    public void reconfigureSynchronisationFrequency(@Descriptor("reconfigureSynchronisationFrequency") String... handleId) {
+        try {
+
+            if (handleId == null || handleId.length != 4){
+                System.out.println("Error : you must provide three parameter {contextEntityId}, {contextStateId}, {newFrequency} and {newUnit}");
+                return;
+            }
+
+            administrationService.reconfigureContextEntityFrequency(handleId[0],handleId[1],Long.valueOf(handleId[2]), TimeUnit.valueOf(handleId[3]));
+
+        }catch (Exception e){
+            LOG.error("exception occurs during command execution",e);
+        }
+    }
+
+    @Descriptor("Show help about cream-admin command")
+    public void creamAdminHelp(@Descriptor("creamAdminHelp") String... handleId) {
+        try {
+            System.out.print("\tCommand name: contextEntities");
+            System.out.println("");
+            System.out.print("\t\tDescription : Get a list of all context entities");
+            System.out.println("");
+            System.out.println("");
+
+            System.out.print("\tCommand name: contextEntity");
+            System.out.println("");
+            System.out.print("\t\tDescription : Get a description of a given context entity");
+            System.out.println("");
+            System.out.print("\t\tParameters : ");
+            System.out.println("");
+            System.out.print("\t\t\t{ContextEntityId} : Id of a context entity");
+            System.out.println("");
+            System.out.println("");
+
+            System.out.print("\tCommand name: reconfigureFunctionalExtension");
+            System.out.println("");
+            System.out.print("\t\tDescription : Reconfigure a functional extension for a given context entity");
+            System.out.println("");
+            System.out.print("\t\tParameters : ");
+            System.out.println("");
+            System.out.print("\t\t\t{ContextEntityId} : Id of a context entity");
+            System.out.println("");
+            System.out.print("\t\t\t{FunctionalExtensionId} : Id of the functional entity to reconfigure");
+            System.out.println("");
+            System.out.print("\t\t\t{FunctionalExtensionNewClassname} : Classname of the new functional extension");
+            System.out.println("");
+            System.out.println("");
+
+            System.out.print("\tCommand name: reconfigureSynchronisationFrequency");
+            System.out.println("");
+            System.out.print("\t\tDescription : Reconfigure the synchronisation frequency of a given state variable of a given context entity");
+            System.out.println("");
+            System.out.print("\t\tParameters : ");
+            System.out.println("");
+            System.out.print("\t\t\t{ContextEntityId} : Id of a context entity");
+            System.out.println("");
+            System.out.print("\t\t\t{contextStateId} : Id of the state variable to reconfigure");
+            System.out.println("");
+            System.out.print("\t\t\t{newFrequency} : New frequency duration");
+            System.out.println("");
+            System.out.print("\t\t\t{newUnit} : New frequency unit");
+            System.out.println("");
+
+        }catch (Exception e){
+            LOG.error("exception occurs during command execution",e);
+        }
+    }
 }
