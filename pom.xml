@@ -417,7 +417,7 @@
         <snapshotRepository>
             <id>adele-icasa-socm</id>
             <name>iCasa SOCM Private Repository</name>
-            <url>http://adele.imag.fr/repository/icasa/socm</url>
+            <url>scp://adele.imag.fr/repository/icasa/socm</url>
         </snapshotRepository>
     </distributionManagement>
 
