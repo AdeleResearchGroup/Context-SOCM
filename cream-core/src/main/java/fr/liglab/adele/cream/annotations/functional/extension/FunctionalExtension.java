@@ -7,9 +7,9 @@ import java.lang.annotation.*;
 @Repeatable(FunctionalExtensions.class)
 public @interface FunctionalExtension {
 
-    Class[] contextServices();
+    Class<?> [] contextServices();
 
-    Class implementation();
+    Class<?> implementation();
 
     String id();
 

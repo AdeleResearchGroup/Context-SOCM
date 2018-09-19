@@ -16,17 +16,17 @@ public class InstanceDeclaration {
     /**
      * The name of the instance
      */
-    protected final String name;
+    private final String name;
 
     /**
      * The configuration used to instantiate the component
      */
-    protected final Dictionary<String, Object> configuration;
+    private final Dictionary<String, Object> configuration;
 
     /**
      * The created instance
      */
-    protected ComponentInstance instance;
+    private ComponentInstance instance;
 
     /**
      * Creates a new instance declaration woth the given configuration
@@ -63,6 +63,12 @@ public class InstanceDeclaration {
             }
         }
     }
+
+    @SuppressWarnings("unchecked")
+	protected <E> E getEntity() {
+        return isInstantiated() ? (E) ((InstanceManager) this.instance).getPojoObject(): null;
+    }
+
 
     /**
      * Destroys this item

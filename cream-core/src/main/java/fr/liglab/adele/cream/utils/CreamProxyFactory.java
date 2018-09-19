@@ -37,7 +37,7 @@ public class CreamProxyFactory extends ClassLoader {
      * @param clazz the service specification to proxy
      * @return the Class object of the proxy.
      */
-    protected Class getProxyClass(Class clazz) {
+    protected Class<?> getProxyClass(Class<?> clazz) {
         byte[] clz = CreamProxyGenerator.dump(clazz, manager.getInstanceName()); // Generate the proxy.
         // Turn around the VM changes (FELIX-2716) about java.* classes.
         String cn = clazz.getName();
@@ -47,10 +47,10 @@ public class CreamProxyFactory extends ClassLoader {
         return defineClass(cn + "$$Proxy" + manager.getInstanceName().hashCode(), clz, 0, clz.length);
     }
 
-    public Object getProxy(Class spec) {
+    public Object getProxy(Class<?> spec) {
         try {
-            Class clazz = getProxyClass(spec);
-            Constructor constructor = clazz.getConstructor();
+            Class<?> clazz = getProxyClass(spec);
+            Constructor<?> constructor = clazz.getConstructor();
             return constructor.newInstance();
         } catch (Exception e) {
             LOG.error("error during proxy generation", e);
@@ -69,7 +69,7 @@ public class CreamProxyFactory extends ClassLoader {
      * @see java.lang.ClassLoader#loadClass(java.lang.String)
      */
     @Override
-    public Class loadClass(String name) throws ClassNotFoundException {
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
         try {
             return manager.getContext().getBundle().loadClass(name);
         } catch (ClassNotFoundException e) {

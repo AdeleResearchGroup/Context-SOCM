@@ -21,11 +21,14 @@ public class FunctionalExtensionStateHandler extends ContextStateHandler impleme
 
 	private static final String QUALIFIED_ID = HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER;
 
-    public static FunctionalExtensionStateHandler forInstance(InstanceManager instance) {
+    /**
+     * Given an iPOJO extension instance with the entity handler attached, return the associated context entity
+     */
+    public static ContextStateHandler forInstance(InstanceManager instance) {
         return instance != null ? (FunctionalExtensionStateHandler) instance.getHandler(QUALIFIED_ID) : null;
     }
 
-    /**
+     /**
      * The Wisdom Scheduler used to handle periodic tasks
      */
     @Requires(id = "scheduler", proxy = false, optional = false)
@@ -39,13 +42,6 @@ public class FunctionalExtensionStateHandler extends ContextStateHandler impleme
     @Override
     public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
         super.configure(element, dictionary, HandlerReference.NAMESPACE, HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
-    }
-
-    /**
-     * Given an iPOJO instance with the entity handler attached, return the associated context entity
-     */
-    public static ContextStateHandler getStateHandler(InstanceManager instance) {
-        return instance != null ? (ContextStateHandler) instance.getHandler(QUALIFIED_ID) : null;
     }
 
 }

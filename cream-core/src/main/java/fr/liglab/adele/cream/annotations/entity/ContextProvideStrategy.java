@@ -128,7 +128,7 @@ public class ContextProvideStrategy extends CreationStrategy {
             String nativeMethodCode = belongToObjectMethod(method, args);
             if (!NONE_OBJECT_METHOD_CALL.equals(nativeMethodCode)) {
                 if (EQUALS_METHOD_CALL.equals(nativeMethodCode)) {
-                    return pojo.equals(args[0]);
+                    return proxy == args[0] || pojo.equals(args[0]);
                 } else if (HASHCODE_METHOD_CALL.equals(nativeMethodCode)) {
                     return pojo.hashCode();
                 } else if (TOSTRING_METHOD_CALL.equals(nativeMethodCode)) {

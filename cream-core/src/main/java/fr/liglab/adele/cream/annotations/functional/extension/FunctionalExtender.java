@@ -9,11 +9,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FunctionalExtender {
 
-    Class[] contextServices();
+    Class<?> [] contextServices();
 
     @Target(ElementType.METHOD)
     @interface ChangeOn {
-        Class contextService();
+    	
+        Class<?> contextService();
 
         String id();
     }

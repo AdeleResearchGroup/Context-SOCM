@@ -1,6 +1,5 @@
 package fr.liglab.adele.cream.model.introspection;
 
-import fr.liglab.adele.cream.annotations.provider.OriginEnum;
 
 import java.util.Set;
 
@@ -10,7 +9,9 @@ public interface EntityProvider {
 
     Set<String> getProvidedEntities();
 
-    OriginEnum getOrigin(String entity);
+    Set<String> getProvidedServices(String entity);
+
+    Set<String> getInstances(String entity);
 
     boolean isEnabled(String entity);
 
@@ -18,15 +19,4 @@ public interface EntityProvider {
 
     boolean disable(String entity);
 
-    Set<String> getInstances(String entity, boolean includePending);
-
-    boolean deleteInstances(String entity, boolean onlyPending);
-
-    Set<String> getPotentiallyProvidedEntityServices(String entity);
-
-    Set<String> getPotentiallyProvidedEntityServices();
-
-    Set<String> getPotentiallyRequiredServices(String entity);
-
-    Set<String> getPotentiallyRequiredServices();
 }

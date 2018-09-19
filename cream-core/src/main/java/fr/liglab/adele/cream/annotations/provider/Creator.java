@@ -2,8 +2,7 @@ package fr.liglab.adele.cream.annotations.provider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
-import java.util.Collections;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -21,27 +20,16 @@ public interface Creator {
 
         public static final String NO_PARAMETER = "";
 
-
 		String value() default NO_PARAMETER;
 
-		OriginEnum origin() default OriginEnum.internal;
-
-		Class[] requirements() default {};
 	}
 
-	public interface Requirements{
-		public Set<String> getRequirements();
-	}
 
     /**
      * Annotation to allow using creators with dynamically created factories
      */
     @Target(ElementType.FIELD)
     public @interface Dynamic {
-
-        OriginEnum origin() default OriginEnum.internal;
-
-        Class[] requirements() default {};
     }
 
     /**
@@ -51,29 +39,25 @@ public interface Creator {
      */
     public interface Entity<E> {
 
-        public Set<String> getInstances();
-
-        /**
-         * Return the created instance of the context entity
-         * <p>
-         * TODO should return a Future because if the creator is disabled the actual instance
-         * may not be available
-         */
-        public E getInstance(String id);
-
-        /**
-         * Creates a new instance of the context entity
-         * <p>
-         * TODO If there are errors at instantiation, and the creator is disabled how to notify
-         * the client?
-         */
         public void create(String id, Map<String, Object> initialization);
 
-        public void create(String id);
+        public default void create(String id) {
+        	create(id,null);
+    	}
+
+        public Set<String> identifiers();
+        
+        public E getInstance(String id);
+        
+        public String id(E entity);
 
         public void delete(String id);
 
-        public void deleteAll();
+        public default void deleteAll() {
+        	for (String id : identifiers()) {
+				delete(id);
+			}
+        }
     }
 
     /**
@@ -84,33 +68,42 @@ public interface Creator {
      */
     public interface Relation<S, T> {
 
-        public Set<String> getInstances();
+        public void link(S source, T target);
 
-        public fr.liglab.adele.cream.model.Relation getInstance(String id);
+        public boolean isLinked(S source, T target);
 
-        public List<fr.liglab.adele.cream.model.Relation> getInstancesRelatedTo(String sourceId);
+        public void unlink(S source, T target);
 
-        public List<fr.liglab.adele.cream.model.Relation> getInstancesRelatedTo(S source);
+        public void unlinkOutgoing(S source);
 
-        public String create(S source, T target);
+        public void unlinkIncoming(T target);
 
-        public String create(String sourceId, String targetId);
+        
+        public void link(String source, T target);
 
-        public String create(S source, String targetId);
+        public void link(S source, String target);
 
-        public String create(String sourceId, T target);
+        public void link(String source, String target);
 
-        public void delete(S source, T target);
 
-        public void delete(String sourceId, String targetId);
+        public void unlink(String source, T target);
 
-        public void delete(S source, String targetId);
+        public void unlink(S source, String target);
 
-        public void delete(String sourceId, T target);
+        public void unlink(String source, String target);
 
-        void delete(String id);
+        
+        public void unlinkOutgoing(String source);
 
-        void deleteAll();
+        public void unlinkIncoming(String target);
+        
+        
+        public boolean isLinked(String source, T target);
+
+        public boolean isLinked(S source, String target);
+
+        public boolean isLinked(String source, String target);
+
 
     }
 }

@@ -29,7 +29,7 @@ public class CreamProxyGenerator implements Opcodes {
         //To hide the public constructor
     }
 
-    public static byte[] dump(Class spec, String uniqueId) {
+    public static byte[] dump(Class<?> spec, String uniqueId) {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS); // use compute max to automaticali compute the max stack size and the max of local variables of a method
 
         String specName = Type.getInternalName(GeneratedDelegatorProxy.class);
@@ -114,7 +114,7 @@ public class CreamProxyGenerator implements Opcodes {
         mv.visitEnd(); // visit end
     }
 
-    private static void addCallerMethod(ClassWriter cw, String className, Class specToDelegate) {
+    private static void addCallerMethod(ClassWriter cw, String className, Class<?> specToDelegate) {
 
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "delegate", "(I[Ljava/lang/Object;)Ljava/lang/Object;", null, new String[]{"java/lang/Throwable"});
 
@@ -169,7 +169,7 @@ public class CreamProxyGenerator implements Opcodes {
         return;
     }
 
-    private static void generateDelegator(MethodVisitor mv, String generatedClassName, Class specToDelegate, Method method) {
+    private static void generateDelegator(MethodVisitor mv, String generatedClassName, Class<?> specToDelegate, Method method) {
         org.objectweb.asm.commons.Method asmMethod = org.objectweb.asm.commons.Method.getMethod(method);
         String interfaceName = Type.getInternalName(specToDelegate);
         mv.visitVarInsn(ALOAD, 0);
@@ -177,10 +177,10 @@ public class CreamProxyGenerator implements Opcodes {
         mv.visitFieldInsn(GETFIELD, generatedClassName, POJO, POJO_TYPE);
         mv.visitTypeInsn(CHECKCAST, interfaceName);
 
-        Class[] parametersClass = method.getParameterTypes();
+        Class<?>  parametersClass [] = method.getParameterTypes();
         int i = 0;
 
-        for (Class paramClass : parametersClass) {
+        for (Class<?> paramClass : parametersClass) {
             mv.visitVarInsn(ALOAD, 2);
             pushArgsOnStack(mv, i);
             mv.visitInsn(AALOAD);
@@ -220,7 +220,7 @@ public class CreamProxyGenerator implements Opcodes {
     }
 
 
-    private static void checkCast(MethodVisitor mv, Class paramClass) {
+    private static void checkCast(MethodVisitor mv, Class<?> paramClass) {
         Type paramType = Type.getType(paramClass);
         if (Type.INT_TYPE.equals(paramType)) {
             mv.visitTypeInsn(CHECKCAST, INTEGER);
@@ -251,7 +251,7 @@ public class CreamProxyGenerator implements Opcodes {
         }
     }
 
-    private static void boxReturn(MethodVisitor mv, Class paramClass) {
+    private static void boxReturn(MethodVisitor mv, Class<?> paramClass) {
         Type paramType = Type.getType(paramClass);
         if (Type.INT_TYPE.equals(paramType)) {
             mv.visitMethodInsn(INVOKESTATIC, INTEGER, VALUE_OF_METHOD, "(I)Ljava/lang/Integer;", false);
