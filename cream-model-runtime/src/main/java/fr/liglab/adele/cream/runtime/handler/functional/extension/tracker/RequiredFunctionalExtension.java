@@ -132,7 +132,7 @@ public class RequiredFunctionalExtension implements InvocationHandler, FieldInte
 	}
 
     public synchronized boolean isValid() {
-        return extension != null ? extension.getState() == ComponentInstance.VALID : false ;
+        return extension != null && extension.getState() == ComponentInstance.VALID;
     }
 
     public Dictionary<?,?> getContext() {
@@ -252,12 +252,17 @@ public class RequiredFunctionalExtension implements InvocationHandler, FieldInte
         return extension != null ? extension.getPojoObject() : null;
 	}
 
+	
     @Override
-    public synchronized Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (extension != null && extension.isStarted()) {
-            return extension.getInvocationHandler().invoke(proxy, method, args);
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    	
+    	InvocationHandler handler = null;
+    	
+        synchronized (this) {
+            handler = extension != null && extension.isStarted() ? extension.getInvocationHandler() : null;
         }
-        return SuccessorStrategy.NO_FOUND_CODE;
+
+        return handler != null ? handler.invoke(proxy, method, args) : SuccessorStrategy.NO_FOUND_CODE;
     }
 
 
