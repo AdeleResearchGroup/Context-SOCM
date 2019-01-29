@@ -7,7 +7,9 @@ import java.lang.reflect.Member;
 
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -193,11 +195,69 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
         }
     }
 
+    /**
+     * This class keeps track of the states that have changed after a pull, and that are in process of being notified to listeners.
+     * 
+     * It is used to avoid reentrant pulling, as it may lead to an infinite cascade of notifications if the listener of the notification
+     * request the value of the state again and it changes at every invocation (as is the case for temporal measurements). 
+     *  
+     */
+    private class PullHistory extends ThreadLocal<Set<String>> {
+    	
+    	public boolean inProgress(String state) {
+    		
+    		Set<String> processing = get(); 
+    		return processing != null && processing.contains(state);
+    	}
+    	
+    	public void startProcessing(String state) {
+    		
+    		Set<String> processing = get();
+    		
+    		if (processing == null) {
+    			processing = new HashSet<>();
+    			set(processing);
+    		}
+    		
+    		processing.add(state);
+    	}
+    	
+    	public void endProcessing(String state) {
+    		
+    		Set<String> processing = get();
+    		processing.remove(state);
+    		
+    		if (processing.isEmpty()) {
+    			remove();
+    		}
+    	}
+    }
+
+     private PullHistory pullHistory = new PullHistory();
+    
+    /**
+     * Pulls a new value using the specified function, and update the cached state.
+     * 
+     */
     private void pull(Object pojo, String state) {
-    	Function<Object, Object> pullFunction = pullFunctions.get(state);
-        if (pullFunction != null) {
-        	stateHandler.update(state, pullFunction.apply(pojo));
-        }
+    	
+    	if (pullHistory.inProgress(state)) {
+    		return;
+    	}
+
+    	try {
+
+    		pullHistory.startProcessing(state);
+
+    		Function<Object, Object> pullFunction = pullFunctions.get(state);
+	        if (pullFunction != null) {
+	            stateHandler.update(state, pullFunction.apply(pojo));
+	        }
+    	}
+    	finally {
+    		pullHistory.endProcessing(state);
+    	}
+
     }
 
     private void pull(InstanceManager instance, String state) {
