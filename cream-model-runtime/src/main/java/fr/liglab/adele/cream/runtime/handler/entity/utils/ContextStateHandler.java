@@ -79,6 +79,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      */
     protected final Map<ContextListener, List<String>> contextSourceListeners = new HashMap<>();
  
+    
     /**
      * Handler Configuration
      **/
@@ -237,7 +238,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     /**
      * Updates the value of a state property, notifying the context listeners
      */
-    protected void update(String stateId, Object value) {
+    protected void update(Optional<? extends StateInterceptor.Context> extra, String stateId, Object value) {
 
         if (stateId == null && !stateIds.contains(stateId)) {
             return;
@@ -258,7 +259,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             stateValues.remove(stateId);
         }
 
-        notifyContextListeners(stateId, oldValue, value);
+        notifyContextListeners(extra, stateId, oldValue, value);
     }
 
     /**
@@ -266,7 +267,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      */
     private void reset() {
     	for (String state : stateIds) {
-       		update(state,configuredValues.get(state));
+       		update(Optional.empty(), state, configuredValues.get(state));
 		}
     }
 
@@ -346,11 +347,18 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     /**
      * Notify All the context listeners of a state change
      */
-    protected void notifyContextListeners(String property, Object oldValue, Object value) {
+    protected <C extends StateInterceptor.Context> void notifyContextListeners(Optional<C> extra, String property, Object oldValue, Object value) {
     	
-        for (Map.Entry<ContextListener, List<String>> listener : contextSourceListeners.entrySet()) {
-            if (listener.getValue() == null || listener.getValue().contains(property)) {
-                listener.getKey().update(this, property, value);
+        for (Map.Entry<ContextListener, List<String>> listenerRegistration : contextSourceListeners.entrySet()) {
+            if (listenerRegistration.getValue() == null || listenerRegistration.getValue().contains(property)) {
+            	ContextListener listener = listenerRegistration.getKey();
+            	
+            	if (listener instanceof StateInterceptor.Listener) {
+               		((StateInterceptor.Listener)listener).update(this, extra, property, value);
+            	}
+            	else {
+               		listener.update(this, property, value);
+            	}
             }
         }
     }
@@ -547,7 +555,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
          */
         public synchronized void stop() {
             if (taskHandle != null) {
-                taskHandle.cancel(true);
+                taskHandle.cancel(false);
                 taskHandle = null;
             }
         }

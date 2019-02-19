@@ -27,4 +27,5 @@ public abstract class FunctionalExtensionBaseCommonConfig extends ContextBaseTes
     public boolean deployTestBundle() {
         return true;
     }
+    
 }

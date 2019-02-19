@@ -9,6 +9,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -107,7 +108,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
                 return supplier.get();
             });
             
-            pullTasks.put(stateId, stateHandler.schedule(stateId, this::pull, period, unit));
+            pullTasks.put(stateId, stateHandler.schedule(stateId, this::periodic, period, unit));
 
         }
 
@@ -197,72 +198,88 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
     }
 
     /**
-     * This class keeps track of the states that have changed after a pull, and that are in process of being notified to listeners.
+     * The kind of notification
+     *
+     */
+    public enum NotificationKind implements StateInterceptor.Context {
+    	PUSH,
+    	PULL,
+    	PERIODIC;
+    } 
+
+    /**
+     * This class notifies the state handler and its listeners of an update of a field (due to a pull/push access)
      * 
-     * It is used to avoid reentrant pulling, as it may lead to an infinite cascade of notifications if the listener of the notification
-     * request the value of the state again and it changes at every invocation (as is the case for temporal measurements). 
+     * It keeps a history of notifications to avoid reentrant pulling, as it may lead to an infinite cascade of notifications if the
+     * listener of the notification request the value of the state again and it changes at every invocation (as is the case for 
+     * continuous temporal measurements). 
      *  
      */
-    private class PullHistory extends ThreadLocal<Set<String>> {
+    private class Notifier extends ThreadLocal<Set<String>> {
     	
-    	public boolean inProgress(String state) {
-    		
-    		Set<String> processing = get(); 
-    		return processing != null && processing.contains(state);
+    	public void update(String state, Supplier<Object> value, NotificationKind kind) {
+
+        	if (inProgress(state)) {
+        		return;
+        	}
+
+        	try {
+        		startNotification(state);
+   	            stateHandler.update(Optional.ofNullable(kind),state,value.get());
+        	}
+        	finally {
+        		endNotification(state);
+        	}
+
     	}
-    	
-    	public void startProcessing(String state) {
+
+    	private boolean inProgress(String state) {
+    		Set<String> notifying = get(); 
+    		return notifying != null && notifying.contains(state);
+    	}
+
+    	private void startNotification(String state) {
     		
-    		Set<String> processing = get();
+    		Set<String> notifying = get();
     		
-    		if (processing == null) {
-    			processing = new HashSet<>();
-    			set(processing);
+    		if (notifying == null) {
+    			notifying = new HashSet<>();
+    			set(notifying);
     		}
     		
-    		processing.add(state);
+    		notifying.add(state);
     	}
     	
-    	public void endProcessing(String state) {
+    	private void endNotification(String state) {
     		
-    		Set<String> processing = get();
-    		processing.remove(state);
+    		Set<String> notifying = get();
+    		notifying.remove(state);
     		
-    		if (processing.isEmpty()) {
+    		if (notifying.isEmpty()) {
     			remove();
     		}
     	}
     }
 
-     private PullHistory pullHistory = new PullHistory();
-    
+    private Notifier notifier = this.new Notifier();
+
+     
     /**
      * Pulls a new value using the specified function, and update the cached state.
      * 
      */
     private void pull(Object pojo, String state) {
-    	
-    	if (pullHistory.inProgress(state)) {
-    		return;
-    	}
-
-    	try {
-
-    		pullHistory.startProcessing(state);
-
-    		Function<Object, Object> pullFunction = pullFunctions.get(state);
-	        if (pullFunction != null) {
-	            stateHandler.update(state, pullFunction.apply(pojo));
-	        }
-    	}
-    	finally {
-    		pullHistory.endProcessing(state);
-    	}
-
+ 		Function<Object, Object> pullFunction = pullFunctions.get(state);
+        if (pullFunction != null) {
+            notifier.update(state, () -> pullFunction.apply(pojo), NotificationKind.PULL);
+        }
     }
 
-    private void pull(InstanceManager instance, String state) {
-    	pull(instance.getPojoObject(),state);
+    private void periodic(InstanceManager instance, String state) {
+ 		Function<Object, Object> pullFunction = pullFunctions.get(state);
+        if (pullFunction != null) {
+            notifier.update(state, () -> pullFunction.apply(instance.getPojoObject()), NotificationKind.PERIODIC);
+        }
     }
 
     private void apply(Object pojo, String state, Object value) {
@@ -274,7 +291,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
     }
 
     private void push(Object pojo, String state, Object value) {
-   		stateHandler.update(state,value);
+   		notifier.update(state, () -> value, NotificationKind.PUSH);
     }
     
     @Override

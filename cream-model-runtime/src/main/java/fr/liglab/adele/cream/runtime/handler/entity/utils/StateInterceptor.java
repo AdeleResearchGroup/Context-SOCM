@@ -1,11 +1,13 @@
 package fr.liglab.adele.cream.runtime.handler.entity.utils;
 
-
 import org.apache.felix.ipojo.ConfigurationException;
+import org.apache.felix.ipojo.ContextListener;
+import org.apache.felix.ipojo.ContextSource;
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.apache.felix.ipojo.metadata.Element;
 
 import java.util.Dictionary;
+import java.util.Optional;
 
 /**
  * This is the base class for all interceptors that are charged to handle the instrumentation
@@ -40,4 +42,27 @@ public interface StateInterceptor extends FieldInterceptor {
      */
     public void getInterceptorInfo(String stateId, Element stateDescription);
 
+    /**
+     * This class represents some additional information to pass from the interceptor to specialized context listeners
+     */
+    public interface Context {
+    	
+    }
+    
+    /**
+     * This class represent an specialized context listener that can handle additional information from the interceptor
+     */
+    public interface Listener extends ContextListener {
+    	
+    	@Override
+    	public default void update(ContextSource source, String property, Object value) {
+    		update(source,Optional.empty(),property,value);
+    	}
+
+        /**
+         * A monitored value has been modified by the specified state interceptor
+         */
+		public void update(ContextSource source, Optional<? extends StateInterceptor.Context> extra, String property, Object value);
+
+    }
 }

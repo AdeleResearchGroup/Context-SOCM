@@ -9,7 +9,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 @FunctionalExtension(id = "behavior1", implementation = FunctionalExtenderImpl1.class, contextServices = ExtensionSpec1.class)
 public class ContextEntityImpl {
 
-    @Requires(filter = "(state=${extensionspec1.state})", optional = true)
-    FakeService service;
+    @Requires(id="context", filter = "(state=${extensionspec1.state})", optional = true)
+    private FakeService service;
 
 }

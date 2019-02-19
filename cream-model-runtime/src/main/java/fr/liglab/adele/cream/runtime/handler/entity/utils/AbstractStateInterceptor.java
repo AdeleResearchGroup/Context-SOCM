@@ -8,6 +8,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -77,7 +78,7 @@ public abstract class AbstractStateInterceptor implements StateInterceptor {
 
     @Override
     public void onSet(Object pojo, String fieldName, Object value) {
-    	stateHandler.update(getStateForField(fieldName),value);
+    	stateHandler.update(Optional.empty(), getStateForField(fieldName),value);
     }
 
     @Override

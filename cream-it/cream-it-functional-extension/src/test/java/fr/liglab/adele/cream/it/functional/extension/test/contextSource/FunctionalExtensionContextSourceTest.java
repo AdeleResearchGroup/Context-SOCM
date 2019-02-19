@@ -26,11 +26,14 @@ import fr.liglab.adele.cream.it.functional.extension.contextSource.ContextEntity
 import fr.liglab.adele.cream.it.functional.extension.contextSource.ExtensionSpec1;
 import fr.liglab.adele.cream.it.functional.extension.test.FunctionalExtensionBaseCommonConfig;
 import fr.liglab.adele.cream.testing.helpers.FunctionalExtensionHelper;
+
 import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.handlers.dependency.DependencyDescription;
+import org.apache.felix.ipojo.handlers.dependency.DependencyHandlerDescription;
+
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
@@ -43,20 +46,20 @@ public class FunctionalExtensionContextSourceTest extends FunctionalExtensionBas
     public void testBehaviorAsIPOJOsource() throws MissingHandlerException, UnacceptableConfiguration, ConfigurationException {
         ComponentInstance instance = createEntityWithBehaviorChangeOn();
         ExtensionSpec1 serviceObj1 = osgiHelper.waitForService(ExtensionSpec1.class, null, ((long) 2000));
-        assertThat(extractStateFilter(instance)).isEqualTo("${" + ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE) + "}");
+        assertThat(getFilter(instance,"context")).isEqualTo("(state=${" + ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE) + "})");
 
         serviceObj1.setValue("value1");
-        assertThat(extractStateFilter(instance)).isEqualTo("value1");
+        assertThat(getFilter(instance,"context")).isEqualTo("(state=value1)");
 
         serviceObj1.setValue("value2");
-        assertThat(extractStateFilter(instance)).isEqualTo("value2");
+        assertThat(getFilter(instance,"context")).isEqualTo("(state=value2)");
 
 
         FunctionalExtensionHelper functionalExtensionHelper = contextHelper.getFunctionalExtensionHelper();
         Assertions.assertThat(functionalExtensionHelper.getFunctionalExtension(instance, "behavior1")).isNotNull();
         functionalExtensionHelper.stopFunctionalExtension(instance, "behavior1");
 
-        assertThat(extractStateFilter(instance)).isEqualTo("${" + ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE) + "}");
+        assertThat(getFilter(instance,"context")).isEqualTo("(state=${" + ContextEntity.State.id(ExtensionSpec1.class, ExtensionSpec1.EXTENSION_STATE) + "})");
     }
 
 
@@ -65,16 +68,15 @@ public class FunctionalExtensionContextSourceTest extends FunctionalExtensionBas
     }
 
 
-    private String extractStateFilter(ComponentInstance instance) {
-        HandlerDescription description = instance.getInstanceDescription().getHandlerDescription(HandlerFactory.IPOJO_NAMESPACE + ":requires");
-        Element element = description.getHandlerInfo();
+    private String getFilter(ComponentInstance instance, String id) {
+        
+    	DependencyHandlerDescription requires = (DependencyHandlerDescription) instance.getInstanceDescription().getHandlerDescription(HandlerFactory.IPOJO_NAMESPACE + ":requires");
+        for (DependencyDescription dependency : requires.getDependencies()) {
+        	if (id.equals(dependency.getId())) {
+        		return dependency.getFilter();
+        	}
+		}
 
-        for (Element requiresElement : element.getElements()) {
-            String filter = requiresElement.getAttribute("filter");
-            if (filter != null) {
-                return filter.substring(7, filter.length() - 1);
-            }
-        }
         return null;
     }
 }
