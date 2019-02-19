@@ -1,10 +1,13 @@
 package fr.liglab.adele.cream.ipojo.module;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
-import fr.liglab.adele.cream.annotations.entity.StrategyReference;
+import fr.liglab.adele.cream.annotations.entity.ContextProvideStrategy;
+
 import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtension;
+
 import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.ParseUtils;
@@ -20,7 +23,7 @@ public abstract class AbstractFunctionalExtensionProcessor<A extends Annotation>
 
     protected static final String BEHAVIOR_ELEMENT = HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER;
 
-    protected AbstractFunctionalExtensionProcessor(Class annotationType, ClassLoader classReferenceLoader) {
+    protected AbstractFunctionalExtensionProcessor(Class<A> annotationType, ClassLoader classReferenceLoader) {
         super(annotationType, classReferenceLoader);
     }
 
@@ -29,7 +32,7 @@ public abstract class AbstractFunctionalExtensionProcessor<A extends Annotation>
             error("FunctionalExtension id must be unique. Duplicate id : " + annotation.id());
         }
 
-        for (Class service : annotation.contextServices()) {
+        for (Class<?> service : annotation.contextServices()) {
             checkNoSpecificationRedundancy(service.getName());
             addSpecToProvideElement(service.getName());
         }
@@ -111,7 +114,7 @@ public abstract class AbstractFunctionalExtensionProcessor<A extends Annotation>
             provides.addElement(property);
 
 
-            Attribute attributeStrategy = new Attribute(ProvideReferenceHandler.STRATEGY.toString(), StrategyReference.STRATEGY_PATH);
+            Attribute attributeStrategy = new Attribute(ProvideReferenceHandler.STRATEGY.toString(),  ContextProvideStrategy.class.getName());
             provides.addAttribute(attributeStrategy);
 
             addMetadataElement(ContextEntityProcessor.CONTEXT_PROVIDE_TYPE, provides, null);

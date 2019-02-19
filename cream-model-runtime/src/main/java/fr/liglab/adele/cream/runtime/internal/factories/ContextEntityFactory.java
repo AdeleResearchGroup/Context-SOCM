@@ -18,12 +18,12 @@ public class ContextEntityFactory extends ComponentFactory {
     }
 
     @Override
-    public ComponentInstance createInstance(Dictionary config, IPojoContext context, HandlerManager[] handlers) throws org.apache.felix.ipojo.ConfigurationException {
+    public ComponentInstance createInstance(@SuppressWarnings("rawtypes") Dictionary configuration, IPojoContext context, HandlerManager[] handlers) throws org.apache.felix.ipojo.ConfigurationException {
 
         InstanceManager instance = new ContextEntityInstanceManager(this, context, handlers);
 
         try {
-            instance.configure(m_componentMetadata, config);
+            instance.configure(m_componentMetadata, configuration);
             instance.start();
             return instance;
         } catch (ConfigurationException e) {
@@ -58,12 +58,15 @@ public class ContextEntityFactory extends ComponentFactory {
         }
 
         @Override
-        public Dictionary getPropertiesToPublish() {
-            Dictionary dict = super.getPropertiesToPublish();
-            if (this.getFactory().getClassName() != null) {
-                dict.put("component.class", this.getFactory().getClassName());
+        public Dictionary<String,Object> getPropertiesToPublish() {
+            
+        	Dictionary<String,Object> published = super.getPropertiesToPublish();
+            
+        	if (this.getFactory().getClassName() != null) {
+            	published.put("component.class", this.getFactory().getClassName());
             }
-            return dict;
+            
+        	return published;
         }
     }
 }

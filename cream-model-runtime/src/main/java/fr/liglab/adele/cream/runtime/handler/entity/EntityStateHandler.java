@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.felix.ipojo.*;
@@ -71,7 +70,7 @@ public class EntityStateHandler extends ContextStateHandler implements ContextSo
 
     
     @Override
-    public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
+    public void configure(Element element,  @SuppressWarnings("rawtypes") Dictionary dictionary) throws ConfigurationException {
         super.configure(element, dictionary, HandlerReference.NAMESPACE, HandlerReference.ENTITY_HANDLER);
     }
 
@@ -153,16 +152,23 @@ public class EntityStateHandler extends ContextStateHandler implements ContextSo
 		return value;
 	}
 
+	
+	
 	@Override
-	public Dictionary getContext() {
+	public Dictionary<String,?> getContext() {
 		
 		Hashtable<String,Object> context = new Hashtable<>();
 		
 		putAll(context,super.getContext(),true);
 		
 		for (ContextSource extension : extensions) {
-			putAll(context, extension.getContext(),false);
+			
+			@SuppressWarnings("unchecked")
+			Dictionary<String,?> extendedContext = extension.getContext();
+			
+			putAll(context, extendedContext, false);
 		}
+		
 		return context;
 	}
 

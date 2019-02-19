@@ -169,7 +169,8 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
             return;
         }
 
-        Map<String,Map<String, Object>> reconfiguration = (Map<String,Map<String, Object>>) configuration.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY.toString());
+        @SuppressWarnings("unchecked")
+		Map<String,Map<String, Object>> reconfiguration = (Map<String,Map<String, Object>>) configuration.get(ReservedCreamValueReference.RECONFIGURATION_FREQUENCY.toString());
 
         for (Map.Entry<String,Map<String, Object>> paramToReconfigure : reconfiguration.entrySet()) {
         	

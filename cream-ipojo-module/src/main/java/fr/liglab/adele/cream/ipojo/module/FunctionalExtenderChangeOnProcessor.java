@@ -18,7 +18,7 @@ public class FunctionalExtenderChangeOnProcessor extends AnnotationProcessor<Fun
     @Override
     public final void process(FunctionalExtender.ChangeOn annotation) {
 
-        Class spec = annotation.contextService();
+        Class<?> spec = annotation.contextService();
         String id = annotation.id();
         MethodNode method = getAnnotatedMethod();
 

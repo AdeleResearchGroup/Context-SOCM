@@ -11,7 +11,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>fr.liglab.adele.cream</groupId>
     <artifactId>cream.core</artifactId>
 
     <packaging>bundle</packaging>
@@ -49,33 +48,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!--Test dependencies -->
-        <dependency>
-            <groupId>org.easytesting</groupId>
-            <artifactId>fest-assert</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-all</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.ow2.asm</groupId>
-                    <artifactId>asm-tree</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
     </dependencies>
 
@@ -93,21 +65,7 @@
                         <Export-Package>
                             fr.liglab.adele.cream.annotations.*,
                             fr.liglab.adele.cream.model.*,
-                            fr.liglab.adele.cream.utils.*
                         </Export-Package>
-                        <Import-Package>
-                            org.osgi.framework,
-                            org.osgi.framework.wiring,
-                            org.slf4j,
-                            org.apache.felix.ipojo,
-                            org.apache.felix.ipojo.handlers.providedservice.*,
-                            !org.objectweb.asm.signature,
-                            !org.objectweb.asm.tree
-                        </Import-Package>
-                        <Private-Package>
-                            org.objectweb.asm;-split-package:=merge-last,
-                            org.objectweb.asm.commons;-split-package:=merge-last
-                        </Private-Package>
                         <Bundle-SymbolicName>
                             ${project.artifactId}
                         </Bundle-SymbolicName>

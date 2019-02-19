@@ -39,12 +39,12 @@ public class FunctionalExtensionFactory extends ComponentFactory {
     }
 
     @Override
-    public ComponentInstance createInstance(Dictionary config, IPojoContext context, HandlerManager[] handlers) throws ConfigurationException {
+    public ComponentInstance createInstance(@SuppressWarnings("rawtypes") Dictionary configuration, IPojoContext context, HandlerManager[] handlers) throws ConfigurationException {
 
         InstanceManager instance = new FunctionalExtensionInstanceManager(this, context, handlers);
 
         try {
-            instance.configure(m_componentMetadata, config);
+            instance.configure(m_componentMetadata, configuration);
 
             return instance;
         } catch (ConfigurationException e) {
@@ -78,15 +78,18 @@ public class FunctionalExtensionFactory extends ComponentFactory {
         }
 
         @Override
-        public Dictionary getPropertiesToPublish() {
-            Dictionary dict = super.getPropertiesToPublish();
+        public Dictionary<String,Object> getPropertiesToPublish() {
+            Dictionary<String,Object> published = super.getPropertiesToPublish();
+            
             if (this.getFactory().getClassName() != null) {
-                dict.put("component.class", this.getFactory().getClassName());
+            	published.put("component.class", this.getFactory().getClassName());
             }
-            dict.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY, FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE);
-            dict.put(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(), myImplem);
-            dict.put(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString(), mySpec);
-            return dict;
+            
+            published.put(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY, FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE);
+            published.put(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString(), myImplem);
+            published.put(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString(), mySpec);
+            
+            return published;
         }
     }
 }

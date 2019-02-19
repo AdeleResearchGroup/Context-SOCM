@@ -1,25 +1,26 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
-import fr.liglab.adele.cream.annotations.entity.ContextEntity;
-import fr.liglab.adele.cream.utils.CreamGenerator;
-import fr.liglab.adele.cream.utils.CreamProxyFactory;
-import fr.liglab.adele.cream.utils.GeneratedDelegatorProxy;
-import org.apache.felix.ipojo.ComponentFactory;
-import org.apache.felix.ipojo.HandlerManager;
-import org.apache.felix.ipojo.InstanceManager;
-import org.osgi.framework.BundleContext;
+import java.lang.reflect.InvocationHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-import java.lang.reflect.Method;
-import java.util.*;
+import org.apache.felix.ipojo.ComponentFactory;
+import org.osgi.framework.BundleContext;
+import org.apache.felix.ipojo.HandlerManager;
+
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+
+
+import fr.liglab.adele.cream.annotations.internal.HandlerReference;
+import fr.liglab.adele.cream.runtime.handler.functional.extension.tracker.FunctionalExtensionTrackerHandler;
+import fr.liglab.adele.cream.runtime.internal.proxies.InvocationHandlerChain;
 
 /**
  * Created by aygalinc on 31/05/16.
  */
-public class ContextEntityInstanceManager extends InstanceManager implements CreamGenerator {
-
-    private final CreamProxyFactory creamProxyFactory = new CreamProxyFactory(this.getClass().getClassLoader(), this);
-
-    private Map<Method, GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
+public class ContextEntityInstanceManager extends EntityInstanceManager  {
 
     /**
      * Creates a new Component Manager.
@@ -34,41 +35,32 @@ public class ContextEntityInstanceManager extends InstanceManager implements Cre
 
     }
 
-    public Map<Method, GeneratedDelegatorProxy> getProxyDelegationMap() {
-        if (proxyDelegatorMap.isEmpty()) {
-            Class clazz = getClazz();
-            ContextEntity[] contextEntities = (ContextEntity[]) clazz.getAnnotationsByType(ContextEntity.class);
-            for (ContextEntity entity : contextEntities) {
-                Class[] entityClass = entity.coreServices();
-                Set<Class> classesFlatten = flattenClass(entityClass);
-                proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(classesFlatten, creamProxyFactory);
-            }
+	@Override
+	public Collection<Class<?>> getEntityServices() {
+		
+		List<Class<?>> services 	= new ArrayList<>();
+        Class<?> implementation 	= getClazz();
+        
+        ContextEntity entityDeclaration =  implementation.getAnnotation(ContextEntity.class);
+        
+        if (entityDeclaration != null) {
+            services.addAll(Arrays.asList(entityDeclaration.coreServices()));
         }
-        return proxyDelegatorMap;
+
+		return services;
+	}
+
+	@Override
+	public InvocationHandlerChain getDelegationHandler() {
+		
+		InvocationHandlerChain delegationChain = super.getDelegationHandler(); 
+		delegationChain.addDelegate(getExtensionTrcakerHandler());
+		return delegationChain;
+	}
+    
+	private InvocationHandler getExtensionTrcakerHandler() {
+        Object tracker = this.getHandler(HandlerReference.NAMESPACE + ":" + HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER);
+        return  tracker != null ? ((FunctionalExtensionTrackerHandler) tracker).getDelegationHandler() : null;
     }
 
-    private Set<Class> flattenClass(Class[] classes) {
-        Set<Class> classSet = new HashSet<>();
-
-        for (Class clazz : classes) {
-            boolean put = true;
-            List<Class> classesToRemove = new ArrayList<>();
-            for (Class classOfSet : classSet) {
-                if (clazz.isAssignableFrom(classOfSet)) {
-                    put = false;
-                }
-                if (classOfSet.isAssignableFrom(clazz) && !(classOfSet.equals(clazz))) {
-                    classesToRemove.add(classOfSet);
-                }
-            }
-
-            if (put) {
-                classSet.add(clazz);
-            }
-            for (Class classToRemove : classesToRemove) {
-                classSet.remove(classToRemove);
-            }
-        }
-        return classSet;
-    }
 }

@@ -82,10 +82,11 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     /**
      * Handler Configuration
      **/
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void configure(Element element, Dictionary rawConfiguration, String handlerNameSpace, String handlerName) throws ConfigurationException {
+  
+    public void configure(Element element, @SuppressWarnings("rawtypes") Dictionary rawConfiguration, String handlerNameSpace, String handlerName) throws ConfigurationException {
 
-        Dictionary<String, Object> configuration = (Dictionary<String, Object>) rawConfiguration;
+        @SuppressWarnings("unchecked")
+		Dictionary<String, Object> configuration = (Dictionary<String, Object>) rawConfiguration;
 
         /*
          * Introspect interfaces implemented by the component POJO and construct the
@@ -189,7 +190,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     }
 
     @Override
-    public void reconfigure(Dictionary rawConfiguration) {
+    public void reconfigure(@SuppressWarnings("rawtypes") Dictionary rawConfiguration) {
        
     	@SuppressWarnings("unchecked")
     	Dictionary<String,Object> configuration = (Dictionary<String, Object>) rawConfiguration;
@@ -305,7 +306,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     }
 
     @Override
-    public Dictionary getContext() {
+    public Dictionary<String,?> getContext() {
         return new Hashtable<>(stateValues);
     }
 
@@ -592,7 +593,9 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
     private Object getConfiguredValue(String state, Dictionary<String,Object> configuration, Element stateDeclaration) throws ConfigurationException {
     	
-        Map<String, Object> stateConfiguration	= (Map<String,Object>) configuration.get("context.entity.init");
+        @SuppressWarnings("unchecked")
+		Map<String, Object> stateConfiguration	= (Map<String,Object>) configuration.get("context.entity.init");
+        
         Object configuredValue  				= stateConfiguration != null ? stateConfiguration.get(state) : null;
 
         if (configuredValue == null) {

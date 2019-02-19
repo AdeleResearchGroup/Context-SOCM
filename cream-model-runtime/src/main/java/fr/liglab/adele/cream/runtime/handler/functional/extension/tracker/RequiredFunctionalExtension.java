@@ -3,10 +3,15 @@ package fr.liglab.adele.cream.runtime.handler.functional.extension.tracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -15,7 +20,7 @@ import fr.liglab.adele.cream.runtime.handler.entity.FunctionalExtensionStateHand
 import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionFactory;
 import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionInstanceManager;
 
-import fr.liglab.adele.cream.utils.SuccessorStrategy;
+import fr.liglab.adele.cream.runtime.internal.proxies.InvocationHandlerChain;
 
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.architecture.InstanceDescription;
@@ -29,7 +34,7 @@ import org.apache.felix.ipojo.parser.ParseUtils;
  */
 /** TODO : Synchronisation seems messy ...
 **/
-public class RequiredFunctionalExtension implements InvocationHandler, FieldInterceptor, InstanceStateListener {
+public class RequiredFunctionalExtension implements InvocationHandlerChain.Link, FieldInterceptor, InstanceStateListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequiredFunctionalExtension.class);
 
@@ -244,6 +249,31 @@ public class RequiredFunctionalExtension implements InvocationHandler, FieldInte
 	}
 
 	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		
+		try {
+			
+			FunctionalExtensionInstanceManager extension = this.extension;
+			
+			if (extension != null && extension.isStarted()) {
+				return extension.getDelegationHandler().invoke(proxy, method, args);
+			}
+		}
+		catch (NoSuchMethodException e ) {
+
+			if (e != null && e.getMessage() != null && e.getMessage().equals(method.getName())) {
+				return InvocationHandlerChain.Link.NOT_SUCH_METHOD_EXCEPTION;
+			}
+			
+			throw e;
+		}
+		
+		throw new NoSuchMethodError(method.getName());
+		
+	}
+
+
+	@Override
 	public void onSet(Object pojo, String fieldName, Object value) {
 	}
 
@@ -251,19 +281,6 @@ public class RequiredFunctionalExtension implements InvocationHandler, FieldInte
 	public Object onGet(Object pojo, String fieldName, Object value) {
         return extension != null ? extension.getPojoObject() : null;
 	}
-
-	
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-    	
-    	InvocationHandler handler = null;
-    	
-        synchronized (this) {
-            handler = extension != null && extension.isStarted() ? extension.getInvocationHandler() : null;
-        }
-
-        return handler != null ? handler.invoke(proxy, method, args) : SuccessorStrategy.NO_FOUND_CODE;
-    }
 
 
     public synchronized void getDescription(Element elementToAttach) {
@@ -288,6 +305,5 @@ public class RequiredFunctionalExtension implements InvocationHandler, FieldInte
             extensionElement.addAttribute(new Attribute(FunctionalExtensionReference.FUNCTIONAL_EXTENSION_IS_INSTANTIATE.toString(),"false"));
         }
     }
-
 
 }

@@ -55,7 +55,7 @@ public class FunctionalExtenderProcessor extends AnnotationProcessor<FunctionalE
         ClassNode clazz = getAnnotatedClass();
         boolean implemented = true;
 
-        for (Class service : annotation.contextServices()) {
+        for (Class<?> service : annotation.contextServices()) {
             if (!clazz.interfaces.contains(Type.getInternalName(service))) {
                 error("Class " + clazz.name + " is not an implementation of context service " + service);
                 implemented = false;

@@ -1,7 +1,8 @@
 package fr.liglab.adele.cream.ipojo.module;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
-import fr.liglab.adele.cream.annotations.entity.StrategyReference;
+import fr.liglab.adele.cream.annotations.entity.ContextProvideStrategy;
+
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
@@ -89,7 +90,7 @@ public class ContextEntityProcessor extends AnnotationProcessor<ContextEntity> {
             provides.addElement(property);
 
 
-            Attribute attributeStrategy = new Attribute(ProvideReferenceHandler.STRATEGY.toString(), StrategyReference.STRATEGY_PATH);
+            Attribute attributeStrategy = new Attribute(ProvideReferenceHandler.STRATEGY.toString(), ContextProvideStrategy.class.getName());
             provides.addAttribute(attributeStrategy);
 
             addMetadataElement(CONTEXT_PROVIDE_TYPE, provides, null);

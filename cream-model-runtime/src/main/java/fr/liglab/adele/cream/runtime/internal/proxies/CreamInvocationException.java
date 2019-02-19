@@ -1,4 +1,4 @@
-package fr.liglab.adele.cream.utils;
+package fr.liglab.adele.cream.runtime.internal.proxies;
 
 /**
  * Created by aygalinc on 25/08/16.

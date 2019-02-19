@@ -54,6 +54,34 @@
             <artifactId>wisdom-executors</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm-tree</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--Test dependencies -->
+        <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -68,6 +96,15 @@
                             fr.liglab.adele.cream.runtime.internal.*,
                             fr.liglab.adele.cream.runtime.handler.*
                         </Export-Package>
+                        <Import-Package>
+                            !org.objectweb.asm.signature,
+                            !org.objectweb.asm.tree,
+                            *
+                        </Import-Package>
+                        <Private-Package>
+                            org.objectweb.asm;-split-package:=merge-last,
+                            org.objectweb.asm.commons;-split-package:=merge-last
+                        </Private-Package>
                         <IPOJO-Extension>
                             context-component:fr.liglab.adele.cream.runtime.internal.factories.ContextEntityFactory,
                             functional-extension:fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionFactory

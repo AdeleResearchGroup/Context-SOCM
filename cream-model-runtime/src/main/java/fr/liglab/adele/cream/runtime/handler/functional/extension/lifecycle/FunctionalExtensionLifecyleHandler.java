@@ -36,7 +36,7 @@ public class FunctionalExtensionLifecyleHandler extends PrimitiveHandler impleme
 
     
     @Override
-    public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+    public void configure(Element metadata, @SuppressWarnings("rawtypes") Dictionary configuration) throws ConfigurationException {
 
         Element[] elements = metadata.getElements(HandlerReference.FUNCTIONAL_EXTENSION_LIFECYCLE_HANDLER, HandlerReference.NAMESPACE);
         if (elements == null || elements.length == 0) {

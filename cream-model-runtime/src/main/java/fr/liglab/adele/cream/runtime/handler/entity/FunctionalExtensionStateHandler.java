@@ -40,7 +40,7 @@ public class FunctionalExtensionStateHandler extends ContextStateHandler impleme
     }
 
     @Override
-    public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
+    public void configure(Element element, @SuppressWarnings("rawtypes") Dictionary dictionary) throws ConfigurationException {
         super.configure(element, dictionary, HandlerReference.NAMESPACE, HandlerReference.FUNCTIONAL_EXTENSION_ENTITY_HANDLER);
     }
 

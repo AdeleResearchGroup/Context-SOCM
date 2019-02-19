@@ -1,25 +1,20 @@
 package fr.liglab.adele.cream.runtime.internal.factories;
 
-import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
-import fr.liglab.adele.cream.annotations.internal.HandlerReference;
-import fr.liglab.adele.cream.runtime.handler.entity.FunctionalExtensionStateHandler;
-import fr.liglab.adele.cream.runtime.handler.functional.extension.lifecycle.FunctionalExtensionLifecyleHandler;
-import fr.liglab.adele.cream.utils.*;
-import org.apache.felix.ipojo.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.felix.ipojo.ComponentFactory;
+import org.apache.felix.ipojo.HandlerManager;
 import org.osgi.framework.BundleContext;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.*;
+import fr.liglab.adele.cream.annotations.functional.extension.FunctionalExtender;
 
 /**
  * Created by aygalinc on 31/05/16.
  */
-public class FunctionalExtensionInstanceManager extends InstanceManager implements CreamGenerator {
-
-    private final CreamProxyFactory creamProxyFactory = new CreamProxyFactory(this.getClass().getClassLoader(), this);
-
-    private Map<Method, GeneratedDelegatorProxy> proxyDelegatorMap = new HashMap<>();
+public class FunctionalExtensionInstanceManager extends EntityInstanceManager {
 
     /**
      * Creates a new Component Manager.
@@ -33,30 +28,21 @@ public class FunctionalExtensionInstanceManager extends InstanceManager implemen
         super(factory, context, handlers);
     }
 
-    public InvocationHandler getInvocationHandler() {
-        Object pojo = getPojoObject();
-        return new CustomInvocationHandler(pojo, this, new NotFoundStrategy(), new ArrayList<>());
-    }
 
-    @Override
-    public Map<Method, GeneratedDelegatorProxy> getProxyDelegationMap() {
-        if (proxyDelegatorMap.isEmpty()) {
-            Class clazz = getClazz();
-            FunctionalExtender[] behaviors = (FunctionalExtender[]) clazz.getAnnotationsByType(FunctionalExtender.class);
-            for (FunctionalExtender provider : behaviors) {
-                Class[] behaviorServices = provider.contextServices();
-                Set<Class> setOfBehaviorService = new HashSet<>(Arrays.asList(behaviorServices));
-                proxyDelegatorMap = ProxyGeneratorUtils.getGeneratedProxyByMethodMap(setOfBehaviorService, creamProxyFactory);
-            }
+ 	@Override
+	public Collection<Class<?>> getEntityServices() {
+ 		
+		List<Class<?>> services 	= new ArrayList<>();
+        Class<?> implementation 	= getClazz();
+        
+        FunctionalExtender entityDeclaration =  implementation.getAnnotation(FunctionalExtender.class);
+        
+        if (entityDeclaration != null) {
+            services.addAll(Arrays.asList(entityDeclaration.contextServices()));
         }
-        return proxyDelegatorMap;
-    }
 
-    private class NotFoundStrategy implements SuccessorStrategy {
+		return services;
 
-        @Override
-        public Object successorStrategy(Object pojo, List<InvocationHandler> successors, Object proxy, Method method, Object[] args) {
-            return SuccessorStrategy.NO_FOUND_CODE;
-        }
-    }
+	}
+
 }

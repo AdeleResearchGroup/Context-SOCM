@@ -1,17 +1,20 @@
 package fr.liglab.adele.cream.runtime.handler.functional.extension.tracker;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 
-import java.util.*;
+import java.lang.reflect.InvocationHandler;
+import java.util.Arrays;
+
+import java.util.Map;
+import java.util.Dictionary;
+
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import fr.liglab.adele.cream.annotations.internal.FunctionalExtensionReference;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
-
 import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionFactory;
 import fr.liglab.adele.cream.runtime.internal.factories.FunctionalExtensionInstanceManager;
-
-import fr.liglab.adele.cream.utils.SuccessorStrategy;
+import fr.liglab.adele.cream.runtime.internal.proxies.InvocationHandlerChain;
 
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Bind;
@@ -33,17 +36,25 @@ import org.apache.felix.ipojo.parser.FieldMetadata;
  *
  */
 @Handler(name = HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER, namespace = HandlerReference.NAMESPACE)
-public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implements InvocationHandler, InstanceStateListener {
+public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implements InstanceStateListener {
 
-    private final List<RequiredFunctionalExtension> extensions = new ArrayList<>();
+    private final List<RequiredFunctionalExtension> extensions = new CopyOnWriteArrayList<>();
 
+    private final InvocationHandlerChain delegationChain = new InvocationHandlerChain();
+
+	/**
+	 * The handler that can be used to invoke methods of the pojo associated to the active extensions of the context entity
+	 */
+    public InvocationHandler getDelegationHandler() {
+    	return delegationChain;
+    }
 
     /**
      * Configure part
      **/
 
     @Override
-    public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+    public void configure(Element metadata, @SuppressWarnings("rawtypes") Dictionary configuration) throws ConfigurationException {
 
         Element[] behaviorElements = metadata.getElements(HandlerReference.FUNCTIONAL_EXTENSION_TRACKER_HANDLER, HandlerReference.NAMESPACE);
 
@@ -72,7 +83,8 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
                         															configuration,this,isMandatory);
                 
                 extensions.add(requiredFunctionalExtension);
-
+                delegationChain.addDelegate(requiredFunctionalExtension);
+                
                 hassMandatoryExtensions = hassMandatoryExtensions || isMandatory;
                 
                 String fieldAttribute = individualBehaviorElement.getAttribute(FunctionalExtensionReference.FIELD_ATTRIBUTE_NAME.toString());
@@ -96,7 +108,7 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
     }
 
     @Override
-    public void reconfigure(Dictionary configuration) {
+    public void reconfigure(@SuppressWarnings("rawtypes") Dictionary configuration) {
         for (RequiredFunctionalExtension extension : extensions) {
             extension.reconfigure(configuration);
         }
@@ -196,7 +208,7 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
      */
 
     @Bind(id = "extension", specification = Factory.class, optional = true, proxy = false, aggregate = true, filter = "(" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY + "=" + FunctionalExtensionReference.FUNCTIONAL_EXTENSION_FACTORY_TYPE_PROPERTY_VALUE + ")")
-    public synchronized void bindExtensionFactory(Factory factory, Map prop) {
+    public synchronized void bindExtensionFactory(Factory factory, Map<String,?> properties) {
         
     	if (! (factory instanceof FunctionalExtensionFactory)) {
     		return;
@@ -204,8 +216,8 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
     	
     	for (RequiredFunctionalExtension extension : extensions) {
             
-    		String implementation 	= (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
-            String[] specifications = (String[]) prop.get(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString());
+    		String implementation 	= (String)   properties.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+            String[] specifications = (String[]) properties.get(FunctionalExtensionReference.SPECIFICATION_ATTRIBUTE_NAME.toString());
             
             if (Arrays.asList(specifications).containsAll(extension.getSpecifications())) {
             	extension.bindExtensionFactory(implementation,(FunctionalExtensionFactory) factory);
@@ -215,7 +227,7 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
 
 
     @Unbind(id = "extension")
-    public synchronized void unbindExtensionFactory(Factory factory, Map prop) {
+    public synchronized void unbindExtensionFactory(Factory factory, Map<String,?> properties) {
     	
     	if (! (factory instanceof FunctionalExtensionFactory)) {
     		return;
@@ -223,7 +235,7 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
 
         for (RequiredFunctionalExtension extension : extensions) {
 
-        	String implementation = (String) prop.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
+        	String implementation = (String) properties.get(FunctionalExtensionReference.IMPLEMEMENTATION_ATTRIBUTE_NAME.toString());
             
             if (extension.isExtensionFactoryBound(implementation)) {
             	extension.unbindExtensionFactory(implementation, (FunctionalExtensionFactory) factory);
@@ -232,23 +244,7 @@ public class FunctionalExtensionTrackerHandler extends PrimitiveHandler implemen
         }
     }
 
-    /**
-     * Method Invocation Delegation, linked to context provided strategy
-     */
-
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        for (RequiredFunctionalExtension extension : extensions) {
-            Object returnObj = extension.invoke(proxy, method, args);
-            if (SuccessorStrategy.NO_FOUND_CODE.equals(returnObj)) {
-                continue;
-            }
-            return returnObj;
-        }
-        return SuccessorStrategy.NO_FOUND_CODE;
-    }
-
-    /**
+     /**
      * FunctionalExtension handler Description
      */
 
