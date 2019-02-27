@@ -1,7 +1,7 @@
 package fr.liglab.adele.cream.runtime.internal.proxies;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 
 import java.lang.reflect.InvocationHandler;
@@ -34,7 +34,7 @@ public class InvocationHandlerChain implements InvocationHandler {
     /**
      * The list of delegates
      */
-    private final List<InvocationHandler> delegates = new CopyOnWriteArrayList<>();
+    private final Set<InvocationHandler> delegates = new ConcurrentSkipListSet<>();
     
      /**
      * Adds a new delegate to the end of the list

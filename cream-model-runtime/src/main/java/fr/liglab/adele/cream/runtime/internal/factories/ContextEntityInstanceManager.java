@@ -52,10 +52,13 @@ public class ContextEntityInstanceManager extends EntityInstanceManager  {
 
 	@Override
 	public InvocationHandlerChain getDelegationHandler() {
+
+		if (invocationHanlder == null) {
+			invocationHanlder= super.getDelegationHandler(); 
+			invocationHanlder.addDelegate(getExtensionTrcakerHandler());
+		}
 		
-		InvocationHandlerChain delegationChain = super.getDelegationHandler(); 
-		delegationChain.addDelegate(getExtensionTrcakerHandler());
-		return delegationChain;
+		return invocationHanlder;
 	}
     
 	private InvocationHandler getExtensionTrcakerHandler() {

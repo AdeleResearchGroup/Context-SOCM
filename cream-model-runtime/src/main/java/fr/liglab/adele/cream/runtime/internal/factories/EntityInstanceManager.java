@@ -38,7 +38,7 @@ public abstract class EntityInstanceManager extends InstanceManager implements E
 	/**
 	 * The invocation handler used to delegate method invocation to the pojo associated to the instance
 	 */
-    private InvocationHandlerChain invocationHanlder;
+    protected InvocationHandlerChain invocationHanlder;
 
 	/**
 	 * Builds a chain of invocation handlers to delegate the method invocation of each provided service of the
