@@ -49,7 +49,7 @@ public interface Creator {
         
         public E getInstance(String id);
         
-        public String id(E entity);
+        public String id(Object pojo);
 
         public void delete(String id);
 
