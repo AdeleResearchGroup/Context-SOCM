@@ -79,7 +79,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      */
     protected final Map<ContextListener, List<String>> contextSourceListeners = new HashMap<>();
  
-    
+
     /**
      * Handler Configuration
      **/
@@ -235,10 +235,11 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
     }
 
+
     /**
      * Updates the value of a state property, notifying the context listeners
      */
-    protected void update(Optional<? extends StateInterceptor.Context> extra, String stateId, Object value) {
+    protected void update(String stateId, Object value, boolean push) {
 
         if (stateId == null && !stateIds.contains(stateId)) {
             return;
@@ -246,10 +247,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
 
         Object oldValue = stateValues.get(stateId);
         
-        boolean bothNull = oldValue == null && value == null;
-        boolean equals = (oldValue != null && value != null) && oldValue.equals(value);
-
-        if (bothNull || equals) {
+        if (!push && Objects.equals(oldValue,value)) {
             return;
         }
 
@@ -259,7 +257,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
             stateValues.remove(stateId);
         }
 
-        notifyContextListeners(extra, stateId, oldValue, value);
+        notifyContextListeners(stateId, value, push);
     }
 
     /**
@@ -267,7 +265,7 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
      */
     private void reset() {
     	for (String state : stateIds) {
-       		update(Optional.empty(), state, configuredValues.get(state));
+       		update(state, configuredValues.get(state), true);
 		}
     }
 
@@ -345,16 +343,33 @@ public abstract class ContextStateHandler extends PrimitiveHandler implements Co
     }
 
     /**
+     * This class represent an specialized context listener that can handle additional information from this handler
+     */
+    public interface Listener extends ContextListener {
+    	
+    	@Override
+    	public default void update(ContextSource source, String property, Object value) {
+    		update(source,property,value,true);
+    	}
+
+        /**
+         * A monitored value has been modified by the specified state interceptor
+         */
+		public void update(ContextSource source, String property, Object value, boolean pushed);
+
+    }
+
+    /**
      * Notify All the context listeners of a state change
      */
-    protected <C extends StateInterceptor.Context> void notifyContextListeners(Optional<C> extra, String property, Object oldValue, Object value) {
+    protected void notifyContextListeners(String property, Object value, boolean push) {
     	
         for (Map.Entry<ContextListener, List<String>> listenerRegistration : contextSourceListeners.entrySet()) {
             if (listenerRegistration.getValue() == null || listenerRegistration.getValue().contains(property)) {
             	ContextListener listener = listenerRegistration.getKey();
             	
-            	if (listener instanceof StateInterceptor.Listener) {
-               		((StateInterceptor.Listener)listener).update(this, extra, property, value);
+            	if (listener instanceof ContextStateHandler.Listener) {
+               		((ContextStateHandler.Listener)listener).update(this, property, value, push);
             	}
             	else {
                		listener.update(this, property, value);

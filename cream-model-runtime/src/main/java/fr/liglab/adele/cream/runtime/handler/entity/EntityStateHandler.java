@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.felix.ipojo.*;
@@ -27,8 +26,6 @@ import org.apache.felix.ipojo.util.Property;
 import fr.liglab.adele.cream.annotations.internal.HandlerReference;
 import fr.liglab.adele.cream.model.ContextEntity;
 import fr.liglab.adele.cream.runtime.handler.entity.utils.ContextStateHandler;
-import fr.liglab.adele.cream.runtime.handler.entity.utils.StateInterceptor;
-import fr.liglab.adele.cream.runtime.handler.entity.utils.SynchronisationInterceptor;
 import fr.liglab.adele.cream.runtime.handler.functional.extension.tracker.ExtensibleEntityHandler;
 
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
@@ -275,7 +272,7 @@ public class EntityStateHandler extends ContextStateHandler implements ContextSo
 		return values;
     }
 
-    private static class ServicePublication implements  StateInterceptor.Listener {
+    private static class ServicePublication implements  ContextStateHandler.Listener {
 
     	private final ProvidedServiceHandler 		providedServiceHandler;
         
@@ -357,13 +354,13 @@ public class EntityStateHandler extends ContextStateHandler implements ContextSo
     	 * Update provided services properties to reflect state changes (handles both core and extensions)
     	 */
     	@Override
-		public void update(ContextSource source, Optional<? extends StateInterceptor.Context> extra, String property, Object value) {
+		public void update(ContextSource source, String property, Object value, boolean push) {
 
     		/*
-    		 * Avoid notifications on pull values as this generates a cascade of events for sources that change on evry
+    		 * Avoid notifications on pull values as this generates a cascade of events for sources that change on every
     		 * invocation (as it's the case of continuous measurements)
     		 */
-    		if (extra != null && extra.isPresent() && extra.get() == SynchronisationInterceptor.NotificationKind.PULL) {
+    		if (!push) {
     			return;
     		}
     		

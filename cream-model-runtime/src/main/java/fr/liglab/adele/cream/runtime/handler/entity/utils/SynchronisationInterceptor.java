@@ -9,7 +9,6 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -197,27 +196,24 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
         }
     }
 
-    /**
-     * The kind of notification
-     *
-     */
-    public enum NotificationKind implements StateInterceptor.Context {
-    	PUSH,
-    	PULL,
-    	PERIODIC;
-    } 
 
     /**
      * This class notifies the state handler and its listeners of an update of a field (due to a pull/push access)
      * 
-     * It keeps a history of notifications to avoid reentrant pulling, as it may lead to an infinite cascade of notifications if the
+     * It keeps a history of notifications to avoid reentrant updates, as it may lead to an infinite cascade of notifications if the
      * listener of the notification request the value of the state again and it changes at every invocation (as is the case for 
      * continuous temporal measurements). 
-     *  
+     * 
      */
     private class Notifier extends ThreadLocal<Set<String>> {
-    	
-    	public void update(String state, Supplier<Object> value, NotificationKind kind) {
+
+    	/**
+    	 * Updates the state handler.
+    	 * 
+    	 * Notice that the value is lazily evaluated only in the case there will be an effective update. This is useful
+    	 * for pull functions that have side-effects as part of the invocation.
+    	 */
+    	public void update(String state, Supplier<Object> value, boolean push) {
 
         	if (inProgress(state)) {
         		return;
@@ -225,7 +221,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
 
         	try {
         		startNotification(state);
-   	            stateHandler.update(Optional.ofNullable(kind),state,value.get());
+   	            stateHandler.update(state,value.get(),push);
         	}
         	finally {
         		endNotification(state);
@@ -271,14 +267,14 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
     private void pull(Object pojo, String state) {
  		Function<Object, Object> pullFunction = pullFunctions.get(state);
         if (pullFunction != null) {
-            notifier.update(state, () -> pullFunction.apply(pojo), NotificationKind.PULL);
+            notifier.update(state, () -> pullFunction.apply(pojo), false);
         }
     }
 
     private void periodic(InstanceManager instance, String state) {
  		Function<Object, Object> pullFunction = pullFunctions.get(state);
         if (pullFunction != null) {
-            notifier.update(state, () -> pullFunction.apply(instance.getPojoObject()), NotificationKind.PERIODIC);
+            notifier.update(state, () -> pullFunction.apply(instance.getPojoObject()), false);
         }
     }
 
@@ -291,7 +287,7 @@ public class SynchronisationInterceptor extends AbstractStateInterceptor impleme
     }
 
     private void push(Object pojo, String state, Object value) {
-   		notifier.update(state, () -> value, NotificationKind.PUSH);
+   		notifier.update(state, () -> value, true);
     }
     
     @Override
